@@ -16,4 +16,8 @@ public class AuthService {
         repository.save(credential);
         return "User added to the system";
     }
+
+    public String generateToken(String username) {
+        return "Login Success";
+    }
 }
