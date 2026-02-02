@@ -1,19 +1,18 @@
 server:
-  port: 8081
+  port: 8083 # New Port!
 
 spring:
-  config:
-    import: "optional:file:.env[.properties]"
   application:
-    name: identity-service
+    name: interaction-service
   datasource:
+    # Use the EXACT same URL that worked for Identity/Catalog
     url: jdbc:postgresql://db.rfmmkqcfcfbxukxjpnvw.supabase.co:5432/postgres?sslmode=require
     username: postgres
     password: xH9QjFi6ujwcP6qx
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update # Crucial: This creates the tables for you automatically!
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
