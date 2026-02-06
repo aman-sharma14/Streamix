@@ -1,9 +1,11 @@
 package com.streamix.identity_service.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.streamix.identity_service.entity.UserCredential;
 import com.streamix.identity_service.repository.UserCredentialRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
@@ -11,13 +13,36 @@ public class AuthService {
     @Autowired
     private UserCredentialRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
+
+    // Register new user
     public String saveUser(UserCredential credential) {
-        // Later we will add password encryption here!
+        // Check if email already exists
+        if (repository.findByEmail(credential.getEmail()).isPresent()) {
+            return "User with this email already exists!";
+        }
+        
+        // Encrypt the password before saving
+        credential.setPassword(passwordEncoder.encode(credential.getPassword()));
         repository.save(credential);
-        return "User added to the system";
+        return "User registered successfully!";
     }
 
-    public String generateToken(String username) {
-        return "Login Success";
+    // Generate JWT token after validating credentials
+    public String generateToken(String email) {
+        return jwtService.generateToken(email);
+    }
+
+    // Validate if user exists
+    public boolean validateUser(String email) {
+        return repository.findByEmail(email).isPresent();
+    }
+    // Validate JWT token
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
     }
 }
