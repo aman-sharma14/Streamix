@@ -1,0 +1,22 @@
+Spring : Java with a manager
+    Creates objects for you
+    Connects classes automatically
+    Handles web requests (HTTP)
+    Manages databases, security, config, etc.
+
+spring boot is spring that is faster to start, less config, prod-ready
+
+Microservices : Instead of one giant app, you build many small apps.
+    as monolith is bad for scaling
+    each service has its own - spring boot app, db, runs on own port, talks to others via rest
+
+
+
+
+Project -
+http://localhost:8761/ - "Phonebook" (Eureka) gateway
+
+catalog service -
+    entity/movie.java :
+         maps directly to a table in your Supabase database.
+         Each instance of this class represents one row in the movies table
