@@ -7,9 +7,9 @@ spring:
   application:
     name: identity-service
   datasource:
-    url: jdbc:postgresql://db.rfmmkqcfcfbxukxjpnvw.supabase.co:5432/postgres?sslmode=require
-    username: postgres
-    password: xH9QjFi6ujwcP6qx
+    url: jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
+    username: postgres.qhemejaizwfsdchbjitp
+    password: EEYZoX0Zne7bDclG
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

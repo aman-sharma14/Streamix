@@ -1,3 +1,4 @@
+// It handles all the SQL for you. You don't have to write SELECT * FROM movies.
 package com.streamix.catalog.repository;
 
 import com.streamix.catalog.entity.Movie;
@@ -8,5 +9,9 @@ import java.util.List;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
+//  JpaRepository -  gives you built-in methods like save(), findAll(), and delete().
+
     List<Movie> findByCategory(String category);
+    // Spring is smart enough to see that name and automatically generate the SQL
+    // SELECT * FROM movies WHERE category = ?
 }

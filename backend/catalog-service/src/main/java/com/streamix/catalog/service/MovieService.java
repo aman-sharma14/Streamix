@@ -1,3 +1,5 @@
+//sits between the Controller and the Repository.
+// to add rules (e.g., "Don't add a movie if the title is empty" or "Send an email when a movie is added").
 package com.streamix.catalog.service;
 
 import com.streamix.catalog.entity.Movie;

@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Data
+@Entity   //Tells Spring that this class should be managed by the database.
+@Data   //Automatically creates your getters, setters, and toString() methods so the file stays clean.
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "movies")
 public class Movie {
 
-    @Id
+    @Id   //  Marks the primary key.
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

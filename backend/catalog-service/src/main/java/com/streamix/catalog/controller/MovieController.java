@@ -1,3 +1,4 @@
+//defines the URLs (Endpoints) that the outside world (Postman, React, or the Gateway) can hit.
 package com.streamix.catalog.controller;
 
 import com.streamix.catalog.entity.Movie;
@@ -7,14 +8,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/movie")
+@RestController  // Tells Spring this class will return JSON data.
+@RequestMapping("/movie")   //  Every URL in this file will start with /movie
 public class MovieController {
 
     @Autowired
     private MovieService service;
 
-    @PostMapping("/add")
+    @PostMapping("/add")   // Maps to POST http://localhost:8082/movie/add
     public String addMovie(@RequestBody Movie movie) {
         service.saveMovie(movie);
         return "Movie added successfully";
