@@ -17,6 +17,10 @@ spring:
 server:
   port: 8082
 
+tmdb:
+  api:
+    key: f33c417070653dbf2c8fd8fd63e6e998
+
 eureka:
   client:
     service-url:

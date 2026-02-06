@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
@@ -14,4 +16,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     List<Movie> findByCategory(String category);
     // Spring is smart enough to see that name and automatically generate the SQL
     // SELECT * FROM movies WHERE category = ?
+
+    Optional<Movie> findByTitle(String title);
+
 }

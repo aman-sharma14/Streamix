@@ -1,28 +1,78 @@
+package com.streamix.catalog.service;
+
+import com.streamix.catalog.dto.TmdbResponse;
+import com.streamix.catalog.entity.Movie;
+import com.streamix.catalog.repository.MovieRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import java.util.List;
+
 @Service
 public class MovieService {
+
     @Autowired
     private MovieRepository repository;
 
-    private final String TMDB_API_KEY = "YOUR_API_KEY_HERE";
-    private final String TMDB_URL = "https://api.themoviedb.org/3/movie/popular?api_key=" + TMDB_API_KEY;
+    @Autowired
+    private RestTemplate restTemplate;
 
-    public void syncMoviesFromTMDB() {
-        RestTemplate restTemplate = new RestTemplate();
-        TmdbResponse response = restTemplate.getForObject(TMDB_URL, TmdbResponse.class);
+    @Value("${tmdb.api.key}")
+    private String apiKey;
+
+    public void syncMoviesFromTMDB(String query) {
+        String url = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + query;
+        TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
 
         if (response != null && response.getResults() != null) {
-            for (TmdbMovieDto dto : response.getResults()) {
-                // Only add if it doesn't already exist
-                if (repository.findByTitle(dto.getTitle()).isEmpty()) {
+            for (TmdbResponse.TmdbMovieDto result : response.getResults()) {
+                if (repository.findByTitle(result.getTitle()).isEmpty()) {
                     Movie movie = new Movie();
-                    movie.setTitle(dto.getTitle());
-                    movie.setCategory("Popular"); // You can map genre_ids to names later
-                    movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + dto.getPoster_path());
-                    movie.setVideoUrl("https://www.youtube.com/results?search_query=" + dto.getTitle() + "+trailer");
-
+                    movie.setTitle(result.getTitle());
+                    movie.setCategory("Movie");
+                    movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + result.getPosterPath());
+                    movie.setVideoUrl("https://www.youtube.com/results?search_query=" + result.getTitle() + "+trailer");
                     repository.save(movie);
                 }
             }
         }
     }
+
+    // This one is for the Controller (No args)
+    public void syncMoviesFromTMDB() {
+        // List of keywords to build a diverse library
+        String[] categories = {"Marvel", "Avengers", "Star Wars", "Disney", "Horror", "Action", "Comedy", "Thriller"};
+
+        for (String keyword : categories) {
+            // Loop through the first 3 pages of results for EACH keyword
+            // 3 pages * 20 movies = 60 movies per keyword
+            for (int page = 1; page <= 3; page++) {
+                String url = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey
+                        + "&query=" + keyword + "&page=" + page;
+
+                TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
+
+                if (response != null && response.getResults() != null) {
+                    for (TmdbResponse.TmdbMovieDto result : response.getResults()) {
+                        // Critical: Avoid saving duplicates or movies without posters
+                        if (result.getPosterPath() != null && repository.findByTitle(result.getTitle()).isEmpty()) {
+                            Movie movie = new Movie();
+                            movie.setTitle(result.getTitle());
+                            movie.setCategory(keyword); // Set category based on search keyword
+                            movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + result.getPosterPath());
+                            movie.setVideoUrl("https://www.youtube.com/results?search_query=" + result.getTitle() + "+trailer");
+                            repository.save(movie);
+                        }
+                    }
+                }
+                // Small sleep to be nice to the TMDB API (prevent rate limiting)
+                try { Thread.sleep(200); } catch (InterruptedException e) {}
+            }
+        }
+    }
+
+    public Movie saveMovie(Movie movie) { return repository.save(movie); }
+    public List<Movie> getAllMovies() { return repository.findAll(); }
+    public List<Movie> getMoviesByCategory(String category) { return repository.findByCategory(category); }
 }
