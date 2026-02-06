@@ -5,10 +5,11 @@ spring:
   application:
     name: interaction-service
   datasource:
-    # Use the EXACT same URL that worked for Identity/Catalog
-    url: jdbc:postgresql://db.rfmmkqcfcfbxukxjpnvw.supabase.co:5432/postgres?sslmode=require
-    username: postgres
-    password: xH9QjFi6ujwcP6qx
+    hikari:
+      maximum-pool-size: 3  # Reduces the "footprint" of each microservice
+    url: jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
+    username: postgres.qhemejaizwfsdchbjitp
+    password: EEYZoX0Zne7bDclG
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

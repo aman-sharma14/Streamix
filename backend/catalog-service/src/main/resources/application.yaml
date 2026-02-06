@@ -2,9 +2,9 @@ spring:
   application:
     name: catalog-service
   datasource:
-    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:6543/postgres
-    username: postgres.qvbrclqoiwzklqoiwzkl
-    password: [YOUR_PASSWORD]
+    url: jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
+    username: postgres.qhemejaizwfsdchbjitp
+    password: EEYZoX0Zne7bDclG
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

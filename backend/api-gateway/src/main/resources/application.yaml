@@ -4,19 +4,23 @@ spring:
   cloud:
     gateway:
       routes:
-        # Route for Identity Service
+        # Route for Identity Service (Index 0)
         - id: identity-service
           uri: lb://IDENTITY-SERVICE
           predicates:
             - Path=/auth/**
-          filters:
-            - RewritePath=/auth/(?<segment>.*), /auth/$\{segment}
 
-        # Route for Catalog Service
+        # Route for Catalog Service (Index 1)
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
             - Path=/movie/**
+
+        # Route for Interaction Service (Index 2)
+        - id: interaction-service
+          uri: lb://INTERACTION-SERVICE
+          predicates:
+            - Path=/interaction/**
 
 eureka:
   client:

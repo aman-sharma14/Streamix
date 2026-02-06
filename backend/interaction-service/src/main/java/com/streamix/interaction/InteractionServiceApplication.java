@@ -1,4 +1,4 @@
-package com.streamix.interaction_service;
+package com.streamix.interaction;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

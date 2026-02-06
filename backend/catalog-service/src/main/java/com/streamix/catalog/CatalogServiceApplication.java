@@ -1,6 +1,6 @@
 //This is the main entry point. When you run this,
 // it starts the embedded Tomcat server, connects to the database, and registers the service with Eureka.
-package com.streamix.catalog_service;
+package com.streamix.catalog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
