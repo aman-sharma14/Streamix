@@ -1,29 +1,28 @@
-//sits between the Controller and the Repository.
-// to add rules (e.g., "Don't add a movie if the title is empty" or "Send an email when a movie is added").
-package com.streamix.catalog.service;
-
-import com.streamix.catalog.entity.Movie;
-import com.streamix.catalog.repository.MovieRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 @Service
 public class MovieService {
-
     @Autowired
     private MovieRepository repository;
 
-    public Movie saveMovie(Movie movie) {
-        return repository.save(movie);
-    }
+    private final String TMDB_API_KEY = "YOUR_API_KEY_HERE";
+    private final String TMDB_URL = "https://api.themoviedb.org/3/movie/popular?api_key=" + TMDB_API_KEY;
 
-    public List<Movie> getAllMovies() {
-        return repository.findAll();
-    }
+    public void syncMoviesFromTMDB() {
+        RestTemplate restTemplate = new RestTemplate();
+        TmdbResponse response = restTemplate.getForObject(TMDB_URL, TmdbResponse.class);
 
-    public List<Movie> getMoviesByCategory(String category) {
-        return repository.findByCategory(category);
+        if (response != null && response.getResults() != null) {
+            for (TmdbMovieDto dto : response.getResults()) {
+                // Only add if it doesn't already exist
+                if (repository.findByTitle(dto.getTitle()).isEmpty()) {
+                    Movie movie = new Movie();
+                    movie.setTitle(dto.getTitle());
+                    movie.setCategory("Popular"); // You can map genre_ids to names later
+                    movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + dto.getPoster_path());
+                    movie.setVideoUrl("https://www.youtube.com/results?search_query=" + dto.getTitle() + "+trailer");
+
+                    repository.save(movie);
+                }
+            }
+        }
     }
 }

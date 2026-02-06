@@ -6,10 +6,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@EnableScheduling
 public class CatalogServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CatalogServiceApplication.class, args);
+	}
+
+	// This Cron Job runs at 12:00 AM every night
+	@Scheduled(cron = "0 0 0 * * *")
+	public void autoSync() {
+		System.out.println("CRON JOB: Syncing with TMDB...");
+		movieService.syncMoviesFromTMDB();
 	}
 
 }

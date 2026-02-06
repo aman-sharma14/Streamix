@@ -30,4 +30,11 @@ public class MovieController {
     public List<Movie> getMoviesByCategory(@PathVariable String category) {
         return service.getMoviesByCategory(category);
     }
+
+// Just for testing movie cron service
+    @GetMapping("/sync")
+    public String forceSync() {
+        service.syncMoviesFromTMDB();
+        return "Sync Started! Check your Supabase DB in a few seconds.";
+    }
 }
