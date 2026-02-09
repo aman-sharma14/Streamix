@@ -42,8 +42,12 @@ public class MovieService {
     // This one is for the Controller (No args)
     public void syncMoviesFromTMDB() {
         // List of keywords to build a diverse library
-        String[] categories = {"Marvel", "Avengers", "Star Wars", "Disney", "Horror", "Action", "Comedy", "Thriller"};
-
+        String[] categories = {
+                "Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary",
+                "Drama", "Family", "Fantasy", "History", "Horror", "Music",
+                "Mystery", "Romance", "Science Fiction", "Thriller", "War", "Western",
+                "Netflix", "HBO", "Amazon", "Marvel", "DC Comics", "Anime"
+        };
         for (String keyword : categories) {
             // Loop through the first 3 pages of results for EACH keyword
             // 3 pages * 20 movies = 60 movies per keyword
@@ -54,15 +58,21 @@ public class MovieService {
                 TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
 
                 if (response != null && response.getResults() != null) {
+                    System.out.println("\n --- Movies found - keyword : "+ keyword +" ---");
                     for (TmdbResponse.TmdbMovieDto result : response.getResults()) {
+                        System.out.println("###");
                         // Critical: Avoid saving duplicates or movies without posters
                         if (result.getPosterPath() != null && repository.findByTitle(result.getTitle()).isEmpty()) {
+                            System.out.println(" -- > Valid found : " + result.getTitle() + " --- \n");
                             Movie movie = new Movie();
                             movie.setTitle(result.getTitle());
                             movie.setCategory(keyword); // Set category based on search keyword
                             movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + result.getPosterPath());
                             movie.setVideoUrl("https://www.youtube.com/results?search_query=" + result.getTitle() + "+trailer");
                             repository.save(movie);
+                        }
+                        else{
+                            System.out.println(" -- > If condition failed, not saving \n");
                         }
                     }
                 }

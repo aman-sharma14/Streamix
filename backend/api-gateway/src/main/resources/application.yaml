@@ -15,12 +15,16 @@ spring:
           uri: lb://CATALOG-SERVICE
           predicates:
             - Path=/movie/**
+          filters:
+            - AuthenticationFilter # <--- ADD THIS
 
         # Route for Interaction Service (Index 2)
         - id: interaction-service
           uri: lb://INTERACTION-SERVICE
           predicates:
             - Path=/interaction/**
+          filters:
+            - AuthenticationFilter # <--- ADD THIS
 
 eureka:
   client:
