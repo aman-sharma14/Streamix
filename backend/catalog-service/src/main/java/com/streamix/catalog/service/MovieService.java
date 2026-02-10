@@ -85,4 +85,5 @@ public class MovieService {
     public Movie saveMovie(Movie movie) { return repository.save(movie); }
     public List<Movie> getAllMovies() { return repository.findAll(); }
     public List<Movie> getMoviesByCategory(String category) { return repository.findByCategory(category); }
+    public Movie getMovieById(Integer id) { return repository.findById(id).orElse(null); }
 }

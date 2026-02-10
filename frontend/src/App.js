@@ -4,6 +4,7 @@ import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import MovieDetailsPage from './components/MovieDetailsPage';
 import authService from './services/authService';
 
 // Protected Route Component
@@ -18,13 +19,21 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          } 
+          }
+        />
+        <Route
+          path="/movie/:id"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsPage />
+            </ProtectedRoute>
+          }
         />
         {/* Redirect unknown routes to home */}
         <Route path="*" element={<Navigate to="/" />} />

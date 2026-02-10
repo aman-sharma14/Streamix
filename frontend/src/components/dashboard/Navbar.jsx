@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, LogOut, Play } from 'lucide-react';
 import authService from '../../services/authService';
 
-const Navbar = () => {
+const Navbar = ({ activeTab, setActiveTab }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
@@ -28,19 +28,24 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const navLinks = ['Home', 'Series', 'Movies', 'New & Popular', 'My List'];
+
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-black/95 shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'
-      }`}
+      className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-black/95 shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          
+
           {/* LEFT: Logo & Links */}
           <div className="flex items-center space-x-8">
             {/* Logo */}
-            <Link to="/dashboard" className="flex items-center space-x-2 group">
+            <Link
+              to="/dashboard"
+              onClick={() => setActiveTab('Home')}
+              className="flex items-center space-x-2 group"
+            >
               <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center transform group-hover:scale-110 transition duration-300">
                 <Play className="w-5 h-5 fill-white" />
               </div>
@@ -51,24 +56,25 @@ const Navbar = () => {
 
             {/* Desktop Links */}
             <div className="hidden md:flex items-center space-x-6">
-              {['Home', 'Series', 'Movies', 'New & Popular', 'My List'].map((item) => (
-                <Link
+              {navLinks.map((item) => (
+                <button
                   key={item}
-                  to="#"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition duration-300"
+                  onClick={() => setActiveTab(item)}
+                  className={`text-sm font-medium transition duration-300 ${activeTab === item ? 'text-white font-bold' : 'text-gray-300 hover:text-white'
+                    }`}
                 >
                   {item}
-                </Link>
+                </button>
               ))}
             </div>
           </div>
 
           {/* RIGHT: Search & Profile */}
           <div className="flex items-center space-x-6">
-            
+
             {/* Search Bar (Expandable) */}
             <div className={`flex items-center border-white/20 transition-all duration-300 ${isSearchOpen ? 'bg-black/50 border border-gray-600 px-3 py-1 rounded-full' : ''}`}>
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="text-gray-200 hover:text-white"
               >
@@ -77,9 +83,8 @@ const Navbar = () => {
               <input
                 type="text"
                 placeholder="Titles, people, genres"
-                className={`bg-transparent text-sm text-white placeholder-gray-400 outline-none transition-all duration-300 ${
-                  isSearchOpen ? 'w-48 ml-2' : 'w-0'
-                }`}
+                className={`bg-transparent text-sm text-white placeholder-gray-400 outline-none transition-all duration-300 ${isSearchOpen ? 'w-48 ml-2' : 'w-0'
+                  }`}
               />
             </div>
 
@@ -91,7 +96,7 @@ const Navbar = () => {
             {/* User Dropdown (Simplified) */}
             <div className="group relative flex items-center cursor-pointer">
               <div className="w-8 h-8 rounded bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-xs font-bold ring-2 ring-transparent group-hover:ring-white transition">
-                 {user.email ? user.email[0].toUpperCase() : 'U'}
+                {user.email ? user.email[0].toUpperCase() : 'U'}
               </div>
 
               {/* Dropdown Menu */}

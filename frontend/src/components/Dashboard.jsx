@@ -5,14 +5,13 @@ import movieService from '../services/movieService'; // Import the new service
 import Navbar from './dashboard/Navbar';
 import HeroSection from './dashboard/HeroSection';
 import MovieRow from './dashboard/MovieRow';
-import MovieDetailsModal from './dashboard/MovieDetailsModal'; // Import Modal
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [movies, setMovies] = useState([]); // Store all movies
   const [loading, setLoading] = useState(true);
-  const [selectedMovie, setSelectedMovie] = useState(null); // For Modal
+  const [activeTab, setActiveTab] = useState("Home"); // Default tab
 
   // Categories to display
   const categories = ["Action", "Sci-Fi", "Comedy", "Horror", "Drama", "Romance", "Movie"];
@@ -52,6 +51,20 @@ const Dashboard = () => {
     return movies.filter(m => m.category === cat || (cat === "Trending" && m.id % 2 === 0)); // Simple mock logic for trending
   };
 
+  // Filter content based on Active Tab
+  const getFilteredContent = () => {
+    if (activeTab === "Series") {
+      return movies.filter(m => m.category === "Series" || m.title.includes("Series")); // Mock logic
+    }
+    if (activeTab === "Movies") {
+      return movies.filter(m => m.category !== "Series");
+    }
+    if (activeTab === "New & Popular") {
+      return movies.slice(0, 5); // Mock
+    }
+    return movies; // "Home"
+  };
+
   if (!user) return null;
 
   // Select a featured movie (Random or first)
@@ -59,15 +72,31 @@ const Dashboard = () => {
     ? movies[Math.floor(Math.random() * movies.length)]
     : null;
 
+  const handlePlay = () => {
+    console.log("Play button clicked");
+    // Future: Navigate to player
+    alert("Playing movie: " + (featuredMovie?.title || "Unknown"));
+  };
+
+  const handleMoreInfo = () => {
+    if (featuredMovie) {
+      navigate(`/movie/${featuredMovie.id}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden font-sans">
-      <Navbar />
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Hero Section - Always Render with fallback if needed */}
-      <HeroSection featuredMovie={featuredMovie} />
+      <HeroSection
+        featuredMovie={featuredMovie}
+        onPlay={handlePlay}
+        onMoreInfo={handleMoreInfo}
+      />
 
-      {/* Content Layers */}
-      <div className="relative z-10 -mt-32 pb-20 space-y-8 px-4 md:px-0">
+      {/* Content Layers - Removed negative margin to prevent overlap issues stated by user */}
+      <div className="relative z-10 pb-20 space-y-8 px-4 md:px-0 bg-[#141414]">
 
         {loading ? (
           <div className="text-center py-20 flex flex-col items-center">
@@ -78,13 +107,13 @@ const Dashboard = () => {
           <>
             {/* Always show a "Trending" or "All" row first */}
             <MovieRow
-              title="Trending Now"
-              movies={movies.slice(0, 10)}
-              onMovieClick={setSelectedMovie}
+              title={activeTab === "Home" ? "Trending Now" : `Top ${activeTab}`}
+              movies={getFilteredContent().slice(0, 10)}
+              onMovieClick={(m) => navigate(`/movie/${m.id}`)}
             />
 
-            {/* Map through categories */}
-            {categories.map((cat) => {
+            {/* Map through categories if on Home, otherwise show relevant content */}
+            {activeTab === "Home" && categories.map((cat) => {
               const catMovies = getMoviesByCategory(cat);
               if (catMovies.length === 0) return null; // Don't show empty rows
 
@@ -93,21 +122,13 @@ const Dashboard = () => {
                   key={cat}
                   title={`${cat} Movies`}
                   movies={catMovies}
-                  onMovieClick={setSelectedMovie}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
                 />
               );
             })}
           </>
         )}
       </div>
-
-      {/* Modal */}
-      {selectedMovie && (
-        <MovieDetailsModal
-          movie={selectedMovie}
-          onClose={() => setSelectedMovie(null)}
-        />
-      )}
     </div>
   );
 };

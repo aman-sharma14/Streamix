@@ -37,4 +37,9 @@ public class MovieController {
         service.syncMoviesFromTMDB();
         return "Sync triggered!";
     }
+
+    @GetMapping("/{id}")
+    public Movie getMovieById(@PathVariable Integer id) {
+        return service.getMovieById(id);
+    }
 }

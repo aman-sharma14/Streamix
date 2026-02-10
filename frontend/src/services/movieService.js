@@ -33,6 +33,12 @@ const movieService = {
         return response.data;
     },
 
+    // Get movie by ID
+    getMovieById: async (id) => {
+        const response = await api.get(`/${id}`);
+        return response.data;
+    },
+
     // Sync (Admin only, but good to have)
     syncMovies: async () => {
         await api.get('/sync');
