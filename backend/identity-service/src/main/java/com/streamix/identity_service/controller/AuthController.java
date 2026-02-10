@@ -58,10 +58,12 @@ public class AuthController {
 
             // If authentication succeeds → generate token
             String token = service.generateToken(authRequest.getEmail());
+            UserCredential user = service.getUserByEmail(authRequest.getEmail());
 
             AuthResponse response = AuthResponse.builder()
                     .email(authRequest.getEmail())
                     .token(token)
+                    .userId(user.getId())
                     .message("Login successful")
                     .build();
 

@@ -42,8 +42,16 @@ const MovieDetailsPage = () => {
                     }
                 }
 
-                // 3. Check Watchlist status (Optional: if API supports checking status)
-                // For now, we default to false or requires a separate check endpoint
+                // 3. Check Watchlist status
+                if (currentUser.id && movieData) {
+                    try {
+                        const watchlist = await interactionService.getWatchlist(currentUser.id);
+                        const exists = watchlist.some(item => item.movieId === movieData.id);
+                        setInWatchlist(exists);
+                    } catch (e) {
+                        console.warn("Failed to check watchlist status", e);
+                    }
+                }
             } catch (err) {
                 console.error("Failed to load movie details", err);
                 setError("Failed to load movie details. Please try again.");
@@ -57,16 +65,30 @@ const MovieDetailsPage = () => {
         }
     }, [id]);
 
-    const handleAddToWatchlist = async () => {
-        if (!user || inWatchlist) return;
+    const [notification, setNotification] = useState(null);
+
+    const handleWatchlistToggle = async () => {
+        if (!user) return;
 
         try {
-            await interactionService.addToWatchlist(user.id, movie.id);
-            setInWatchlist(true);
+            if (inWatchlist) {
+                await interactionService.removeFromWatchlist(user.id, movie.id);
+                setInWatchlist(false);
+                showNotification(`${movie.title} removed from Watchlist`);
+            } else {
+                await interactionService.addToWatchlist(user.id, movie.id);
+                setInWatchlist(true);
+                showNotification(`${movie.title} added to Watchlist`);
+            }
         } catch (error) {
-            console.error("Failed to add to watchlist", error);
-            alert("Failed to add to watchlist. Please try again.");
+            console.error("Failed to update watchlist", error);
+            showNotification("Failed to update watchlist. Please try again.");
         }
+    };
+
+    const showNotification = (msg) => {
+        setNotification(msg);
+        setTimeout(() => setNotification(null), 3000);
     };
 
     const handlePlay = () => {
@@ -107,6 +129,14 @@ const MovieDetailsPage = () => {
 
     return (
         <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden animate-in fade-in duration-300">
+
+            {/* Notification Toast */}
+            {notification && (
+                <div className="fixed bottom-5 right-5 z-50 bg-green-600 text-white px-6 py-3 rounded shadow-lg animate-in slide-in-from-right duration-300 flex items-center space-x-2">
+                    <Check className="w-5 h-5" />
+                    <span>{notification}</span>
+                </div>
+            )}
 
             {/* Back Button */}
             <button
@@ -180,11 +210,10 @@ const MovieDetailsPage = () => {
                             </button>
 
                             <button
-                                onClick={handleAddToWatchlist}
-                                disabled={inWatchlist}
+                                onClick={handleWatchlistToggle}
                                 className={`flex items-center space-x-2 px-8 py-3 rounded font-bold transition border text-lg ${inWatchlist
-                                        ? 'bg-transparent border-green-500 text-green-500 cursor-default'
-                                        : 'bg-[#2a2a2a] border-transparent text-white hover:bg-[#3f3f3f] hover:border-white/30'
+                                    ? 'bg-transparent border-green-500 text-green-500 hover:bg-green-500/10'
+                                    : 'bg-[#2a2a2a] border-transparent text-white hover:bg-[#3f3f3f] hover:border-white/30'
                                     }`}
                             >
                                 {inWatchlist ? <Check className="w-6 h-6" /> : <Plus className="w-6 h-6" />}

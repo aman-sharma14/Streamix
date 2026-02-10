@@ -33,6 +33,30 @@ const interactionService = {
             console.error("Error adding to watchlist:", error);
             throw error;
         }
+    },
+
+    // Remove movie from user's watchlist
+    removeFromWatchlist: async (userId, movieId) => {
+        try {
+            await api.post('/watchlist/remove', {
+                userId: userId,
+                movieId: movieId
+            });
+        } catch (error) {
+            console.error("Error removing from watchlist:", error);
+            throw error;
+        }
+    },
+
+    // Get user's watchlist
+    getWatchlist: async (userId) => {
+        try {
+            const response = await api.get(`/watchlist/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching watchlist:", error);
+            return [];
+        }
     }
 };
 

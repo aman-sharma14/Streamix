@@ -45,4 +45,8 @@ public class AuthService {
     public void validateToken(String token) {
         jwtService.validateToken(token);
     }
+
+    public UserCredential getUserByEmail(String email) {
+        return repository.findByEmail(email).orElse(null);
+    }
 }

@@ -29,7 +29,7 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
                 {/* Left Arrow */}
                 <button
                     onClick={() => handleScroll('left')}
-                    className="absolute left-0 top-0 bottom-0 z-40 bg-black/50 hover:bg-black/70 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 h-[300px] rounded-l-md"
+                    className="absolute left-0 top-8 bottom-8 z-40 bg-black/30 hover:bg-black/50 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 rounded-l-md"
                 >
                     <ChevronLeft className="w-8 h-8 text-white" />
                 </button>
@@ -42,7 +42,7 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
                 >
                     {movies.map((movie) => (
                         <div key={movie.id} className="flex-none">
-                            <MovieCard movie={movie} onOpenModal={onMovieClick} />
+                            <MovieCard movie={movie} onMovieClick={onMovieClick} />
                         </div>
                     ))}
                 </div>
@@ -50,7 +50,7 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
                 {/* Right Arrow */}
                 <button
                     onClick={() => handleScroll('right')}
-                    className="absolute right-0 top-0 bottom-0 z-40 bg-black/50 hover:bg-black/70 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 h-[300px] rounded-r-md"
+                    className="absolute right-0 top-8 bottom-8 z-40 bg-black/30 hover:bg-black/50 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 rounded-r-md"
                 >
                     <ChevronRight className="w-8 h-8 text-white" />
                 </button>

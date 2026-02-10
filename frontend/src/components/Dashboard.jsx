@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
-import movieService from '../services/movieService'; // Import the new service
+import movieService from '../services/movieService';
+import interactionService from '../services/interactionService';
 import Navbar from './dashboard/Navbar';
 import HeroSection from './dashboard/HeroSection';
 import MovieRow from './dashboard/MovieRow';
@@ -13,54 +14,70 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Home"); // Default tab
 
+  const [watchlist, setWatchlist] = useState([]); // Store watchlist movie IDs
+
   // Categories to display
   const categories = ["Action", "Sci-Fi", "Comedy", "Horror", "Drama", "Romance", "Movie"];
 
   useEffect(() => {
     // 1. Auth Check
-    if (!authService.isAuthenticated()) {
+    const currentUser = authService.getCurrentUser();
+    if (!currentUser.token) {
       navigate('/login');
       return;
     }
-    setUser(authService.getCurrentUser());
+    setUser(currentUser);
 
     // 2. Fetch Movies
-    const fetchMovies = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await movieService.getAllMovies();
-        console.log("Fetched Movies:", data);
-        if (data && data.length > 0) {
-          setMovies(data);
+        const [moviesData, watchlistData] = await Promise.all([
+          movieService.getAllMovies(),
+          currentUser.id ? interactionService.getWatchlist(currentUser.id) : Promise.resolve([])
+        ]);
+
+        if (moviesData && moviesData.length > 0) {
+          setMovies(moviesData);
         } else {
-          console.warn("API returned empty list, using mock data.");
           setMovies(mockMovies);
         }
+
+        if (watchlistData) {
+          // watchlistData is array of { movieId: 123, ... }
+          const ids = watchlistData.map(item => item.movieId);
+          setWatchlist(ids);
+        }
+
       } catch (error) {
-        console.error("Failed to fetch movies", error);
+        console.error("Failed to fetch data", error);
         setMovies(mockMovies);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMovies();
+    fetchData();
   }, [navigate]);
 
   // Helper to filter movies by category
   const getMoviesByCategory = (cat) => {
-    return movies.filter(m => m.category === cat || (cat === "Trending" && m.id % 2 === 0)); // Simple mock logic for trending
+    return movies.filter(m => m.category === cat || (cat === "Trending" && m.id % 2 === 0));
   };
 
   // Filter content based on Active Tab
   const getFilteredContent = () => {
     if (activeTab === "Series") {
-      return movies.filter(m => m.category === "Series" || m.title.includes("Series")); // Mock logic
+      return movies.filter(m => m.category === "Series" || m.title.includes("Series"));
     }
     if (activeTab === "Movies") {
       return movies.filter(m => m.category !== "Series");
     }
     if (activeTab === "New & Popular") {
-      return movies.slice(0, 5); // Mock
+      return movies.slice(0, 5);
+    }
+    if (activeTab === "My List") {
+      return movies.filter(m => watchlist.includes(m.id));
     }
     return movies; // "Home"
   };
@@ -88,15 +105,18 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden font-sans">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Hero Section - Always Render with fallback if needed */}
-      <HeroSection
-        featuredMovie={featuredMovie}
-        onPlay={handlePlay}
-        onMoreInfo={handleMoreInfo}
-      />
+      {/* Hero Section - Hide on "My List" */}
+      {activeTab !== "My List" && (
+        <HeroSection
+          featuredMovie={featuredMovie}
+          onPlay={handlePlay}
+          onMoreInfo={handleMoreInfo}
+        />
+      )}
 
       {/* Content Layers - Removed negative margin to prevent overlap issues stated by user */}
-      <div className="relative z-10 pb-20 space-y-8 px-4 md:px-0 bg-[#141414]">
+      <div className={`relative z-10 pb-20 space-y-8 px-4 md:px-0 bg-[#141414] ${activeTab === "My List" ? "pt-24" : "pb-20"}`}>
+
 
         {loading ? (
           <div className="text-center py-20 flex flex-col items-center">

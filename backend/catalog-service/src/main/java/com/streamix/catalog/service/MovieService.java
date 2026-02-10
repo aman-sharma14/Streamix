@@ -50,8 +50,9 @@ public class MovieService {
         };
         for (String keyword : categories) {
             // Loop through the first 3 pages of results for EACH keyword
-            // 3 pages * 20 movies = 60 movies per keyword
-            for (int page = 1; page <= 3; page++) {
+            // Loop through the first 10 pages of results for EACH keyword
+            // 10 pages * 20 movies = 200 movies per keyword
+            for (int page = 1; page <=6; page++) {
                 String url = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey
                         + "&query=" + keyword + "&page=" + page;
 
@@ -77,7 +78,7 @@ public class MovieService {
                     }
                 }
                 // Small sleep to be nice to the TMDB API (prevent rate limiting)
-                try { Thread.sleep(200); } catch (InterruptedException e) {}
+                try { Thread.sleep(500); } catch (InterruptedException e) {}
             }
         }
     }

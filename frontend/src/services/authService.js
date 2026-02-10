@@ -47,13 +47,14 @@ const authService = {
         email,
         password,
       });
-      
+
       // Save token to localStorage
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('email', response.data.email);
+        localStorage.setItem('userId', response.data.userId);
       }
-      
+
       return response.data;
     } catch (error) {
       throw error.response?.data || 'Login failed';
@@ -64,6 +65,7 @@ const authService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
+    localStorage.removeItem('userId');
   },
 
   // Get current user
@@ -71,6 +73,7 @@ const authService = {
     return {
       token: localStorage.getItem('token'),
       email: localStorage.getItem('email'),
+      id: localStorage.getItem('userId'),
     };
   },
 
