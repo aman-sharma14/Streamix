@@ -48,43 +48,52 @@ public class MovieService {
                 "Mystery", "Romance", "Science Fiction", "Thriller", "War", "Western",
                 "Netflix", "HBO", "Amazon", "Marvel", "DC Comics", "Anime"
         };
+
+        int totalMoviesAdded = 0;
+        System.out.println("Starting TMDB Sync...");
+
         for (String keyword : categories) {
-            // Loop through the first 3 pages of results for EACH keyword
-            // Loop through the first 10 pages of results for EACH keyword
-            // 10 pages * 20 movies = 200 movies per keyword
-            for (int page = 1; page <=6; page++) {
+            // Loop through the first 6 pages of results for EACH keyword (User changed to 6)
+            for (int page = 1; page <= 6; page++) {
                 String url = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey
                         + "&query=" + keyword + "&page=" + page;
 
-                TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
+                System.out.println("Fetching " + keyword + " (Page " + page + ")...");
 
-                if (response != null && response.getResults() != null) {
-                    System.out.println("\n --- Movies found - keyword : "+ keyword +" ---");
-                    for (TmdbResponse.TmdbMovieDto result : response.getResults()) {
-                        System.out.println("###");
-                        // Critical: Avoid saving duplicates or movies without posters
-                        if (result.getPosterPath() != null && repository.findByTitle(result.getTitle()).isEmpty()) {
-                            System.out.println(" -- > Valid found : " + result.getTitle() + " --- \n");
-                            Movie movie = new Movie();
-                            movie.setTitle(result.getTitle());
-                            movie.setCategory(keyword); // Set category based on search keyword
-                            movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + result.getPosterPath());
-                            movie.setVideoUrl("https://www.youtube.com/results?search_query=" + result.getTitle() + "+trailer");
-                            repository.save(movie);
-                        }
-                        else{
-                            System.out.println(" -- > If condition failed, not saving \n");
+                try {
+                    TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
+
+                    if (response != null && response.getResults() != null) {
+                        for (TmdbResponse.TmdbMovieDto result : response.getResults()) {
+                            // Critical: Avoid saving duplicates or movies without posters
+                            if (result.getPosterPath() != null && repository.findByTitle(result.getTitle()).isEmpty()) {
+                                Movie movie = new Movie();
+                                movie.setTitle(result.getTitle());
+                                movie.setCategory(keyword); // Set category based on search keyword
+                                movie.setPosterUrl("https://image.tmdb.org/t/p/w500" + result.getPosterPath());
+                                movie.setVideoUrl("https://www.youtube.com/results?search_query=" + result.getTitle() + "+trailer");
+                                repository.save(movie);
+                                System.out.println("   [+] Added: " + result.getTitle());
+                                totalMoviesAdded++;
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    System.err.println("   [!] Failed to fetch " + keyword + " page " + page + ": " + e.getMessage());
                 }
+
                 // Small sleep to be nice to the TMDB API (prevent rate limiting)
                 try { Thread.sleep(500); } catch (InterruptedException e) {}
             }
         }
+        System.out.println("--------------------------------------------------");
+        System.out.println("TMDB Sync Completed. Total new movies added: " + totalMoviesAdded);
+        System.out.println("--------------------------------------------------");
     }
 
     public Movie saveMovie(Movie movie) { return repository.save(movie); }
     public List<Movie> getAllMovies() { return repository.findAll(); }
     public List<Movie> getMoviesByCategory(String category) { return repository.findByCategory(category); }
     public Movie getMovieById(Integer id) { return repository.findById(id).orElse(null); }
+    public List<Movie> searchMovies(String query) { return repository.findByTitleContainingIgnoreCase(query); }
 }

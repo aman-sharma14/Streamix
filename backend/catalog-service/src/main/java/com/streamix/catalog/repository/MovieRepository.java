@@ -19,4 +19,6 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
     Optional<Movie> findByTitle(String title);
 
+    // Search for movies containing the query string (case-insensitive)
+    List<Movie> findByTitleContainingIgnoreCase(String query);
 }

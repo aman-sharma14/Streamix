@@ -1,13 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Bell, User, LogOut, Play } from 'lucide-react';
+import { Search, Bell, LogOut, Play } from 'lucide-react';
 import authService from '../../services/authService';
+import movieService from '../../services/movieService';
 
 const Navbar = ({ activeTab, setActiveTab }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const searchRef = useRef(null); // Ref for click outside
   const navigate = useNavigate();
   const user = authService.getCurrentUser();
+
+  // Click Outside Logic
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchOpen(false);
+        // Optional: Clear results if you want them gone too
+        // setSearchResults([]); 
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Search Logic
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchQuery.length > 1) {
+        console.log("Navbar: Searching for...", searchQuery);
+        try {
+          const results = await movieService.searchMovies(searchQuery);
+          console.log("Navbar: Search results:", results);
+          setSearchResults(results.slice(0, 5)); // Limit to 5 results
+        } catch (error) {
+          console.error("Navbar: Search failed", error);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setIsSearchOpen(false);
+      setSearchResults([]); // Clear dropdown
+    }
+  };
+
+  const handleResultClick = (movieId) => {
+    navigate(`/movie/${movieId}`);
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -73,19 +128,48 @@ const Navbar = ({ activeTab, setActiveTab }) => {
           <div className="flex items-center space-x-6">
 
             {/* Search Bar (Expandable) */}
-            <div className={`flex items-center border-white/20 transition-all duration-300 ${isSearchOpen ? 'bg-black/50 border border-gray-600 px-3 py-1 rounded-full' : ''}`}>
+            <div
+              ref={searchRef}
+              className={`relative flex items-center border-white/20 transition-all duration-300 ${isSearchOpen ? 'bg-black/50 border border-gray-600 px-3 py-1 rounded-t-lg' : ''} ${searchResults.length > 0 && isSearchOpen ? 'rounded-b-none' : 'rounded-full'}`}
+            >
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="text-gray-200 hover:text-white"
               >
                 <Search className="w-5 h-5" />
               </button>
-              <input
-                type="text"
-                placeholder="Titles, people, genres"
-                className={`bg-transparent text-sm text-white placeholder-gray-400 outline-none transition-all duration-300 ${isSearchOpen ? 'w-48 ml-2' : 'w-0'
-                  }`}
-              />
+              <form onSubmit={handleSearchSubmit} className="flex-1">
+                <input
+                  type="text"
+                  placeholder="Titles, people, genres"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`bg-transparent text-sm text-white placeholder-gray-400 outline-none transition-all duration-300 ${isSearchOpen ? 'w-48 ml-2' : 'w-0'}`}
+                />
+              </form>
+
+              {/* Search Suggestions Dropdown */}
+              {isSearchOpen && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-black/95 border border-t-0 border-gray-600 rounded-b-lg shadow-xl overflow-hidden z-50">
+                  {searchResults.map(movie => (
+                    <div
+                      key={movie.id}
+                      onClick={() => handleResultClick(movie.id)}
+                      className="px-4 py-3 hover:bg-gray-800 cursor-pointer flex items-center space-x-3 transition border-b border-gray-800 last:border-0"
+                    >
+                      <img
+                        src={movie.posterUrl || `https://image.tmdb.org/t/p/w92${movie.poster_path}`}
+                        alt={movie.title}
+                        className="w-8 h-12 object-cover rounded"
+                      />
+                      <div className="overflow-hidden">
+                        <p className="text-sm font-bold text-white truncate">{movie.title}</p>
+                        <p className="text-xs text-gray-400">{movie.release_date?.split('-')[0] || "Unknown"}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Notification */}

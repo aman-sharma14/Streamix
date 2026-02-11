@@ -17,12 +17,32 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
         }
     };
 
+    const limit = 10;
+    const displayMovies = movies.slice(0, limit);
+    const showExploreMore = movies.length > limit;
+
+    const handleExploreClick = () => {
+        // Navigate to category page
+        // Assuming title is like "Action Movies" -> "Action"
+        // Or pass category slug as prop. For now, try to parse title or ignore if specialized row.
+        const category = title.replace(" Movies", "").replace("Top ", "");
+        window.location.href = `/category/${category}`;
+        // Using window.location for now to ensure full reload/reset, strictly cleaner would be useNavigate
+    };
+
     return (
         <div className="space-y-2 mb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             {/* Title */}
-            <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer">
-                {title}
-            </h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer">
+                    {title}
+                </h2>
+                {showExploreMore && (
+                    <a href={`/category/${title.replace(" Movies", "")}`} className="text-sm text-gray-400 hover:text-white transition font-semibold">
+                        Explore All &gt;
+                    </a>
+                )}
+            </div>
 
             {/* Row Container */}
             <div className="relative group/row">
@@ -40,11 +60,24 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
                     className="flex space-x-4 overflow-x-scroll scrollbar-hide scroll-smooth py-8 px-4"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                    {movies.map((movie) => (
+                    {displayMovies.map((movie) => (
                         <div key={movie.id} className="flex-none">
                             <MovieCard movie={movie} onMovieClick={onMovieClick} />
                         </div>
                     ))}
+
+                    {/* Explore More Card */}
+                    {showExploreMore && (
+                        <div
+                            onClick={handleExploreClick}
+                            className="flex-none w-[150px] md:w-[200px] h-[225px] md:h-[300px] bg-gray-900 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-gray-800 transition group"
+                        >
+                            <div className="w-12 h-12 rounded-full border-2 border-red-600 flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                                <span className="text-red-600 font-bold text-xl">+</span>
+                            </div>
+                            <span className="text-gray-300 font-semibold group-hover:text-white">Explore More</span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Arrow */}

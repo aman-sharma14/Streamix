@@ -6,6 +6,9 @@ import interactionService from '../services/interactionService';
 import Navbar from './dashboard/Navbar';
 import HeroSection from './dashboard/HeroSection';
 import MovieRow from './dashboard/MovieRow';
+import MovieCard from './dashboard/MovieCard';
+import MoviesHeader from './dashboard/MoviesHeader';
+import SectionHeader from './dashboard/SectionHeader';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -13,11 +16,12 @@ const Dashboard = () => {
   const [movies, setMovies] = useState([]); // Store all movies
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Home"); // Default tab
-
+  const [selectedGenre, setSelectedGenre] = useState("All"); // For Movies Tab
   const [watchlist, setWatchlist] = useState([]); // Store watchlist movie IDs
 
-  // Categories to display
-  const categories = ["Action", "Sci-Fi", "Comedy", "Horror", "Drama", "Romance", "Movie"];
+  // Categories Config
+  const homeCategories = ["Action", "Science Fiction", "Series", "Comedy", "Thriller", "Horror", "Drama", "Romance"];
+  const movieCategories = ["Action", "Science Fiction", "Comedy", "Thriller", "Horror", "Drama", "Romance", "Adventure", "Fantasy", "Animation", "Crime", "Mystery", "War", "Western"];
 
   useEffect(() => {
     // 1. Auth Check
@@ -44,7 +48,7 @@ const Dashboard = () => {
         }
 
         if (watchlistData) {
-          // watchlistData is array of { movieId: 123, ... }
+          // watchlistData is array of {movieId: 123, ... }
           const ids = watchlistData.map(item => item.movieId);
           setWatchlist(ids);
         }
@@ -105,8 +109,8 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden font-sans">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Hero Section - Hide on "My List" */}
-      {activeTab !== "My List" && (
+      {/* Headers based on Active Tab */}
+      {activeTab === "Home" && (
         <HeroSection
           featuredMovie={featuredMovie}
           onPlay={handlePlay}
@@ -114,9 +118,40 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Content Layers - Removed negative margin to prevent overlap issues stated by user */}
-      <div className={`relative z-10 pb-20 space-y-8 px-4 md:px-0 bg-[#141414] ${activeTab === "My List" ? "pt-24" : "pb-20"}`}>
+      {activeTab === "Movies" && (
+        <SectionHeader
+          title="Movies"
+          description="Movies move us like nothing else can, whether they’re scary, funny, dramatic, romantic or anywhere in-between."
+          image="https://assets.nflxext.com/ffe/siteui/vlv3/dace47b4-a5cb-4368-80fe-c26f3e77d540/f5b52435-458f-498f-9d1d-ccd4f1af9913/IN-en-20231023-popsignuptwoweeks-perspective_alpha_website_large.jpg"
+        />
+      )}
 
+      {activeTab === "Series" && (
+        <SectionHeader
+          title="TV Series"
+          description="Binge-worthy shows from around the world."
+          image="https://image.tmdb.org/t/p/original/9faGSFi5jam6pDWGNd0p8JcJgXQ.jpg" // Breaking Bad / Better Call Saul vibe
+        />
+      )}
+
+      {activeTab === "New & Popular" && (
+        <SectionHeader
+          title="New & Popular"
+          description="The latest and greatest hits everyone is talking about."
+          image="https://image.tmdb.org/t/p/original/uDgy6hyPd82kOHh6I95FLtLnj6p.jpg" // Last of Us
+        />
+      )}
+
+      {activeTab === "My List" && (
+        <SectionHeader
+          title="My List"
+          description="Your personal collection of must-watch movies and series."
+          image="https://image.tmdb.org/t/p/original/xXHZeb1yhJvnSHPzZDqee0zfMb6.jpg" // Western/General stylistic background
+        />
+      )}
+
+      {/* Content Layers */}
+      <div className={`relative z-10 pb-20 space-y-8 px-4 md:px-0 bg-[#141414] pb-20`}>
 
         {loading ? (
           <div className="text-center py-20 flex flex-col items-center">
@@ -125,17 +160,40 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            {/* Always show a "Trending" or "All" row first */}
-            <MovieRow
-              title={activeTab === "Home" ? "Trending Now" : `Top ${activeTab}`}
-              movies={getFilteredContent().slice(0, 10)}
-              onMovieClick={(m) => navigate(`/movie/${m.id}`)}
-            />
+            {/* My List Grid View - 5 Columns */}
+            {activeTab === "My List" && (
+              <div className="px-8 md:px-12 pb-12">
+                <h2 className="text-xl font-bold mb-4 text-white">Your List</h2>
+                {getFilteredContent().length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    {getFilteredContent().map((movie) => (
+                      <MovieCard
+                        key={movie.id}
+                        movie={movie}
+                        onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                        className="w-full aspect-[2/3]" // Responsive width, fixed aspect ratio
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-400">Your watchlist is empty.</p>
+                )}
+              </div>
+            )}
 
-            {/* Map through categories if on Home, otherwise show relevant content */}
-            {activeTab === "Home" && categories.map((cat) => {
+            {/* Always show a "Trending" or "All" row first ONLY on Home or when viewing All movies */}
+            {activeTab !== "My List" && (activeTab !== "Movies" || selectedGenre === "All") && (
+              <MovieRow
+                title={activeTab === "Home" ? "Trending Now" : `Top ${activeTab}`}
+                movies={getFilteredContent().slice(0, 10)}
+                onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+              />
+            )}
+
+            {/* Show Home Categories */}
+            {activeTab === "Home" && homeCategories.map((cat) => {
               const catMovies = getMoviesByCategory(cat);
-              if (catMovies.length === 0) return null; // Don't show empty rows
+              if (catMovies.length === 0) return null;
 
               return (
                 <MovieRow
@@ -146,6 +204,23 @@ const Dashboard = () => {
                 />
               );
             })}
+
+            {/* Show Movies Categories (Filtered by Genre Selector) */}
+            {activeTab === "Movies" && movieCategories
+              .filter(cat => selectedGenre === "All" || cat === selectedGenre)
+              .map((cat) => {
+                const catMovies = getMoviesByCategory(cat);
+                if (catMovies.length === 0) return null;
+
+                return (
+                  <MovieRow
+                    key={cat}
+                    title={`${cat} Movies`}
+                    movies={catMovies}
+                    onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  />
+                );
+              })}
           </>
         )}
       </div>

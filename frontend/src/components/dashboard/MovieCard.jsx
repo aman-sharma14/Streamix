@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MovieCard = ({ movie, onMovieClick }) => {
+const MovieCard = ({ movie, onMovieClick, className }) => {
 
     // Generic image getter
     const getPoster = (m) => {
@@ -14,7 +14,7 @@ const MovieCard = ({ movie, onMovieClick }) => {
     return (
         <div
             onClick={() => onMovieClick && onMovieClick(movie)}
-            className="relative w-[220px] h-[330px] flex-none group overflow-hidden rounded-md bg-[#181818] cursor-pointer"
+            className={`relative flex-none group overflow-hidden rounded-md bg-[#181818] cursor-pointer ${className || "w-[220px] h-[330px]"}`}
         >
 
             {/* Poster Image */}

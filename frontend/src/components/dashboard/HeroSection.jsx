@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Info, Plus } from 'lucide-react';
+import { Play, Info } from 'lucide-react';
 
 const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
   // Default fallback if no movie is passed

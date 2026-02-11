@@ -39,6 +39,11 @@ const movieService = {
         return response.data;
     },
 
+    searchMovies: async (query) => {
+        const response = await api.get(`/search?query=${query}`);
+        return response.data;
+    },
+
     // Sync (Admin only, but good to have)
     syncMovies: async () => {
         await api.get('/sync');

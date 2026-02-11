@@ -5,6 +5,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import MovieDetailsPage from './components/MovieDetailsPage';
+import SearchResultsPage from './components/SearchResultsPage';
+import CategoryPage from './components/CategoryPage'; // Import new page
 import authService from './services/authService';
 
 // Protected Route Component
@@ -32,6 +34,22 @@ function App() {
           element={
             <ProtectedRoute>
               <MovieDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <SearchResultsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/category/:category"
+          element={
+            <ProtectedRoute>
+              <CategoryPage />
             </ProtectedRoute>
           }
         />

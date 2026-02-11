@@ -38,6 +38,11 @@ public class MovieController {
         return "Sync triggered!";
     }
 
+    @GetMapping("/search")
+    public List<Movie> searchMovies(@RequestParam String query) {
+        return service.searchMovies(query);
+    }
+
     @GetMapping("/{id}")
     public Movie getMovieById(@PathVariable Integer id) {
         return service.getMovieById(id);
