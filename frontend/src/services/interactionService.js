@@ -22,11 +22,13 @@ api.interceptors.request.use(
 
 const interactionService = {
     // Add movie to user's watchlist
-    addToWatchlist: async (userId, movieId) => {
+    addToWatchlist: async (userId, movieId, movieTitle, posterUrl) => {
         try {
             const response = await api.post('/watchlist/add', {
                 userId: userId,
-                movieId: movieId
+                movieId: movieId,
+                movieTitle: movieTitle,
+                posterUrl: posterUrl
             });
             return response.data;
         } catch (error) {

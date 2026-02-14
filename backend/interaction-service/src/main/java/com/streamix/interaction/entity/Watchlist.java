@@ -1,32 +1,35 @@
 package com.streamix.interaction.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "watchlist", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "userId", "movieId" })
-})
+@Document(collection = "watchlist")
+@CompoundIndex(name = "user_movie_idx", def = "{'userId': 1, 'movieId': 1}", unique = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Watchlist {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id; // MongoDB uses String IDs
 
     private Integer userId;
-
-    private Integer movieId;
-
+    private String movieId; // Reference to Movie document ID
     private LocalDateTime addedOn;
+
+    // Embedded movie snapshot for denormalization (faster queries)
+    private MovieSnapshot movieSnapshot;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MovieSnapshot {
+        private String title;
+        private String posterUrl;
+    }
 }

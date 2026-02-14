@@ -17,13 +17,19 @@ public class InteractionController {
     private final InteractionService interactionService;
 
     @PostMapping("/watchlist/add")
-    public Watchlist addToWatchlist(@RequestBody Map<String, Integer> payload) {
-        return interactionService.addToWatchlist(payload.get("userId"), payload.get("movieId"));
+    public Watchlist addToWatchlist(@RequestBody Map<String, Object> payload) {
+        Integer userId = parseUserId(payload.get("userId"));
+        String movieId = (String) payload.get("movieId"); // MongoDB String ID
+        String movieTitle = (String) payload.get("movieTitle");
+        String posterUrl = (String) payload.get("posterUrl");
+        return interactionService.addToWatchlist(userId, movieId, movieTitle, posterUrl);
     }
 
     @PostMapping("/watchlist/remove")
-    public void removeFromWatchlist(@RequestBody Map<String, Integer> payload) {
-        interactionService.removeFromWatchlist(payload.get("userId"), payload.get("movieId"));
+    public void removeFromWatchlist(@RequestBody Map<String, Object> payload) {
+        Integer userId = parseUserId(payload.get("userId"));
+        String movieId = (String) payload.get("movieId"); // MongoDB String ID
+        interactionService.removeFromWatchlist(userId, movieId);
     }
 
     @GetMapping("/watchlist/{userId}")
@@ -33,14 +39,31 @@ public class InteractionController {
 
     @PostMapping("/history/update")
     public WatchHistory updateHistory(@RequestBody Map<String, Object> payload) {
-        Integer userId = (Integer) payload.get("userId");
-        Integer movieId = (Integer) payload.get("movieId");
+        Integer userId = parseUserId(payload.get("userId"));
+        String movieId = (String) payload.get("movieId"); // MongoDB String ID
         String timestamp = (String) payload.get("timestamp");
-        return interactionService.updateHistory(userId, movieId, timestamp);
+        String movieTitle = (String) payload.get("movieTitle");
+        String posterUrl = (String) payload.get("posterUrl");
+        return interactionService.updateHistory(userId, movieId, timestamp, movieTitle, posterUrl);
     }
 
     @GetMapping("/history/{userId}")
     public List<WatchHistory> getUserHistory(@PathVariable Integer userId) {
         return interactionService.getUserHistory(userId);
+    }
+
+    /**
+     * Helper method to parse userId from either String or Number type
+     * Handles both JWT tokens (which send userId as String) and direct numeric
+     * values
+     */
+    private Integer parseUserId(Object userIdObj) {
+        if (userIdObj instanceof String) {
+            return Integer.parseInt((String) userIdObj);
+        } else if (userIdObj instanceof Number) {
+            return ((Number) userIdObj).intValue();
+        } else {
+            throw new IllegalArgumentException("Invalid userId type: " + userIdObj.getClass().getName());
+        }
     }
 }

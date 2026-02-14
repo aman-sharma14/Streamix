@@ -76,7 +76,7 @@ const MovieDetailsPage = () => {
                 setInWatchlist(false);
                 showNotification(`${movie.title} removed from Watchlist`);
             } else {
-                await interactionService.addToWatchlist(user.id, movie.id);
+                await interactionService.addToWatchlist(user.id, movie.id, movie.title, movie.posterUrl);
                 setInWatchlist(true);
                 showNotification(`${movie.title} added to Watchlist`);
             }

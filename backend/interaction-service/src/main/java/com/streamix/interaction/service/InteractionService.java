@@ -18,33 +18,62 @@ public class InteractionService {
     private final WatchlistRepository watchlistRepository;
     private final WatchHistoryRepository watchHistoryRepository;
 
-    public Watchlist addToWatchlist(Integer userId, Integer movieId) {
+    /**
+     * Add movie to user's watchlist
+     * 
+     * @param userId     User ID
+     * @param movieId    Movie document ID (MongoDB String ID)
+     * @param movieTitle Movie title for snapshot
+     * @param posterUrl  Poster URL for snapshot
+     */
+    public Watchlist addToWatchlist(Integer userId, String movieId, String movieTitle, String posterUrl) {
         Optional<Watchlist> existing = watchlistRepository.findByUserIdAndMovieId(userId, movieId);
         if (existing.isPresent()) {
             return existing.get();
         }
+
         Watchlist watchlist = new Watchlist();
         watchlist.setUserId(userId);
         watchlist.setMovieId(movieId);
         watchlist.setAddedOn(LocalDateTime.now());
+
+        // Set movie snapshot for denormalization
+        Watchlist.MovieSnapshot snapshot = new Watchlist.MovieSnapshot(movieTitle, posterUrl);
+        watchlist.setMovieSnapshot(snapshot);
+
         return watchlistRepository.save(watchlist);
     }
 
-    public void removeFromWatchlist(Integer userId, Integer movieId) {
-        Optional<Watchlist> existing = watchlistRepository.findByUserIdAndMovieId(userId, movieId);
-        existing.ifPresent(watchlistRepository::delete);
+    public void removeFromWatchlist(Integer userId, String movieId) {
+        watchlistRepository.deleteByUserIdAndMovieId(userId, movieId);
     }
 
-    public WatchHistory updateHistory(Integer userId, Integer movieId, String timestamp) {
+    /**
+     * Update watch history for a user
+     * 
+     * @param userId     User ID
+     * @param movieId    Movie document ID (MongoDB String ID)
+     * @param timestamp  Video timestamp (e.g., "12:30")
+     * @param movieTitle Movie title for snapshot
+     * @param posterUrl  Poster URL for snapshot
+     */
+    public WatchHistory updateHistory(Integer userId, String movieId, String timestamp, String movieTitle,
+            String posterUrl) {
         Optional<WatchHistory> existing = watchHistoryRepository.findByUserIdAndMovieId(userId, movieId);
         WatchHistory history;
+
         if (existing.isPresent()) {
             history = existing.get();
         } else {
             history = new WatchHistory();
             history.setUserId(userId);
             history.setMovieId(movieId);
+
+            // Set movie snapshot for new history entry
+            WatchHistory.MovieSnapshot snapshot = new WatchHistory.MovieSnapshot(movieTitle, posterUrl);
+            history.setMovieSnapshot(snapshot);
         }
+
         history.setTimestamp(timestamp);
         history.setWatchedOn(LocalDateTime.now());
         return watchHistoryRepository.save(history);

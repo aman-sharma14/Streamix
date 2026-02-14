@@ -10,9 +10,13 @@ public class TmdbResponse { // Must be PUBLIC
 
     @Data
     public static class TmdbMovieDto {
+        private Integer id; // TMDB ID
         private String title;
         private String overview;
         @JsonProperty("poster_path")
         private String posterPath;
+        private Double popularity;
+        @JsonProperty("release_date")
+        private String releaseDate; // Format: "2010-07-16"
     }
 }

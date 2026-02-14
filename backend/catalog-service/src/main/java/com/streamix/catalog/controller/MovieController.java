@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController  // Tells Spring this class will return JSON data.
-@RequestMapping("/movie")   //  Every URL in this file will start with /movie
+@RestController // Tells Spring this class will return JSON data.
+@RequestMapping("/movie") // Every URL in this file will start with /movie
 public class MovieController {
 
     @Autowired
     private MovieService service;
 
-    @PostMapping("/add")   // Maps to POST http://localhost:8082/movie/add
+    @PostMapping("/add") // Maps to POST http://localhost:8082/movie/add
     public String addMovie(@RequestBody Movie movie) {
         service.saveMovie(movie);
         return "Movie added successfully";
@@ -31,20 +31,18 @@ public class MovieController {
         return service.getMoviesByCategory(category);
     }
 
-    // Just for testing movie cron service
-    @GetMapping("/sync") // This matches what you likely had
-    public String sync() {
-        service.syncMoviesFromTMDB();
-        return "Sync triggered!";
-    }
-
     @GetMapping("/search")
     public List<Movie> searchMovies(@RequestParam String query) {
         return service.searchMovies(query);
     }
 
     @GetMapping("/{id}")
-    public Movie getMovieById(@PathVariable Integer id) {
+    public Movie getMovieById(@PathVariable String id) {
         return service.getMovieById(id);
+    }
+
+    @GetMapping("/top")
+    public List<Movie> getTopMovies() {
+        return service.getTopMovies();
     }
 }

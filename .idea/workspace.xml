@@ -5,21 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/SearchResultsPage.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MoviesHeader.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/SectionHeader.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/dto/TmdbResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/dto/TmdbResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/entity/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/entity/Movie.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/repository/MovieRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/repository/MovieRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/scheduler/MovieScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/scheduler/MovieScheduler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/HeroSection.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/HeroSection.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/WatchHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/WatchHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/Watchlist.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/Watchlist.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchHistoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchHistoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchlistRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchlistRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieDetailsModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieDetailsModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/interactionService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/interactionService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +37,13 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -42,32 +58,130 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "TMDB-feeding",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Aman/Desktop/Streamix",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "fileTemplates",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.arrays.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.CatalogServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.DiscoveryServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.IdentityServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.InteractionServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;TMDB-feeding&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Aman/Desktop/Streamix&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.archetype.catalogs&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="ApiGatewayApplication" value="STOPPED" />
+              <entry key="CatalogServiceApplication" value="STOPPED" />
+              <entry key="DiscoveryServerApplication" value="STOPPED" />
+              <entry key="IdentityServiceApplication" value="STOPPED" />
+              <entry key="InteractionServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.InteractionServiceApplication">
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="api-gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.api_gateway.ApiGatewayApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.streamix.api_gateway.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CatalogServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="catalog-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.catalog.CatalogServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.streamix.catalog.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiscoveryServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="discovery-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.discovery_server.DiscoveryServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IdentityServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="identity-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.identity_service.IdentityServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="InteractionServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="interaction-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.interaction.InteractionServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.streamix.interaction.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.InteractionServiceApplication" />
+        <item itemvalue="Spring Boot.CatalogServiceApplication" />
+        <item itemvalue="Spring Boot.ApiGatewayApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -90,6 +204,13 @@
       <workItem from="1770052307553" duration="165000" />
       <workItem from="1770052491646" duration="12000" />
       <workItem from="1770793225326" duration="2434000" />
+      <workItem from="1770820344590" duration="294000" />
+      <workItem from="1770820650967" duration="103000" />
+      <workItem from="1770874754212" duration="251000" />
+      <workItem from="1770875071693" duration="888000" />
+      <workItem from="1770911346368" duration="627000" />
+      <workItem from="1770912006124" duration="752000" />
+      <workItem from="1770950983934" duration="7297000" />
     </task>
     <servers />
   </component>

@@ -1,23 +1,31 @@
 package com.streamix.catalog.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity   //Tells Spring that this class should be managed by the database.
-@Data   //Automatically creates your getters, setters, and toString() methods so the file stays clean.
+@Document(collection = "movies") // MongoDB collection name
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "movies")
 public class Movie {
 
-    @Id   //  Marks the primary key.
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Id
+    private String id; // MongoDB uses String IDs by default
+
+    @Indexed(unique = true) // Index for faster searches and prevent duplicates
+    private Integer tmdbId; // TMDB movie ID for reference
 
     private String title;
     private String category;
     private String posterUrl;
     private String videoUrl;
+
+    // Additional fields for optimization
+    private Double popularity; // For sorting by popularity
+    private Integer releaseYear; // For filtering
+    private String overview; // Movie description
 }

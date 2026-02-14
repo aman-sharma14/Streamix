@@ -21,7 +21,7 @@ const MovieDetailsModal = ({ movie, similarMovies, user, onClose, onMovieClick }
         if (!user || inWatchlist) return;
 
         try {
-            await interactionService.addToWatchlist(user.id, movie.id);
+            await interactionService.addToWatchlist(user.id, movie.id, movie.title, movie.posterUrl);
             setInWatchlist(true);
             console.log("Added to watchlist:", movie.title);
         } catch (error) {
