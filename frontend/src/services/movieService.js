@@ -161,6 +161,15 @@ const movieService = {
         return response.data;
     },
 
+    // NEW: Get TV Show Season Details from TMDB Proxy
+    getTVShowSeasonDetails: async (tmdbId, seasonNumber) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}/season/${seasonNumber}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
     // Sync (Admin only, but good to have)
     syncMovies: async () => {
         await api.get('/sync');

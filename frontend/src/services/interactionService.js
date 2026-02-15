@@ -62,19 +62,9 @@ const interactionService = {
     },
 
     // Update watch history
-    updateHistory: async (userId, movieId, startAt, duration, completed, season, episode, movieTitle, posterUrl) => {
+    updateHistory: async (data) => {
         try {
-            const response = await api.post('/history/update', {
-                userId,
-                movieId,
-                startAt,
-                duration,
-                completed,
-                season,
-                episode,
-                movieTitle,
-                posterUrl
-            });
+            const response = await api.post('/history/update', data);
             return response.data;
         } catch (error) {
             console.error("Error updating watch history:", error);

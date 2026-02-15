@@ -5,19 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/WatchHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/WatchHistory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/LandingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/LandingPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/services/interactionService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/interactionService.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
     </list>
@@ -68,7 +63,7 @@
     &quot;Spring Boot.IdentityServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;Spring Boot.InteractionServiceApplication.executor&quot;: &quot;Run&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;streaming&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Aman/Desktop/Streamix&quot;,
@@ -103,7 +98,7 @@
               <entry key="ApiGatewayApplication" value="STOPPED" />
               <entry key="CatalogServiceApplication" value="STOPPED" />
               <entry key="DiscoveryServerApplication" value="STOPPED" />
-              <entry key="IdentityServiceApplication" value="STOPPED" />
+              <entry key="IdentityServiceApplication" value="FAILED" />
               <entry key="InteractionServiceApplication" value="STOPPED" />
             </map>
           </value>
@@ -168,8 +163,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.InteractionServiceApplication" />
-        <item itemvalue="Spring Boot.CatalogServiceApplication" />
         <item itemvalue="Spring Boot.ApiGatewayApplication" />
+        <item itemvalue="Spring Boot.CatalogServiceApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -204,6 +199,8 @@
       <workItem from="1770950983934" duration="7297000" />
       <workItem from="1771047666946" duration="1551000" />
       <workItem from="1771133021419" duration="6805000" />
+      <workItem from="1771178434767" duration="114000" />
+      <workItem from="1771178696944" duration="4465000" />
     </task>
     <servers />
   </component>

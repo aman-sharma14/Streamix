@@ -66,6 +66,8 @@ const Dashboard = () => {
           movieService.getGenres()
         ]);
 
+        console.log("DEBUG: Dashboard history fetched:", historyData);
+
         const allGenres = genresData.genres || genresData || [];
         setGenres(allGenres);
 
@@ -474,7 +476,6 @@ const Dashboard = () => {
                   movies={movies}
                   onMovieClick={(m) => navigate(`/movie/${m.id}`)}
                 />
-
 
 
               </>

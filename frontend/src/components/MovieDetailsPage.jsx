@@ -189,6 +189,32 @@ const MovieDetailsPage = () => {
         navigate(url);
     };
 
+    const [seasonDetails, setSeasonDetails] = useState(null);
+    const scrollContainerRef = React.useRef(null);
+
+    // Fetch Season Details when selectedSeason changes
+    useEffect(() => {
+        const fetchSeasonDetails = async () => {
+            if (movie?.type === 'tv' && movie.tmdbId) {
+                try {
+                    const details = await movieService.getTVShowSeasonDetails(movie.tmdbId, selectedSeason);
+                    setSeasonDetails(details);
+                } catch (error) {
+                    console.error("Failed to fetch season details", error);
+                }
+            }
+        };
+        fetchSeasonDetails();
+    }, [movie, selectedSeason]);
+
+    const scrollCast = (direction) => {
+        if (scrollContainerRef.current) {
+            const { current } = scrollContainerRef;
+            const scrollAmount = direction === 'left' ? -300 : 300;
+            current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-[#141414] flex items-center justify-center text-white">
@@ -290,7 +316,7 @@ const MovieDetailsPage = () => {
                                 className="flex items-center space-x-3 bg-white text-black px-10 py-4 rounded font-extrabold hover:bg-gray-200 transition text-xl shadow-xl hover:scale-105"
                             >
                                 <Play className="w-7 h-7 fill-black" />
-                                <span>{hasProgress ? `Resume S${history.season}E${history.episode}` : 'Watch Series'}</span>
+                                <span>{hasProgress ? `Resume S${history?.season || 1}E${history?.episode || 1}` : 'Watch Series'}</span>
                             </button>
                         )}
 
@@ -329,22 +355,33 @@ const MovieDetailsPage = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {Array.from({ length: tvDetails.seasons?.find(s => s.season_number === selectedSeason)?.episode_count || 0 }).map((_, i) => {
-                                const epNum = i + 1;
-                                const isCurrentHistory = history && history.season === selectedSeason && history.episode === epNum;
+                            {(seasonDetails?.episodes || []).map((ep) => {
+                                const isCurrentHistory = history && history.season === selectedSeason && history.episode === ep.episode_number;
 
                                 return (
                                     <div
-                                        key={i}
-                                        onClick={() => handlePlay(false, selectedSeason, epNum)}
+                                        key={ep.id}
+                                        onClick={() => handlePlay(false, selectedSeason, ep.episode_number)}
                                         className="group relative bg-[#1f1f1f] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition cursor-pointer"
                                     >
                                         <div className="aspect-video bg-gray-900 relative">
+                                            {ep.still_path ? (
+                                                <img
+                                                    src={`https://image.tmdb.org/t/p/w227_and_h127_bestv2${ep.still_path}`}
+                                                    alt={ep.name}
+                                                    className="w-full h-full object-cover group-hover:opacity-75 transition"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-500 bg-[#2a2a2a]">
+                                                    No Image
+                                                </div>
+                                            )}
+
                                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
                                                 <Play className="w-12 h-12 text-white fill-white" />
                                             </div>
                                             <div className="absolute top-2 left-2 bg-black/60 px-2 py-1 rounded text-xs font-bold">
-                                                EP {epNum}
+                                                EP {ep.episode_number}
                                             </div>
                                             {isCurrentHistory && (
                                                 <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-700">
@@ -356,8 +393,8 @@ const MovieDetailsPage = () => {
                                             )}
                                         </div>
                                         <div className="p-4">
-                                            <h4 className="font-bold text-lg mb-1 group-hover:text-red-500 transition">Episode {epNum}</h4>
-                                            <p className="text-sm text-gray-400 line-clamp-2">Season {selectedSeason}, Episode {epNum} of {title}.</p>
+                                            <h4 className="font-bold text-lg mb-1 group-hover:text-red-500 transition line-clamp-1">{ep.name}</h4>
+                                            <p className="text-sm text-gray-400 line-clamp-2">{ep.overview || `Episode ${ep.episode_number} of Season ${selectedSeason}`}</p>
                                         </div>
                                     </div>
                                 );
@@ -368,9 +405,29 @@ const MovieDetailsPage = () => {
 
                 {/* Cast */}
                 {cast && cast.length > 0 && (
-                    <div className="space-y-6">
-                        <h3 className="text-2xl font-bold text-white">Top Cast</h3>
-                        <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
+                    <div className="space-y-6 relative group/cast">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-2xl font-bold text-white">Top Cast</h3>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={() => scrollCast('left')}
+                                    className="p-2 rounded-full bg-black/50 hover:bg-white/20 transition hidden md:block"
+                                >
+                                    <ArrowLeft className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => scrollCast('right')}
+                                    className="p-2 rounded-full bg-black/50 hover:bg-white/20 transition hidden md:block"
+                                >
+                                    <ArrowLeft className="w-5 h-5 rotate-180" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            ref={scrollContainerRef}
+                            className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
+                        >
                             {cast.map((actor, idx) => (
                                 <div key={actor.id || idx} className="flex-shrink-0 w-32 text-center group">
                                     <div className="w-32 h-32 rounded-full overflow-hidden mb-3 border-2 border-transparent group-hover:border-red-600 transition duration-300 shadow-xl">

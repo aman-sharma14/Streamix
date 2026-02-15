@@ -11,8 +11,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InteractionService {
 
     private final WatchlistRepository watchlistRepository;
@@ -84,6 +87,7 @@ public class InteractionService {
         history.setSeason(season);
         history.setEpisode(episode);
         history.setLastWatchedAt(LocalDateTime.now());
+        log.info("Saving watch history for user {} and movie {}: {}", userId, movieId, history);
         return watchHistoryRepository.save(history);
     }
 

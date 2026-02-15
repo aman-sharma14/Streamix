@@ -21,8 +21,10 @@ const VideoPlayerPage = () => {
     const [user, setUser] = useState(null);
 
     const lastSavedTime = useRef(0);
+    const currentVideoTime = useRef(0); // Track latest time for unmount save
     const videoDuration = useRef(0);
     const saveInterval = useRef(null);
+    const userIdRef = useRef(null); // Ref to hold latest user ID
 
     useEffect(() => {
         const currentUser = authService.getCurrentUser();
@@ -31,6 +33,7 @@ const VideoPlayerPage = () => {
             return;
         }
         setUser(currentUser);
+        userIdRef.current = currentUser.id; // Update ref immediately
 
         const fetchData = async () => {
             try {
@@ -68,47 +71,76 @@ const VideoPlayerPage = () => {
             // Safety check for origin if possible, but vidlink might change
             // We just care about the data structure
             const data = event.data;
+            console.log("DEBUG: Received message from iframe:", data);
 
-            if (data.type === 'MEDIA_DATA') {
+            if (data && data.type === 'MEDIA_DATA') {
+                console.log("DEBUG: Media Data received:", data);
                 videoDuration.current = data.duration;
             }
 
-            if (data.type === 'PLAYER_EVENT' && data.event === 'timeupdate') {
-                const currentTime = data.currentTime;
-                // Throttle saving to every 15 seconds
-                if (currentTime - lastSavedTime.current > 15) {
-                    saveProgress(currentTime);
-                    lastSavedTime.current = currentTime;
+            if (data && data.type === 'PLAYER_EVENT') {
+                console.log("DEBUG: Player Event:", data.event, data.currentTime);
+                if (data.event === 'timeupdate') {
+                    const currentTime = data.currentTime;
+                    currentVideoTime.current = currentTime; // Update ref
+
+                    // Throttle saving to every 15 seconds
+                    if (currentTime - lastSavedTime.current > 15) {
+                        console.log("Saving progress...", currentTime);
+                        saveProgress(currentTime);
+                        lastSavedTime.current = currentTime;
+                    }
                 }
             }
         };
 
         window.addEventListener('message', handleMessage);
+
+        // IMMEDIATE SAVE: Save "started watching" (0:00) immediately on mount
+        // This ensures the item appears in "Continue Watching" as soon as the page is opened.
+        if (lastSavedTime.current === 0) {
+            console.log("Initial history save at 0s...");
+            // Pass currentUser.id explicitly for immediate save
+            saveProgress(0, currentUser.id);
+        }
+
         return () => {
             window.removeEventListener('message', handleMessage);
-            if (saveInterval.current) clearInterval(saveInterval.current);
+            // Save on unmount if we have progress
+            if (currentVideoTime.current > 0) {
+                console.log("Saving progress on unmount...", currentVideoTime.current);
+                saveProgress(currentVideoTime.current);
+            }
         };
     }, [id, type, season, episode]);
 
-    const saveProgress = async (currentTime) => {
-        if (!user || !movie) return;
+    const saveProgress = async (currentTime, explicitUserId = null) => {
+        // Use ref or explicit ID to avoid stale closure
+        const userIdToUse = explicitUserId || userIdRef.current;
 
-        const isCompleted = videoDuration.current > 0 && (currentTime / videoDuration.current) > 0.9;
+        if (!userIdToUse) {
+            console.error("DEBUG: Cannot save progress, user ID missing", { explicitUserId, ref: userIdRef.current });
+            return;
+        }
+        if (!movie) return;
+
+        const progressData = {
+            userId: userIdToUse,
+            movieId: id,
+            startAt: currentTime,
+            duration: videoDuration.current,
+            completed: videoDuration.current > 0 && (currentTime / videoDuration.current) > 0.9,
+            season: season ? parseInt(season) : null,
+            episode: episode ? parseInt(episode) : null,
+            movieTitle: movie.title || movie.name,
+            posterUrl: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null
+        };
 
         try {
-            await interactionService.updateHistory(
-                user.id,
-                movie.id,
-                currentTime,
-                videoDuration.current,
-                isCompleted,
-                season ? parseInt(season) : null,
-                episode ? parseInt(episode) : null,
-                movie.title || movie.name,
-                movie.posterUrl
-            );
-        } catch (err) {
-            console.error("Failed to save progress", err);
+            await interactionService.updateHistory(progressData);
+            console.log("History saved successfully assigned to User " + userIdToUse);
+        } catch (error) {
+            console.error("Failed to save history", error);
         }
     };
 
@@ -151,7 +183,6 @@ const VideoPlayerPage = () => {
                 title={movie.title || movie.name}
                 className="w-full h-full border-none"
                 allowFullScreen
-                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
             ></iframe>
         </div>
     );

@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/interaction")
 @RequiredArgsConstructor
+@Slf4j
 public class InteractionController {
 
     private final InteractionService interactionService;
@@ -19,7 +22,7 @@ public class InteractionController {
     @PostMapping("/watchlist/add")
     public Watchlist addToWatchlist(@RequestBody Map<String, Object> payload) {
         Integer userId = parseUserId(payload.get("userId"));
-        String movieId = (String) payload.get("movieId"); // MongoDB String ID
+        String movieId = String.valueOf(payload.get("movieId")); // Safely convert to String
         String movieTitle = (String) payload.get("movieTitle");
         String posterUrl = (String) payload.get("posterUrl");
         return interactionService.addToWatchlist(userId, movieId, movieTitle, posterUrl);
@@ -28,7 +31,7 @@ public class InteractionController {
     @PostMapping("/watchlist/remove")
     public void removeFromWatchlist(@RequestBody Map<String, Object> payload) {
         Integer userId = parseUserId(payload.get("userId"));
-        String movieId = (String) payload.get("movieId"); // MongoDB String ID
+        String movieId = String.valueOf(payload.get("movieId")); // Safely convert to String
         interactionService.removeFromWatchlist(userId, movieId);
     }
 
@@ -39,8 +42,9 @@ public class InteractionController {
 
     @PostMapping("/history/update")
     public WatchHistory updateHistory(@RequestBody Map<String, Object> payload) {
+        log.info("Received history update request: {}", payload);
         Integer userId = parseUserId(payload.get("userId"));
-        String movieId = (String) payload.get("movieId"); // MongoDB String ID
+        String movieId = String.valueOf(payload.get("movieId")); // Safely convert to String
         Double startAt = payload.get("startAt") != null ? ((Number) payload.get("startAt")).doubleValue() : 0.0;
         Double duration = payload.get("duration") != null ? ((Number) payload.get("duration")).doubleValue() : 0.0;
         Boolean completed = (Boolean) payload.get("completed");

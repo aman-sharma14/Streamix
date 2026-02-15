@@ -340,4 +340,17 @@ public class TVShowService {
             return null;
         }
     }
+
+    /**
+     * Get TV Show Season details directly from TMDB
+     */
+    public Object getTVShowSeasonDetailsFromTmdb(Integer tmdbId, Integer seasonNumber) {
+        try {
+            String url = baseUrl + "/tv/" + tmdbId + "/season/" + seasonNumber + "?api_key=" + apiKey;
+            return restTemplate.getForObject(url, Object.class);
+        } catch (Exception e) {
+            System.err.println("Error fetching TV season details from TMDB: " + e.getMessage());
+            return null;
+        }
+    }
 }

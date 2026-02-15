@@ -63,4 +63,14 @@ public class TVShowController {
                 ? org.springframework.http.ResponseEntity.ok(details)
                 : org.springframework.http.ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/tmdb/{tmdbId}/season/{seasonNumber}")
+    public org.springframework.http.ResponseEntity<Object> getTVShowSeasonDetailsFromTmdb(
+            @PathVariable Integer tmdbId,
+            @PathVariable Integer seasonNumber) {
+        Object details = service.getTVShowSeasonDetailsFromTmdb(tmdbId, seasonNumber);
+        return details != null
+                ? org.springframework.http.ResponseEntity.ok(details)
+                : org.springframework.http.ResponseEntity.notFound().build();
+    }
 }
