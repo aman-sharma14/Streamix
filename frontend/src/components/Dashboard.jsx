@@ -340,7 +340,7 @@ const Dashboard = () => {
                   movies={movies.filter(m =>
                     m.categories?.includes("Trending Movies") ||
                     m.categories?.includes("Trending TV")
-                  ).slice(0, 15)}
+                  ).sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}${m.category?.includes('TV') || m.categories?.some(c => c.includes('TV')) || m.type === 'tv' ? '?type=tv' : ''}`)}
                   destinationUrl="/category/trending-all"
                 />
@@ -348,7 +348,7 @@ const Dashboard = () => {
                 {/* Popular Movies */}
                 <MovieRow
                   title="Popular Movies"
-                  movies={movies.filter(m => m.categories?.includes("Popular Movies")).slice(0, 15)}
+                  movies={movies.filter(m => m.categories?.includes("Popular Movies")).sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}`)}
                   destinationUrl="/category/popular-movies"
                 />
@@ -356,7 +356,7 @@ const Dashboard = () => {
                 {/* Top Rated Movies */}
                 <MovieRow
                   title="Top Rated Movies"
-                  movies={movies.filter(m => m.categories?.includes("Top Rated Movies")).slice(0, 15)}
+                  movies={movies.filter(m => m.categories?.includes("Top Rated Movies")).sort((a, b) => (b.voteAverage || 0) - (a.voteAverage || 0)).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}`)}
                   destinationUrl="/category/top-rated-movies"
                 />
@@ -364,7 +364,7 @@ const Dashboard = () => {
                 {/* Popular TV Shows */}
                 <MovieRow
                   title="Popular TV Shows"
-                  movies={movies.filter(m => m.categories?.includes("Popular TV")).slice(0, 15)}
+                  movies={movies.filter(m => m.categories?.includes("Popular TV")).sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
                   destinationUrl="/category/popular-tv"
                 />
@@ -372,7 +372,7 @@ const Dashboard = () => {
                 {/* Top Rated TV Shows */}
                 <MovieRow
                   title="Top Rated TV Shows"
-                  movies={movies.filter(m => m.categories?.includes("Top Rated TV")).slice(0, 15)}
+                  movies={movies.filter(m => m.categories?.includes("Top Rated TV")).sort((a, b) => (b.voteAverage || 0) - (a.voteAverage || 0)).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
                   destinationUrl="/category/top-rated-tv"
                 />

@@ -4,8 +4,9 @@ server:
 spring:
   application:
     name: interaction-service
-  mongodb:
-    uri: mongodb+srv://admin:yXXEeI8bJDIJBLCL@cluster0.adwjbav.mongodb.net/streamix?retryWrites=true&w=majority&appName=Cluster0
+  data:
+    mongodb:
+      uri: mongodb+srv://admin:yXXEeI8bJDIJBLCL@cluster0.adwjbav.mongodb.net/streamix?retryWrites=true&w=majority&appName=Cluster0
 
 
 eureka:

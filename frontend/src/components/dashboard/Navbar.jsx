@@ -37,15 +37,32 @@ const Navbar = ({ activeTab, setActiveTab }) => {
     };
   }, []);
 
-  // Search Logic
+  // Search Logic - searches BOTH movies and TV shows
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchQuery.length > 1) {
-        console.log("Navbar: Searching for...", searchQuery);
         try {
-          const results = await movieService.searchMovies(searchQuery);
-          console.log("Navbar: Search results:", results);
-          setSearchResults(results.slice(0, 5)); // Limit to 5 results
+          // Search both movies and TV shows in parallel
+          const [movieResults, tvResults] = await Promise.all([
+            movieService.searchMovies(searchQuery).catch(() => []),
+            movieService.searchTVShows(searchQuery).catch(() => [])
+          ]);
+
+          // Combine and mark type, then limit
+          const combined = [
+            ...movieResults.map(m => ({ ...m, type: m.type || 'movie' })),
+            ...tvResults.map(t => ({ ...t, type: 'tv' }))
+          ];
+
+          // Deduplicate by id
+          const seen = new Set();
+          const unique = combined.filter(item => {
+            if (seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+          });
+
+          setSearchResults(unique.slice(0, 8)); // Limit to 8 results
         } catch (error) {
           console.error("Navbar: Search failed", error);
         }
@@ -66,8 +83,9 @@ const Navbar = ({ activeTab, setActiveTab }) => {
     }
   };
 
-  const handleResultClick = (movieId) => {
-    navigate(`/movie/${movieId}`);
+  const handleResultClick = (movie) => {
+    const typeSuffix = movie.type === 'tv' ? '?type=tv' : '';
+    navigate(`/movie/${movie.id}${typeSuffix}`);
     setIsSearchOpen(false);
     setSearchQuery("");
   };
@@ -178,18 +196,23 @@ const Navbar = ({ activeTab, setActiveTab }) => {
                   {searchResults.map(movie => (
                     <div
                       key={movie.id}
-                      onClick={() => handleResultClick(movie.id)}
+                      onClick={() => handleResultClick(movie)}
                       className="px-4 py-3 hover:bg-gray-800 cursor-pointer flex items-center space-x-3 transition border-b border-gray-800 last:border-0"
                     >
                       <img
                         src={movie.posterUrl || `https://image.tmdb.org/t/p/w92${movie.poster_path}`}
-                        alt={movie.title}
+                        alt={movie.title || movie.name}
                         className="w-8 h-12 object-cover rounded"
                       />
-                      <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-white truncate">{movie.title}</p>
-                        <p className="text-xs text-gray-400">{movie.release_date?.split('-')[0] || "Unknown"}</p>
+                      <div className="overflow-hidden flex-1">
+                        <p className="text-sm font-bold text-white truncate">{movie.title || movie.name}</p>
+                        <p className="text-xs text-gray-400">
+                          {(movie.releaseDate || movie.firstAirDate || movie.release_date || "")?.split('-')[0] || ""}
+                        </p>
                       </div>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${movie.type === 'tv' ? 'bg-blue-600/30 text-blue-400' : 'bg-red-600/30 text-red-400'}`}>
+                        {movie.type === 'tv' ? 'Series' : 'Movie'}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -226,7 +249,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
           </div>
         </div>
       </div>
-    </nav>
+    </nav >
   );
 };
 

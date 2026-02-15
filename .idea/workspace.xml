@@ -6,8 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/SearchResultsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SearchResultsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +104,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.CatalogServiceApplication">
+  <component name="RunManager" selected="Spring Boot.InteractionServiceApplication">
     <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="api-gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.api_gateway.ApiGatewayApplication" />
@@ -155,8 +160,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.CatalogServiceApplication" />
         <item itemvalue="Spring Boot.InteractionServiceApplication" />
+        <item itemvalue="Spring Boot.CatalogServiceApplication" />
         <item itemvalue="Spring Boot.ApiGatewayApplication" />
       </list>
     </recent_temporary>

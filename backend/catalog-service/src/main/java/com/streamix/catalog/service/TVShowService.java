@@ -200,6 +200,39 @@ public class TVShowService {
         return repository.findAll();
     }
 
+    /**
+     * Smart search: DB first, TMDB fallback with caching
+     */
+    public List<TVShow> searchTVShows(String query) {
+        // Search in database first
+        List<TVShow> results = new ArrayList<>(repository.findByTitleContainingIgnoreCase(query));
+
+        // If found enough results, return
+        if (results.size() >= 5) {
+            return results;
+        }
+
+        // Otherwise, search TMDB and cache results
+        try {
+            String url = baseUrl + "/search/tv?api_key=" + apiKey + "&query=" + query;
+            TmdbTVResponse response = restTemplate.getForObject(url, TmdbTVResponse.class);
+
+            if (response != null && response.getResults() != null) {
+                for (TmdbTVResponse.TmdbTVDto dto : response.getResults()) {
+                    if (dto.getPosterPath() != null && repository.findByTmdbId(dto.getId()).isEmpty()) {
+                        TVShow tvShow = createTVShowFromDto(dto, "Search Result");
+                        repository.save(tvShow);
+                        results.add(tvShow);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error searching TMDB TV: " + e.getMessage());
+        }
+
+        return results;
+    }
+
     public List<TVShow> getPopularTVShows() {
         List<TVShow> shows = repository.findByCategoriesContaining("Popular TV");
         shows.sort((a, b) -> Double.compare(

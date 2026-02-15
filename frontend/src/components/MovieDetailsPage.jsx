@@ -140,7 +140,7 @@ const MovieDetailsPage = () => {
                 setInWatchlist(false);
                 showNotification(`${movie.title || movie.name} removed from Watchlist`);
             } else {
-                await interactionService.addToWatchlist(user.id, movie.id);
+                await interactionService.addToWatchlist(user.id, movie.id, movie.title || movie.name, movie.posterUrl);
                 setInWatchlist(true);
                 showNotification(`${movie.title || movie.name} added to Watchlist`);
             }

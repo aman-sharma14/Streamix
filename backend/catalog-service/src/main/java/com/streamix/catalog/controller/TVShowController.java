@@ -19,6 +19,11 @@ public class TVShowController {
         return service.getAllTVShows();
     }
 
+    @GetMapping("/search")
+    public List<TVShow> searchTVShows(@RequestParam String query) {
+        return service.searchTVShows(query);
+    }
+
     @GetMapping("/popular")
     public List<TVShow> getPopularTVShows() {
         return service.getPopularTVShows();

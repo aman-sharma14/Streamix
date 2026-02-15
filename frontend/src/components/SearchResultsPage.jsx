@@ -21,8 +21,26 @@ const SearchResultsPage = () => {
             if (query) {
                 setLoading(true);
                 try {
-                    const results = await movieService.searchMovies(query);
-                    setMovies(results);
+                    // Search both movies and TV shows
+                    const [movieResults, tvResults] = await Promise.all([
+                        movieService.searchMovies(query).catch(() => []),
+                        movieService.searchTVShows(query).catch(() => [])
+                    ]);
+
+                    const combined = [
+                        ...movieResults.map(m => ({ ...m, type: m.type || 'movie' })),
+                        ...tvResults.map(t => ({ ...t, type: 'tv' }))
+                    ];
+
+                    // Deduplicate by id
+                    const seen = new Set();
+                    const unique = combined.filter(item => {
+                        if (seen.has(item.id)) return false;
+                        seen.add(item.id);
+                        return true;
+                    });
+
+                    setMovies(unique);
                 } catch (error) {
                     console.error("Failed to fetch search results", error);
                 } finally {
@@ -69,7 +87,7 @@ const SearchResultsPage = () => {
                     </div>
                 ) : (
                     <div className="text-center py-20">
-                        <p className="text-xl text-gray-400">No movies found matching "{query}".</p>
+                        <p className="text-xl text-gray-400">No results found for "{query}".</p>
                         <button
                             onClick={() => navigate('/dashboard')}
                             className="mt-6 px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"

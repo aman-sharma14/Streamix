@@ -44,6 +44,15 @@ const movieService = {
         return response.data;
     },
 
+    // Search TV Shows (DB + TMDB fallback)
+    searchTVShows: async (query) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/tv/search?query=${query}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
     // NEW: Get popular movies
     getPopularMovies: async () => {
         const response = await api.get('/popular');
