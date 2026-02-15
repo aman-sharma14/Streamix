@@ -116,6 +116,33 @@ const movieService = {
         return response.data;
     },
 
+    // NEW: Get TV Show by ID
+    getTVShowById: async (id) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/tv/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
+    // NEW: Get TV Show Cast
+    getTVShowCast: async (tmdbId) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}/cast`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
+    // NEW: Get Similar TV Shows
+    getSimilarTVShows: async (tmdbId) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}/similar`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
     // Sync (Admin only, but good to have)
     syncMovies: async () => {
         await api.get('/sync');

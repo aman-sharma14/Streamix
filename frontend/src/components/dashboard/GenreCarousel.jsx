@@ -63,6 +63,7 @@ const GenreCarousel = ({ movies, onMovieClick }) => {
                         title=""
                         movies={moviesWithGenre}
                         onMovieClick={onMovieClick}
+                        destinationUrl={`/category/genre-${selectedGenreId}-all?name=${encodeURIComponent(selectedGenreName)}`}
                     />
                 </div>
             ) : (

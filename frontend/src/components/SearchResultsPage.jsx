@@ -35,7 +35,7 @@ const SearchResultsPage = () => {
     }, [query]);
 
     const handleMovieClick = (movie) => {
-        navigate(`/movie/${movie.id}`);
+        navigate(`/movie/${movie.id}${movie.type === 'tv' ? '?type=tv' : ''}`);
     };
 
     return (

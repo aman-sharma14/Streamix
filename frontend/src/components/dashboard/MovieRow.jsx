@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import MovieCard from './MovieCard';
 
-const MovieRow = ({ title, movies, onMovieClick }) => {
+const MovieRow = ({ title, movies, onMovieClick, destinationUrl }) => {
+    const navigate = useNavigate();
     const rowRef = useRef(null);
 
     const handleScroll = (direction) => {
@@ -22,12 +24,13 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
     const showExploreMore = movies.length > limit;
 
     const handleExploreClick = () => {
-        // Navigate to category page
-        // Assuming title is like "Action Movies" -> "Action"
-        // Or pass category slug as prop. For now, try to parse title or ignore if specialized row.
+        if (destinationUrl) {
+            navigate(destinationUrl);
+            return;
+        }
+        // Fallback
         const category = title.replace(" Movies", "").replace("Top ", "");
-        window.location.href = `/category/${category}`;
-        // Using window.location for now to ensure full reload/reset, strictly cleaner would be useNavigate
+        navigate(`/category/${category}`);
     };
 
     return (
@@ -39,9 +42,12 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
                         {title}
                     </h2>
                     {showExploreMore && (
-                        <a href={`/category/${title.replace(" Movies", "")}`} className="text-sm text-gray-400 hover:text-white transition font-semibold">
+                        <button
+                            onClick={handleExploreClick}
+                            className="text-sm text-gray-400 hover:text-white transition font-semibold"
+                        >
                             Explore All &gt;
-                        </a>
+                        </button>
                     )}
                 </div>
             )}

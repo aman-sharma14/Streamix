@@ -33,4 +33,21 @@ public class TVShowController {
     public List<TVShow> getTrendingTVShows() {
         return service.getTrendingTVShows();
     }
+
+    @GetMapping("/{id}")
+    public org.springframework.http.ResponseEntity<TVShow> getTVShowById(@PathVariable String id) {
+        return service.getTVShowById(id)
+                .map(org.springframework.http.ResponseEntity::ok)
+                .orElse(org.springframework.http.ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/tmdb/{tmdbId}/cast")
+    public List<com.streamix.catalog.dto.TmdbCreditsResponse.CastMember> getTVShowCast(@PathVariable Integer tmdbId) {
+        return service.getTVShowCast(tmdbId);
+    }
+
+    @GetMapping("/tmdb/{tmdbId}/similar")
+    public List<TVShow> getSimilarTVShows(@PathVariable Integer tmdbId) {
+        return service.getSimilarTVShows(tmdbId);
+    }
 }

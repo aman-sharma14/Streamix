@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import authService from '../services/authService';
 import movieService from '../services/movieService';
 import interactionService from '../services/interactionService';
@@ -13,13 +13,22 @@ import GenreCarousel from './dashboard/GenreCarousel';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
+
+  // Handle Tab Switch via Query Param
+  useEffect(() => {
+    if (location.state?.tab && ["Home", "Series", "Movies", "My List"].includes(location.state.tab)) {
+      setActiveTab(location.state.tab);
+    }
+  }, [location]);
   const [movies, setMovies] = useState([]); // Store all movies
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Home"); // Default tab
   const [watchlist, setWatchlist] = useState([]); // Store watchlist movie IDs
   const [selectedGenreId, setSelectedGenreId] = useState(null);
   const [selectedGenreName, setSelectedGenreName] = useState(null);
+  const [genres, setGenres] = useState([]);
 
 
   useEffect(() => {
@@ -42,7 +51,8 @@ const Dashboard = () => {
           trendingTV,
           popularTV,
           topRatedTV,
-          watchlistData
+          watchlistData,
+          genresData
         ] = await Promise.all([
           movieService.getTrendingMovies(),
           movieService.getPopularMovies(),
@@ -50,8 +60,11 @@ const Dashboard = () => {
           movieService.getTrendingTVShows(),
           movieService.getPopularTVShows(),
           movieService.getTopRatedTVShows(),
-          currentUser.id ? interactionService.getWatchlist(currentUser.id) : Promise.resolve([])
+          currentUser.id ? interactionService.getWatchlist(currentUser.id) : Promise.resolve([]),
+          movieService.getGenres()
         ]);
+
+        setGenres(genresData.genres || []); // Assuming response structure
 
         // Combine all content for display
         const allContent = [
@@ -173,48 +186,120 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            {/* Movies Tab with Genre Filter */}
+            {/* Movies Tab */}
             {activeTab === "Movies" && (
               <div className="px-8 md:px-12 pb-12">
-                <GenreFilter
-                  selectedGenre={selectedGenreName}
-                  onGenreSelect={(genreId, genreName) => {
-                    setSelectedGenreId(genreId);
-                    setSelectedGenreName(genreName);
-                  }}
+                {/* 1. Trending Movies */}
+                <MovieRow
+                  title="Trending Movies"
+                  movies={movies.filter(m => m.categories?.includes("Trending Movies"))}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  destinationUrl="/category/trending-movies"
                 />
 
-                {selectedGenreId ? (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-6 text-white">{selectedGenreName} Movies & TV Shows</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                      {movies
-                        .filter(m => m.genreIds?.includes(selectedGenreId))
-                        .map((movie) => (
-                          <MovieCard
-                            key={movie.id}
-                            movie={movie}
-                            onMovieClick={(m) => navigate(`/movie/${m.id}`)}
-                            className="w-full aspect-[2/3]"
-                          />
-                        ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-6 text-white">All Movies & TV Shows</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                      {movies.slice(0, 50).map((movie) => (
-                        <MovieCard
-                          key={movie.id}
-                          movie={movie}
-                          onMovieClick={(m) => navigate(`/movie/${m.id}`)}
-                          className="w-full aspect-[2/3]"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* 2. Popular Movies */}
+                <MovieRow
+                  title="Popular Movies"
+                  movies={movies.filter(m => m.categories?.includes("Popular Movies"))}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  destinationUrl="/category/popular-movies"
+                />
+
+                {/* 3. Top Rated Movies */}
+                <MovieRow
+                  title="Top Rated Movies"
+                  movies={movies.filter(m => m.categories?.includes("Top Rated Movies"))}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  destinationUrl="/category/top-rated-movies"
+                />
+
+                {/* 4. Dynamic Genre Rows */}
+                {[
+                  { id: 28, name: "Action" },
+                  { id: 35, name: "Comedy" },
+                  { id: 18, name: "Drama" },
+                  { id: 878, name: "Science Fiction" },
+                  { id: 27, name: "Horror" },
+                  { id: 10749, name: "Romance" },
+                  { id: 53, name: "Thriller" },
+                  { id: 16, name: "Animation" }
+                ].map(genre => {
+                  const genreData = genres.find(g => g.id === genre.id) || genre;
+                  const genreMovies = movies.filter(m =>
+                    m.genreIds?.includes(genre.id) &&
+                    !m.categories?.some(c => c.includes("TV")) &&
+                    !m.category?.includes("TV")
+                  );
+
+                  if (genreMovies.length < 1) return null;
+
+                  return (
+                    <MovieRow
+                      key={genre.id}
+                      title={`${genreData.name} Movies`}
+                      movies={genreMovies}
+                      onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                      destinationUrl={`/category/genre-${genre.id}-movie?name=${encodeURIComponent(genreData.name)}`}
+                    />
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Series Tab */}
+            {activeTab === "Series" && (
+              <div className="px-8 md:px-12 pb-12">
+
+                {/* 1. Trending Series */}
+                <MovieRow
+                  title="Trending Series"
+                  movies={movies.filter(m => m.categories?.includes("Trending TV"))}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  destinationUrl="/category/trending-tv"
+                />
+
+                {/* 2. Popular Series */}
+                <MovieRow
+                  title="Popular TV Shows"
+                  movies={movies.filter(m => m.categories?.includes("Popular TV"))}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  destinationUrl="/category/popular-tv"
+                />
+
+                {/* 3. Top Rated Series */}
+                <MovieRow
+                  title="Top Rated TV Shows"
+                  movies={movies.filter(m => m.categories?.includes("Top Rated TV"))}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  destinationUrl="/category/top-rated-tv"
+                />
+
+                {/* 4. Dynamic Genre Rows for TV */}
+                {[
+                  { id: 10759, name: "Action & Adventure" },
+                  { id: 35, name: "Comedy" },
+                  { id: 18, name: "Drama" },
+                  { id: 10765, name: "Sci-Fi & Fantasy" },
+                  { id: 9648, name: "Mystery" },
+                  { id: 80, name: "Crime" },
+                  { id: 16, name: "Animation" }
+                ].map(genre => {
+                  const genreData = genres.find(g => g.id === genre.id) || genre;
+                  const genreSeries = movies.filter(m =>
+                    m.genreIds?.includes(genre.id) &&
+                    (m.categories?.some(c => c.includes("TV")) || m.category?.includes("TV"))
+                  );
+                  if (genreSeries.length < 1) return null;
+                  return (
+                    <MovieRow
+                      key={genre.id}
+                      title={`${genreData.name} Series`}
+                      movies={genreSeries}
+                      onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                      destinationUrl={`/category/genre-${genre.id}-tv?name=${encodeURIComponent(genreData.name)}`}
+                    />
+                  );
+                })}
               </div>
             )}
 
@@ -250,7 +335,8 @@ const Dashboard = () => {
                     m.categories?.includes("Trending Movies") ||
                     m.categories?.includes("Trending TV")
                   ).slice(0, 15)}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}${m.category?.includes('TV') || m.categories?.some(c => c.includes('TV')) || m.type === 'tv' ? '?type=tv' : ''}`)}
+                  destinationUrl="/category/trending-all"
                 />
 
                 {/* Popular Movies */}
@@ -258,6 +344,7 @@ const Dashboard = () => {
                   title="Popular Movies"
                   movies={movies.filter(m => m.categories?.includes("Popular Movies")).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  destinationUrl="/category/popular-movies"
                 />
 
                 {/* Top Rated Movies */}
@@ -265,20 +352,23 @@ const Dashboard = () => {
                   title="Top Rated Movies"
                   movies={movies.filter(m => m.categories?.includes("Top Rated Movies")).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  destinationUrl="/category/top-rated-movies"
                 />
 
                 {/* Popular TV Shows */}
                 <MovieRow
                   title="Popular TV Shows"
                   movies={movies.filter(m => m.categories?.includes("Popular TV")).slice(0, 15)}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  destinationUrl="/category/popular-tv"
                 />
 
                 {/* Top Rated TV Shows */}
                 <MovieRow
                   title="Top Rated TV Shows"
                   movies={movies.filter(m => m.categories?.includes("Top Rated TV")).slice(0, 15)}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  destinationUrl="/category/top-rated-tv"
                 />
 
 

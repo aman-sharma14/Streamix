@@ -91,7 +91,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
     navigate('/login');
   };
 
-  const navLinks = ['Home', 'Series', 'Movies', 'New & Popular', 'My List'];
+  const navLinks = ['Home', 'Series', 'Movies', 'My List'];
 
   return (
     <nav
@@ -122,11 +122,21 @@ const Navbar = ({ activeTab, setActiveTab }) => {
               {navLinks.map((item) => (
                 <button
                   key={item}
-                  onClick={() => setActiveTab(item)}
-                  className={`text-sm font-medium transition duration-300 ${activeTab === item ? 'text-white font-bold' : 'text-gray-300 hover:text-white'
+                  onClick={() => {
+                    setActiveTab(item);
+                    if (window.location.pathname !== '/dashboard') {
+                      navigate('/dashboard', { state: { tab: item } });
+                    }
+                  }}
+                  className={`relative text-sm font-medium transition duration-300 pb-1 ${activeTab === item
+                    ? 'text-white font-bold'
+                    : 'text-gray-400 hover:text-gray-200'
                     }`}
                 >
                   {item}
+                  {activeTab === item && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+                  )}
                 </button>
               ))}
             </div>

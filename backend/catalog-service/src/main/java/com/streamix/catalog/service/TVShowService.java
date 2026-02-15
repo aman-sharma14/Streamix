@@ -204,11 +204,74 @@ public class TVShowService {
         return repository.findByCategoriesContaining("Trending TV");
     }
 
+    public java.util.Optional<TVShow> getTVShowById(String id) {
+        return repository.findById(id);
+    }
+
     /**
      * Refresh a specific category (used by scheduled jobs)
      */
     public void refreshCategory(String endpoint, int pages, String category) {
         System.out.println("Refreshing category: " + category);
         fetchFromEndpoint(endpoint, pages, category);
+    }
+
+    /**
+     * Fetch cast for a TV Show
+     */
+    public java.util.List<com.streamix.catalog.dto.TmdbCreditsResponse.CastMember> getTVShowCast(Integer tmdbId) {
+        try {
+            String url = baseUrl + "/tv/" + tmdbId + "/credits?api_key=" + apiKey;
+            com.streamix.catalog.dto.TmdbCreditsResponse response = restTemplate.getForObject(url,
+                    com.streamix.catalog.dto.TmdbCreditsResponse.class);
+
+            if (response != null && response.getCast() != null) {
+                // Return top 10 cast members
+                return response.getCast().stream()
+                        .limit(10)
+                        .collect(java.util.stream.Collectors.toList());
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching cast for TMDB ID " + tmdbId + ": " + e.getMessage());
+        }
+
+        return java.util.Collections.emptyList();
+    }
+
+    /**
+     * Get similar TV shows based on genre matching
+     */
+    public List<TVShow> getSimilarTVShows(Integer tmdbId) {
+        java.util.Optional<TVShow> currentShow = repository.findByTmdbId(tmdbId);
+
+        if (currentShow.isEmpty() || currentShow.get().getGenreIds() == null) {
+            // Fallback: return popular TV
+            return getPopularTVShows().stream().limit(6).collect(java.util.stream.Collectors.toList());
+        }
+
+        List<Integer> genreIds = currentShow.get().getGenreIds();
+
+        // Find shows with at least one matching genre
+        List<TVShow> allShows = repository.findAll();
+
+        return allShows.stream()
+                .filter(s -> !s.getTmdbId().equals(tmdbId)) // Exclude current show
+                .filter(s -> s.getGenreIds() != null &&
+                        s.getGenreIds().stream().anyMatch(genreIds::contains)) // Has matching genre
+                .sorted((s1, s2) -> {
+                    // Sort by number of matching genres, then by popularity
+                    long matches1 = s1.getGenreIds().stream().filter(genreIds::contains).count();
+                    long matches2 = s2.getGenreIds().stream().filter(genreIds::contains).count();
+
+                    if (matches1 != matches2) {
+                        return Long.compare(matches2, matches1); // More matches first
+                    }
+
+                    return Double.compare(
+                            s2.getPopularity() != null ? s2.getPopularity() : 0.0,
+                            s1.getPopularity() != null ? s1.getPopularity() : 0.0);
+                })
+                .limit(6)
+                .collect(java.util.stream.Collectors.toList());
     }
 }
