@@ -53,12 +53,16 @@ public class InteractionService {
      * 
      * @param userId     User ID
      * @param movieId    Movie document ID (MongoDB String ID)
-     * @param timestamp  Video timestamp (e.g., "12:30")
+     * @param startAt    Watch progress timestamp (seconds)
+     * @param duration   Total duration (seconds)
+     * @param completed  Whether finished
+     * @param season     Season number (for TV)
+     * @param episode    Episode number (for TV)
      * @param movieTitle Movie title for snapshot
      * @param posterUrl  Poster URL for snapshot
      */
-    public WatchHistory updateHistory(Integer userId, String movieId, String timestamp, String movieTitle,
-            String posterUrl) {
+    public WatchHistory updateHistory(Integer userId, String movieId, Double startAt, Double duration,
+            Boolean completed, Integer season, Integer episode, String movieTitle, String posterUrl) {
         Optional<WatchHistory> existing = watchHistoryRepository.findByUserIdAndMovieId(userId, movieId);
         WatchHistory history;
 
@@ -74,8 +78,12 @@ public class InteractionService {
             history.setMovieSnapshot(snapshot);
         }
 
-        history.setTimestamp(timestamp);
-        history.setWatchedOn(LocalDateTime.now());
+        history.setStartAt(startAt);
+        history.setDuration(duration);
+        history.setCompleted(completed);
+        history.setSeason(season);
+        history.setEpisode(episode);
+        history.setLastWatchedAt(LocalDateTime.now());
         return watchHistoryRepository.save(history);
     }
 

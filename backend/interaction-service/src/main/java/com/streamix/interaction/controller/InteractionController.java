@@ -41,10 +41,15 @@ public class InteractionController {
     public WatchHistory updateHistory(@RequestBody Map<String, Object> payload) {
         Integer userId = parseUserId(payload.get("userId"));
         String movieId = (String) payload.get("movieId"); // MongoDB String ID
-        String timestamp = (String) payload.get("timestamp");
+        Double startAt = payload.get("startAt") != null ? ((Number) payload.get("startAt")).doubleValue() : 0.0;
+        Double duration = payload.get("duration") != null ? ((Number) payload.get("duration")).doubleValue() : 0.0;
+        Boolean completed = (Boolean) payload.get("completed");
+        Integer season = (Integer) payload.get("season");
+        Integer episode = (Integer) payload.get("episode");
         String movieTitle = (String) payload.get("movieTitle");
         String posterUrl = (String) payload.get("posterUrl");
-        return interactionService.updateHistory(userId, movieId, timestamp, movieTitle, posterUrl);
+        return interactionService.updateHistory(userId, movieId, startAt, duration, completed, season, episode,
+                movieTitle, posterUrl);
     }
 
     @GetMapping("/history/{userId}")

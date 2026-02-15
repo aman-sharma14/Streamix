@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import MovieDetailsPage from './components/MovieDetailsPage';
+import VideoPlayerPage from './components/VideoPlayerPage';
 import SearchResultsPage from './components/SearchResultsPage';
 import CategoryPage from './components/CategoryPage'; // Import new page
 import authService from './services/authService';
@@ -34,6 +35,14 @@ function App() {
           element={
             <ProtectedRoute>
               <MovieDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/watch/:id"
+          element={
+            <ProtectedRoute>
+              <VideoPlayerPage />
             </ProtectedRoute>
           }
         />

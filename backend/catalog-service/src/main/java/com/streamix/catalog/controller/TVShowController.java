@@ -55,4 +55,12 @@ public class TVShowController {
     public List<TVShow> getSimilarTVShows(@PathVariable Integer tmdbId) {
         return service.getSimilarTVShows(tmdbId);
     }
+
+    @GetMapping("/tmdb/{tmdbId}")
+    public org.springframework.http.ResponseEntity<Object> getTVShowDetailsFromTmdb(@PathVariable Integer tmdbId) {
+        Object details = service.getTVShowDetailsFromTmdb(tmdbId);
+        return details != null
+                ? org.springframework.http.ResponseEntity.ok(details)
+                : org.springframework.http.ResponseEntity.notFound().build();
+    }
 }

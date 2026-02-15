@@ -327,4 +327,17 @@ public class TVShowService {
                 .limit(6)
                 .collect(java.util.stream.Collectors.toList());
     }
+
+    /**
+     * Get TV Show details directly from TMDB
+     */
+    public Object getTVShowDetailsFromTmdb(Integer tmdbId) {
+        try {
+            String url = baseUrl + "/tv/" + tmdbId + "?api_key=" + apiKey;
+            return restTemplate.getForObject(url, Object.class);
+        } catch (Exception e) {
+            System.err.println("Error fetching TV details from TMDB: " + e.getMessage());
+            return null;
+        }
+    }
 }

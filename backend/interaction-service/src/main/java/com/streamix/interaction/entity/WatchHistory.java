@@ -1,4 +1,4 @@
-package main.java.com.streamix.interaction.entity;
+package com.streamix.interaction.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,8 +18,12 @@ public class WatchHistory {
 
     private Integer userId;
     private String movieId; // Reference to Movie document ID
-    private String timestamp; // e.g. "12:30"
-    private LocalDateTime watchedOn;
+    private Double startAt; // current timestamp in seconds
+    private Double duration; // total duration in seconds
+    private Boolean completed;
+    private Integer season; // For TV shows
+    private Integer episode; // For TV shows
+    private LocalDateTime lastWatchedAt;
 
     // Embedded movie snapshot for denormalization
     private MovieSnapshot movieSnapshot;

@@ -52,6 +52,7 @@ const Dashboard = () => {
           popularTV,
           topRatedTV,
           watchlistData,
+          historyData,
           genresData
         ] = await Promise.all([
           movieService.getTrendingMovies(),
@@ -61,10 +62,18 @@ const Dashboard = () => {
           movieService.getPopularTVShows(),
           movieService.getTopRatedTVShows(),
           currentUser.id ? interactionService.getWatchlist(currentUser.id) : Promise.resolve([]),
+          currentUser.id ? interactionService.getHistory(currentUser.id) : Promise.resolve([]),
           movieService.getGenres()
         ]);
 
-        setGenres(genresData.genres || []); // Assuming response structure
+        const allGenres = genresData.genres || genresData || [];
+        setGenres(allGenres);
+
+        // Continue Watching: Filter by !completed
+        const continueWatching = historyData
+          .filter(h => !h.completed)
+          .sort((a, b) => new Date(b.lastWatchedAt) - new Date(a.lastWatchedAt));
+        setContinueWatchingList(continueWatching);
 
         // Combine all content and deduplicate by id
         const allContentRaw = [
@@ -87,6 +96,33 @@ const Dashboard = () => {
         if (watchlistData) {
           const ids = watchlistData.map(item => item.movieId);
           setWatchlist(ids);
+          setWatchlistItems(watchlistData);
+        }
+
+        // Recommendations Logic
+        if (allContent.length > 0) {
+          // Get unique genre IDs from history and watchlist
+          const watchedGenreIds = new Set();
+          historyData.forEach(h => {
+            const movie = allContent.find(m => m.id === h.movieId);
+            if (movie && movie.genreIds) movie.genreIds.forEach(gid => watchedGenreIds.add(gid));
+          });
+          watchlistData.forEach(w => {
+            const movie = allContent.find(m => m.id === w.movieId);
+            if (movie && movie.genreIds) movie.genreIds.forEach(gid => watchedGenreIds.add(gid));
+          });
+
+          if (watchedGenreIds.size > 0) {
+            const recommended = allContent
+              .filter(m =>
+                !historyData.some(h => h.movieId === m.id && h.completed) && // Not already finished
+                !watchlistData.some(w => w.movieId === m.id) && // Not already in list
+                m.genreIds?.some(gid => watchedGenreIds.has(gid)) // Matches at least one genre
+              )
+              .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+              .slice(0, 15);
+            setRecommendations(recommended);
+          }
         }
 
       } catch (error) {
@@ -100,14 +136,18 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
+  const [continueWatchingList, setContinueWatchingList] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const [watchlistItems, setWatchlistItems] = useState([]);
+
 
   // Filter content based on Active Tab
   const getFilteredContent = () => {
     if (activeTab === "Series") {
-      return movies.filter(m => m.category === "Series" || m.title.includes("Series"));
+      return movies.filter(m => m.category?.includes("TV") || m.categories?.some(c => c.includes("TV")) || m.type === 'tv');
     }
     if (activeTab === "Movies") {
-      return movies.filter(m => m.category !== "Series");
+      return movies.filter(m => m.type !== 'tv' && !m.category?.includes('TV'));
     }
     if (activeTab === "New & Popular") {
       return movies.slice(0, 5);
@@ -125,16 +165,22 @@ const Dashboard = () => {
     ? movies[Math.floor(Math.random() * movies.length)]
     : null;
 
-  const handlePlay = () => {
-    console.log("Play button clicked");
-    // Future: Navigate to player
-    alert("Playing movie: " + (featuredMovie?.title || "Unknown"));
+  const handlePlay = (movieToPlay) => {
+    const target = movieToPlay || featuredMovie;
+    if (!target) return;
+    const isTV = target.type === 'tv' || target.category?.includes('TV') || target.categories?.some(c => c.includes('TV'));
+    navigate(`/watch/${target.id}${isTV ? '?type=tv&season=1&episode=1' : ''}`);
   };
 
-  const handleMoreInfo = () => {
-    if (featuredMovie) {
-      navigate(`/movie/${featuredMovie.id}`);
-    }
+  const handleContinueWatching = (item) => {
+    let url = `/watch/${item.movieId}?type=${item.season ? 'tv' : 'movie'}`;
+    if (item.season) url += `&season=${item.season}&episode=${item.episode}`;
+    if (item.startAt > 0) url += `&startAt=${Math.floor(item.startAt)}`;
+    navigate(url);
+  };
+
+  const handleMoreInfo = (id, type) => {
+    navigate(`/movie/${id}${type === 'tv' ? '?type=tv' : ''}`);
   };
 
   return (
@@ -145,8 +191,8 @@ const Dashboard = () => {
       {activeTab === "Home" && (
         <HeroSection
           featuredMovie={featuredMovie}
-          onPlay={handlePlay}
-          onMoreInfo={handleMoreInfo}
+          onPlay={() => handlePlay()}
+          onMoreInfo={() => handleMoreInfo(featuredMovie?.id, (featuredMovie?.type || (featuredMovie?.category?.includes('TV') ? 'tv' : 'movie')))}
         />
       )}
 
@@ -199,7 +245,7 @@ const Dashboard = () => {
                 <MovieRow
                   title="Trending Movies"
                   movies={movies.filter(m => m.categories?.includes("Trending Movies")).sort((a, b) => (b.popularity || 0) - (a.popularity || 0))}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, 'movie')}
                   destinationUrl="/category/trending-movies"
                 />
 
@@ -207,7 +253,7 @@ const Dashboard = () => {
                 <MovieRow
                   title="Popular Movies"
                   movies={movies.filter(m => m.categories?.includes("Popular Movies")).sort((a, b) => (b.popularity || 0) - (a.popularity || 0))}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, 'movie')}
                   destinationUrl="/category/popular-movies"
                 />
 
@@ -215,7 +261,7 @@ const Dashboard = () => {
                 <MovieRow
                   title="Top Rated Movies"
                   movies={movies.filter(m => m.categories?.includes("Top Rated Movies")).sort((a, b) => (b.voteAverage || 0) - (a.voteAverage || 0))}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, 'movie')}
                   destinationUrl="/category/top-rated-movies"
                 />
 
@@ -244,7 +290,7 @@ const Dashboard = () => {
                       key={genre.id}
                       title={`${genreData.name} Movies`}
                       movies={genreMovies}
-                      onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                      onMovieClick={(m) => handleMoreInfo(m.id, 'movie')}
                       destinationUrl={`/category/genre-${genre.id}-movie?name=${encodeURIComponent(genreData.name)}`}
                     />
                   );
@@ -260,7 +306,7 @@ const Dashboard = () => {
                 <MovieRow
                   title="Trending Series"
                   movies={movies.filter(m => m.categories?.includes("Trending TV")).sort((a, b) => (b.popularity || 0) - (a.popularity || 0))}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, 'tv')}
                   destinationUrl="/category/trending-tv"
                 />
 
@@ -268,7 +314,7 @@ const Dashboard = () => {
                 <MovieRow
                   title="Popular TV Shows"
                   movies={movies.filter(m => m.categories?.includes("Popular TV")).sort((a, b) => (b.popularity || 0) - (a.popularity || 0))}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, 'tv')}
                   destinationUrl="/category/popular-tv"
                 />
 
@@ -276,7 +322,7 @@ const Dashboard = () => {
                 <MovieRow
                   title="Top Rated TV Shows"
                   movies={movies.filter(m => m.categories?.includes("Top Rated TV")).sort((a, b) => (b.voteAverage || 0) - (a.voteAverage || 0))}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, 'tv')}
                   destinationUrl="/category/top-rated-tv"
                 />
 
@@ -301,7 +347,7 @@ const Dashboard = () => {
                       key={genre.id}
                       title={`${genreData.name} Series`}
                       movies={genreSeries}
-                      onMovieClick={(m) => navigate(`/movie/${m.id}?type=tv`)}
+                      onMovieClick={(m) => handleMoreInfo(m.id, 'tv')}
                       destinationUrl={`/category/genre-${genre.id}-tv?name=${encodeURIComponent(genreData.name)}`}
                     />
                   );
@@ -319,7 +365,7 @@ const Dashboard = () => {
                       <MovieCard
                         key={movie.id}
                         movie={movie}
-                        onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                        onMovieClick={(m) => handleMoreInfo(m.id, (m.type || (m.category?.includes('TV') ? 'tv' : 'movie')))}
                         className="w-full aspect-[2/3]" // Responsive width, fixed aspect ratio
                       />
                     ))}
@@ -334,6 +380,50 @@ const Dashboard = () => {
             {/* Show Home Categories - Fetch from specific endpoints */}
             {activeTab === "Home" && (
               <>
+                {/* Continue Watching */}
+                {continueWatchingList.length > 0 && (
+                  <div className="px-8 md:px-12">
+                    <h2 className="text-2xl font-bold mb-4">Continue Watching</h2>
+                    <div className="flex space-x-4 overflow-x-auto pb-6 scrollbar-hide">
+                      {continueWatchingList.map(item => (
+                        <div
+                          key={item.id}
+                          onClick={() => handleContinueWatching(item)}
+                          className="flex-shrink-0 w-48 md:w-64 cursor-pointer group"
+                        >
+                          <div className="aspect-video relative rounded-md overflow-hidden bg-gray-800 border border-white/10 hover:border-white/30 transition">
+                            <img
+                              src={item.movieSnapshot?.posterUrl}
+                              alt={item.movieSnapshot?.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                            />
+                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
+                            <div className="absolute bottom-1 left-2 bg-red-600 px-2 rounded text-[10px] font-bold">
+                              {item.season ? `S${item.season}E${item.episode}` : 'Resume'}
+                            </div>
+                            <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-700">
+                              <div
+                                className="h-full bg-red-600"
+                                style={{ width: `${(item.startAt / (item.duration || 1)) * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          <p className="mt-2 text-sm font-medium truncate">{item.movieSnapshot?.title}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommended for You */}
+                {recommendations.length > 0 && (
+                  <MovieRow
+                    title="Recommended for You"
+                    movies={recommendations}
+                    onMovieClick={(m) => handleMoreInfo(m.id, (m.type || (m.category?.includes('TV') ? 'tv' : 'movie')))}
+                  />
+                )}
+
                 {/* Trending Now - Mixed Movies + TV */}
                 <MovieRow
                   title="Trending Now"
@@ -341,7 +431,7 @@ const Dashboard = () => {
                     m.categories?.includes("Trending Movies") ||
                     m.categories?.includes("Trending TV")
                   ).sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 15)}
-                  onMovieClick={(m) => navigate(`/movie/${m.id}${m.category?.includes('TV') || m.categories?.some(c => c.includes('TV')) || m.type === 'tv' ? '?type=tv' : ''}`)}
+                  onMovieClick={(m) => handleMoreInfo(m.id, (m.type || (m.category?.includes('TV') ? 'tv' : 'movie')))}
                   destinationUrl="/category/trending-all"
                 />
 

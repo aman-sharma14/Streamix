@@ -59,6 +59,38 @@ const interactionService = {
             console.error("Error fetching watchlist:", error);
             return [];
         }
+    },
+
+    // Update watch history
+    updateHistory: async (userId, movieId, startAt, duration, completed, season, episode, movieTitle, posterUrl) => {
+        try {
+            const response = await api.post('/history/update', {
+                userId,
+                movieId,
+                startAt,
+                duration,
+                completed,
+                season,
+                episode,
+                movieTitle,
+                posterUrl
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error updating watch history:", error);
+            throw error;
+        }
+    },
+
+    // Get user's watch history
+    getHistory: async (userId) => {
+        try {
+            const response = await api.get(`/history/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching watch history:", error);
+            return [];
+        }
     }
 };
 

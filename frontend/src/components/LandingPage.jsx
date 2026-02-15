@@ -23,19 +23,6 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-300 hover:text-white transition">
-                Features
-              </a>
-              <a href="#pricing" className="text-gray-300 hover:text-white transition">
-                Pricing
-              </a>
-              <a href="#about" className="text-gray-300 hover:text-white transition">
-                About
-              </a>
-            </div>
-
             {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
               <button 
@@ -97,10 +84,10 @@ const LandingPage = () => {
               <Play className="w-6 h-6 fill-white" />
               <span>Start Watching Free</span>
             </button>
-            <button className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg transition border border-white/20 flex items-center justify-center space-x-2">
+            {/* <button className="w-full sm:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg transition border border-white/20 flex items-center justify-center space-x-2">
               <span>Learn More</span>
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </button> */}
           </div>
 
           <div className="mt-12 flex items-center justify-center space-x-8 text-sm text-gray-400">
@@ -228,7 +215,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="bg-black border-t border-gray-800 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
@@ -261,7 +248,7 @@ const LandingPage = () => {
                 <li><a href="#" className="hover:text-white transition">Instagram</a></li>
               </ul>
             </div>
-          </div>
+          </div> */}
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <div className="w-6 h-6 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center">

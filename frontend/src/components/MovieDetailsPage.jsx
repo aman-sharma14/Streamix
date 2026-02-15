@@ -17,6 +17,9 @@ const MovieDetailsPage = () => {
     const [genresMap, setGenresMap] = useState({});
 
     const [inWatchlist, setInWatchlist] = useState(false);
+    const [history, setHistory] = useState(null);
+    const [tvDetails, setTvDetails] = useState(null);
+    const [selectedSeason, setSelectedSeason] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
@@ -56,6 +59,8 @@ const MovieDetailsPage = () => {
             setMovie(null);
             setCast([]);
             setSimilarMovies([]);
+            setHistory(null);
+            setTvDetails(null);
 
             try {
                 const currentUser = authService.getCurrentUser();
@@ -70,13 +75,17 @@ const MovieDetailsPage = () => {
                 let movieData;
                 if (isTV) {
                     movieData = await movieService.getTVShowById(id);
+                    // Fetch full TV details from proxy for seasons/episodes
+                    if (movieData && movieData.tmdbId) {
+                        try {
+                            const details = await movieService.getTVShowDetailsFromProxy(movieData.tmdbId);
+                            setTvDetails(details);
+                        } catch (e) { console.warn("Proxy details fetch failed", e); }
+                    }
                 } else {
                     movieData = await movieService.getMovieById(id);
                 }
 
-                // Unify fields if necessary (Handle both camelCase and snake_case)
-                // Backend entities usually return camelCase. DTOs might return snake_case.
-                // We'll trust the data but have fallbacks in render.
                 setMovie(movieData);
 
                 // B. Fetch Cast & Similar
@@ -97,7 +106,6 @@ const MovieDetailsPage = () => {
                             ? await movieService.getSimilarTVShows(tmdbId)
                             : await movieService.getSimilarMovies(tmdbId);
 
-                        // Fallback logic if specialized endpoint returns nothing
                         if (!similarData || similarData.length === 0) {
                             const allData = isTV ? await movieService.getAllTVShows() : await movieService.getAllMovies();
                             similarData = allData
@@ -108,13 +116,27 @@ const MovieDetailsPage = () => {
                     } catch (e) { console.warn("Similar fetch failed", e); }
                 }
 
-                // C. Check Watchlist
+                // C. Fetch Watchlist & History
                 if (currentUser.id && movieData) {
                     try {
-                        const watchlist = await interactionService.getWatchlist(currentUser.id);
+                        const [watchlist, userHistory] = await Promise.all([
+                            interactionService.getWatchlist(currentUser.id),
+                            interactionService.getHistory(currentUser.id)
+                        ]);
+
                         const exists = watchlist.some(item => item.movieId === movieData.id);
                         setInWatchlist(exists);
-                    } catch (e) { console.warn("Watchlist check failed", e); }
+
+                        // Find most relevant history entry
+                        const itemHistory = userHistory
+                            .filter(h => h.movieId === movieData.id)
+                            .sort((a, b) => new Date(b.lastWatchedAt) - new Date(a.lastWatchedAt))[0];
+                        setHistory(itemHistory);
+
+                        if (itemHistory && itemHistory.season) {
+                            setSelectedSeason(itemHistory.season);
+                        }
+                    } catch (e) { console.warn("Interaction data fetch failed", e); }
                 }
 
             } catch (err) {
@@ -150,8 +172,21 @@ const MovieDetailsPage = () => {
         }
     };
 
-    const handlePlay = () => {
-        alert("Playing: " + (movie?.title || movie?.name));
+    const handlePlay = (resume = true, s = null, e = null) => {
+        if (!movie) return;
+        let url = `/watch/${movie.id}?type=${movie.type || 'movie'}`;
+
+        if (movie.type === 'tv') {
+            const seasonNum = s || selectedSeason || 1;
+            const episodeNum = e || 1;
+            url += `&season=${seasonNum}&episode=${episodeNum}`;
+        }
+
+        if (resume && history && history.startAt > 0 && !history.completed) {
+            url += `&startAt=${Math.floor(history.startAt)}`;
+        }
+
+        navigate(url);
     };
 
     if (loading) {
@@ -178,27 +213,19 @@ const MovieDetailsPage = () => {
         );
     }
 
-    // Video Logic
-    const isDirectVideo = movie.videoUrl && movie.videoUrl.includes("watch?v=");
-    let embedUrl = "";
-    if (isDirectVideo) {
-        const videoId = movie.videoUrl.split("v=")[1]?.split("&")[0];
-        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&modestbranding=1`;
-    }
-
     const title = movie.title || movie.name;
     const releaseYear = (movie.releaseDate || movie.firstAirDate || movie.releaseYear || "2024").toString().substring(0, 4);
-    const voteAverage = movie.voteAverage || movie.vote_average || 0;
     const backdrop = movie.backdropUrl || movie.backdrop_path || movie.posterUrl;
 
     // Genre Mapping
     const genreNames = movie.genreIds?.map(id => genresMap[id]).filter(Boolean).join(', ');
     const displayGenre = genreNames || movie.category || "General";
 
-    return (
-        <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden animate-in fade-in duration-300">
+    const hasProgress = history && history.startAt > 0 && !history.completed;
 
-            {/* Notification Toast */}
+    return (
+        <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden animate-in fade-in duration-300 font-sans">
+
             {notification && (
                 <div className="fixed bottom-5 right-5 z-50 bg-green-600 text-white px-6 py-3 rounded shadow-lg animate-in slide-in-from-right duration-300 flex items-center space-x-2">
                     <Check className="w-5 h-5" />
@@ -206,7 +233,6 @@ const MovieDetailsPage = () => {
                 </div>
             )}
 
-            {/* Back Button */}
             <button
                 onClick={() => navigate('/dashboard')}
                 className="fixed top-6 left-6 z-50 w-12 h-12 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#333] transition ring-1 ring-white/20 group"
@@ -215,154 +241,170 @@ const MovieDetailsPage = () => {
                 <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
             </button>
 
-            {/* Hero / Video Section */}
-            <div className="relative w-full h-[60vh] md:h-[70vh] bg-black">
-                {isDirectVideo ? (
-                    <iframe
-                        src={embedUrl}
-                        title={title}
-                        className="w-full h-full object-cover"
-                        allow="autoplay; encrypted-media"
-                        allowFullScreen
-                    ></iframe>
-                ) : (
-                    <div className="relative w-full h-full">
-                        <img
-                            src={backdrop}
-                            alt={title}
-                            className="w-full h-full object-cover opacity-60"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <a
-                                href={movie.videoUrl || "#"}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-white text-black px-8 py-4 rounded font-bold flex items-center space-x-3 hover:scale-105 transition shadow-lg"
-                            >
-                                <Play className="w-6 h-6 fill-black" />
-                                <span className="text-black">Play Trailer</span>
-                            </a>
-                        </div>
-                        <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#141414] to-transparent"></div>
+            <div className="relative w-full h-[70vh] bg-black">
+                <img
+                    src={backdrop}
+                    alt={title}
+                    className="w-full h-full object-cover opacity-50"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-black/30"></div>
+
+                <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 space-y-6 max-w-4xl">
+                    <h1 className="text-5xl md:text-7xl font-extrabold text-white drop-shadow-2xl">{title}</h1>
+
+                    <div className="flex items-center space-x-4 text-lg font-medium text-gray-200">
+                        <span className="text-green-500 font-bold">{getMatchPercentage(movie.voteAverage)}</span>
+                        <span>{releaseYear}</span>
+                        <span className="border border-gray-500 px-2 py-0.5 rounded text-xs">HD</span>
+                        {movie.type === 'tv' && (
+                            <span className="border border-gray-500 px-2 py-0.5 rounded text-xs uppercase tracking-wider">TV Series</span>
+                        )}
                     </div>
-                )}
-            </div>
 
-            {/* Content Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 pb-20">
-                <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12">
+                    <p className="text-xl text-gray-300 leading-relaxed max-w-2xl drop-shadow-md">
+                        {movie.overview || "Experience the unknown in this thrilling adventure."}
+                    </p>
 
-                    {/* Left: Info */}
-                    <div className="space-y-8">
-                        <div>
-                            <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{title}</h1>
-
-                            <div className="flex items-center space-x-4 text-sm md:text-base font-medium text-gray-300">
-                                <span>{releaseYear}</span>
-                                <span className="border border-gray-600 px-1.5 rounded text-xs">HD</span>
-                                {movie.type === 'tv' && (
-                                    <span className="border border-gray-600 px-1.5 rounded text-xs">TV Series</span>
+                    <div className="flex flex-wrap gap-4 pt-4">
+                        {movie.type !== 'tv' ? (
+                            <>
+                                <button
+                                    onClick={() => handlePlay(true)}
+                                    className="flex items-center space-x-3 bg-white text-black px-10 py-4 rounded font-extrabold hover:bg-gray-200 transition text-xl shadow-xl hover:scale-105"
+                                >
+                                    <Play className="w-7 h-7 fill-black" />
+                                    <span>{hasProgress ? 'Resume' : 'Play'}</span>
+                                </button>
+                                {hasProgress && (
+                                    <button
+                                        onClick={() => handlePlay(false)}
+                                        className="flex items-center space-x-3 bg-[#333]/80 backdrop-blur-md text-white px-10 py-4 rounded font-extrabold hover:bg-[#444] transition text-xl shadow-xl hover:scale-105"
+                                    >
+                                        <span>Restart</span>
+                                    </button>
                                 )}
-                            </div>
-                        </div>
-
-                        <p className="text-lg text-gray-300 leading-relaxed max-w-3xl">
-                            {movie.overview || "Experience the unknown in this thrilling adventure."}
-                        </p>
-
-                        <div className="flex items-center space-x-4">
+                            </>
+                        ) : (
                             <button
-                                onClick={handlePlay}
-                                className="flex items-center space-x-2 bg-white text-black px-8 py-3 rounded font-bold hover:bg-gray-200 transition text-lg"
+                                onClick={() => handlePlay(true)}
+                                className="flex items-center space-x-3 bg-white text-black px-10 py-4 rounded font-extrabold hover:bg-gray-200 transition text-xl shadow-xl hover:scale-105"
                             >
-                                <Play className="w-6 h-6 fill-black text-black" />
-                                <span className="text-black">Play</span>
+                                <Play className="w-7 h-7 fill-black" />
+                                <span>{hasProgress ? `Resume S${history.season}E${history.episode}` : 'Watch Series'}</span>
                             </button>
-
-                            <button
-                                onClick={handleWatchlistToggle}
-                                className={`flex items-center space-x-2 px-8 py-3 rounded font-bold transition border text-lg ${inWatchlist
-                                    ? 'bg-transparent border-green-500 text-green-500 hover:bg-green-500/10'
-                                    : 'bg-[#2a2a2a] border-transparent text-white hover:bg-[#3f3f3f] hover:border-white/30'
-                                    }`}
-                            >
-                                {inWatchlist ? <Check className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
-                                <span>{inWatchlist ? 'Added to List' : 'My List'}</span>
-                            </button>
-                        </div>
-
-                        {/* Cast Section */}
-                        {cast && cast.length > 0 && (
-                            <div className="pt-6">
-                                <h3 className="text-xl font-bold mb-4 text-white">Cast</h3>
-                                <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-                                    {cast.map((actor, idx) => (
-                                        <div key={actor.id || idx} className="flex-shrink-0 w-24 text-center">
-                                            <div className="w-24 h-24 rounded-full overflow-hidden mb-2 bg-gray-800 border border-gray-700">
-                                                {actor.profile_path ? (
-                                                    <img
-                                                        src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
-                                                        alt={actor.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs text-wrap px-1">No Image</div>
-                                                )}
-                                            </div>
-                                            <p className="text-xs text-gray-300 font-medium truncate w-full">{actor.name}</p>
-                                            <p className="text-[10px] text-gray-500 truncate w-full">{actor.character}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Right: Sidebar */}
-                    <div className="bg-[#2f2f2f]/20 p-6 rounded-xl border border-white/5 h-fit space-y-6 backdrop-blur-sm">
-                        <div>
-                            <span className="block text-gray-500 mb-1 text-sm">Genres</span>
-                            <span className="text-white font-medium">{displayGenre}</span>
-                        </div>
-                        <div>
-                            <span className="block text-gray-500 mb-1 text-sm">Maturity Rating</span>
-                            <span className="border border-gray-500 px-1 text-xs text-white inline-block">TV-MA</span>
-                        </div>
-                        <div>
-                            <span className="block text-gray-500 mb-1 text-sm">Original Language</span>
-                            <span className="text-white uppercase font-medium">{movie.originalLanguage || "EN"}</span>
-                        </div>
-
-                        {/* Series Specifics */}
-                        {(movie.numberOfSeasons || movie.number_of_seasons) && (
-                            <div className="pt-2 border-t border-gray-700">
-                                <span className="block text-gray-500 mb-1 text-sm">Seasons</span>
-                                <span className="text-white font-medium block">{movie.numberOfSeasons || movie.number_of_seasons} Seasons</span>
-                                <span className="text-gray-400 text-xs block">{movie.numberOfEpisodes || movie.number_of_episodes} Episodes</span>
-                            </div>
                         )}
 
-                        <div className="pt-2 border-t border-gray-700">
-                            <span className="block text-gray-500 mb-1 text-sm">Popularity</span>
-                            <span className="text-white font-medium">{Math.round(movie.popularity || 0)}</span>
-                        </div>
+                        <button
+                            onClick={handleWatchlistToggle}
+                            className={`flex items-center space-x-3 px-10 py-4 rounded font-extrabold transition border-2 text-xl shadow-xl hover:scale-105 ${inWatchlist
+                                ? 'bg-transparent border-green-500 text-green-500 hover:bg-green-500/10'
+                                : 'bg-[#2a2a2a]/60 backdrop-blur-md border-transparent text-white hover:bg-[#3f3f3f] hover:border-white/30'
+                                }`}
+                        >
+                            {inWatchlist ? <Check className="w-7 h-7" /> : <Plus className="w-7 h-7" />}
+                            <span>{inWatchlist ? 'In My List' : 'My List'}</span>
+                        </button>
                     </div>
                 </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 space-y-16">
+
+                {/* TV Season/Episode Selector */}
+                {movie.type === 'tv' && tvDetails && (
+                    <div className="space-y-8 animate-in slide-in-from-bottom duration-500">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                            <h2 className="text-3xl font-bold">Episodes</h2>
+                            <select
+                                value={selectedSeason}
+                                onChange={(e) => setSelectedSeason(parseInt(e.target.value))}
+                                className="bg-[#2a2a2a] text-white px-6 py-2 rounded-md font-bold text-lg border border-white/20 focus:outline-none focus:ring-2 ring-red-600 cursor-pointer"
+                            >
+                                {tvDetails.seasons?.filter(s => s.season_number > 0).map(s => (
+                                    <option key={s.id} value={s.season_number}>
+                                        Season {s.season_number} ({s.episode_count} Episodes)
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {Array.from({ length: tvDetails.seasons?.find(s => s.season_number === selectedSeason)?.episode_count || 0 }).map((_, i) => {
+                                const epNum = i + 1;
+                                const isCurrentHistory = history && history.season === selectedSeason && history.episode === epNum;
+
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => handlePlay(false, selectedSeason, epNum)}
+                                        className="group relative bg-[#1f1f1f] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition cursor-pointer"
+                                    >
+                                        <div className="aspect-video bg-gray-900 relative">
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                                                <Play className="w-12 h-12 text-white fill-white" />
+                                            </div>
+                                            <div className="absolute top-2 left-2 bg-black/60 px-2 py-1 rounded text-xs font-bold">
+                                                EP {epNum}
+                                            </div>
+                                            {isCurrentHistory && (
+                                                <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-700">
+                                                    <div
+                                                        className="h-full bg-red-600"
+                                                        style={{ width: `${(history.startAt / history.duration) * 100}%` }}
+                                                    ></div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="p-4">
+                                            <h4 className="font-bold text-lg mb-1 group-hover:text-red-500 transition">Episode {epNum}</h4>
+                                            <p className="text-sm text-gray-400 line-clamp-2">Season {selectedSeason}, Episode {epNum} of {title}.</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {/* Cast */}
+                {cast && cast.length > 0 && (
+                    <div className="space-y-6">
+                        <h3 className="text-2xl font-bold text-white">Top Cast</h3>
+                        <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
+                            {cast.map((actor, idx) => (
+                                <div key={actor.id || idx} className="flex-shrink-0 w-32 text-center group">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden mb-3 border-2 border-transparent group-hover:border-red-600 transition duration-300 shadow-xl">
+                                        {actor.profile_path ? (
+                                            <img
+                                                src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+                                                alt={actor.name}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-[#2a2a2a] text-gray-500">No Image</div>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-white font-bold truncate">{actor.name}</p>
+                                    <p className="text-xs text-gray-500 truncate">{actor.character}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Recommendations */}
-                <div className="mt-20">
-                    <h3 className="text-2xl font-bold mb-8 text-white">More Like This</h3>
+                <div className="space-y-8 pt-8">
+                    <h3 className="text-3xl font-bold text-white">More Like This</h3>
                     {similarMovies && similarMovies.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                             {similarMovies.map(m => (
                                 <div
                                     key={m.id}
-                                    className="transform hover:scale-105 transition duration-300 cursor-pointer"
+                                    className="group transform hover:scale-105 transition duration-300 cursor-pointer"
                                     onClick={() => {
-                                        // Navigate with type param if target is TV or we are currently on TV page and target has no type
                                         const typeSuffix = (movie.type === 'tv' || m.type === 'tv') ? '?type=tv' : '';
                                         navigate(`/movie/${m.id}${typeSuffix}`);
-                                        window.scrollTo(0, 0); // Ensure scroll to top
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
                                     }}
                                 >
                                     <MovieCard movie={m} />
@@ -370,7 +412,7 @@ const MovieDetailsPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-gray-400 italic">No recommendations available at this time.</p>
+                        <p className="text-gray-400 italic">Finding more great content for you...</p>
                     )}
                 </div>
             </div>
