@@ -5,6 +5,7 @@ import movieService from '../services/movieService';
 import interactionService from '../services/interactionService';
 import authService from '../services/authService';
 import MovieCard from './dashboard/MovieCard';
+import { loadGenres, getGenreNames } from '../utils/genreUtils';
 
 const MovieDetailsPage = () => {
     const { id } = useParams();
@@ -15,6 +16,7 @@ const MovieDetailsPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
+    const [genres, setGenres] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,14 +30,14 @@ const MovieDetailsPage = () => {
                 const movieData = await movieService.getMovieById(id);
                 setMovie(movieData);
 
-                // 2. Fetch Similar Movies (Mock logic or API if available)
-                // If API doesn't support "similar", we fetch all and filter client-side for now
-                if (movieData && movieData.category) {
+                // Load genres
+                const genresData = await loadGenres();
+                setGenres(genresData);
+
+                // 2. Fetch Similar Movies using new endpoint
+                if (movieData && movieData.tmdbId) {
                     try {
-                        const allMovies = await movieService.getAllMovies();
-                        const similar = allMovies
-                            .filter(m => m.category === movieData.category && m.id !== movieData.id)
-                            .slice(0, 6);
+                        const similar = await movieService.getSimilarMovies(movieData.tmdbId);
                         setSimilarMovies(similar);
                     } catch (err) {
                         console.warn("Failed to fetch similar movies", err);
@@ -190,8 +192,12 @@ const MovieDetailsPage = () => {
                             <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg mb-4">{movie.title}</h1>
 
                             <div className="flex items-center space-x-4 text-sm md:text-base font-medium text-gray-300">
-                                <span className="text-green-500 font-bold">98% Match</span>
-                                <span>{movie.release_date?.split('-')[0] || "2024"}</span>
+                                {movie.genreIds && genres && getGenreNames(movie.genreIds, genres) ? (
+                                    <span className="text-green-500 font-bold">{getGenreNames(movie.genreIds, genres)}</span>
+                                ) : (
+                                    <span className="text-green-500 font-bold">98% Match</span>
+                                )}
+                                <span>{movie.releaseYear || movie.releaseDate?.split('-')[0] || "2024"}</span>
                                 <span className="border border-gray-600 px-1.5 rounded text-xs">HD</span>
                             </div>
                         </div>

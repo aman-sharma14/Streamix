@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Info } from 'lucide-react';
+import { loadGenres, getGenreNames } from '../../utils/genreUtils';
 
 const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
+  const [genres, setGenres] = useState({});
+
+  useEffect(() => {
+    loadGenres().then(setGenres);
+  }, []);
   // Default fallback if no movie is passed
   const defaultMovie = {
     title: "Interstellar",
@@ -48,11 +54,17 @@ const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
 
           {/* Metadata */}
           <div className="flex items-center space-x-4 text-sm md:text-base font-medium">
-            <span className="text-green-400">
-              {movie.vote_average ? `${Math.round(movie.vote_average * 10)}% Match` : "98% Match"}
-            </span>
+            {movie.genreIds && genres && getGenreNames(movie.genreIds, genres) ? (
+              <span className="text-green-400">
+                {getGenreNames(movie.genreIds, genres)}
+              </span>
+            ) : (
+              <span className="text-green-400">
+                {movie.vote_average ? `${Math.round(movie.vote_average * 10)}% Match` : "98% Match"}
+              </span>
+            )}
             <span className="text-gray-300">
-              {movie.release_date ? movie.release_date.substring(0, 4) : "2024"}
+              {movie.releaseYear || movie.release_date?.substring(0, 4) || "2024"}
             </span>
             <span className="border border-gray-500 px-1 text-xs rounded text-gray-400">HD</span>
             <span className="text-gray-300 uppercase">{movie.original_language || "EN"}</span>

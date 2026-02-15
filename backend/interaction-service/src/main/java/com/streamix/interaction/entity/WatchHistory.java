@@ -1,4 +1,4 @@
-package com.streamix.interaction.entity;
+package main.java.com.streamix.interaction.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -18,6 +18,14 @@ spring:
           filters:
             - AuthenticationFilter # <--- ADD THIS
 
+        # Route for TV Shows (Index 1.5)
+        - id: catalog-service-tv
+          uri: lb://CATALOG-SERVICE
+          predicates:
+            - Path=/tv/**
+          filters:
+            - AuthenticationFilter
+
         # Route for Interaction Service (Index 2)
         - id: interaction-service
           uri: lb://INTERACTION-SERVICE

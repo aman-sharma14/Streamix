@@ -7,8 +7,9 @@ import Navbar from './dashboard/Navbar';
 import HeroSection from './dashboard/HeroSection';
 import MovieRow from './dashboard/MovieRow';
 import MovieCard from './dashboard/MovieCard';
-import MoviesHeader from './dashboard/MoviesHeader';
 import SectionHeader from './dashboard/SectionHeader';
+import GenreFilter from './dashboard/GenreFilter';
+import GenreCarousel from './dashboard/GenreCarousel';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,12 +17,10 @@ const Dashboard = () => {
   const [movies, setMovies] = useState([]); // Store all movies
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Home"); // Default tab
-  const [selectedGenre, setSelectedGenre] = useState("All"); // For Movies Tab
   const [watchlist, setWatchlist] = useState([]); // Store watchlist movie IDs
+  const [selectedGenreId, setSelectedGenreId] = useState(null);
+  const [selectedGenreName, setSelectedGenreName] = useState(null);
 
-  // Categories Config
-  const homeCategories = ["Action", "Science Fiction", "Series", "Comedy", "Thriller", "Horror", "Drama", "Romance"];
-  const movieCategories = ["Action", "Science Fiction", "Comedy", "Thriller", "Horror", "Drama", "Romance", "Adventure", "Fantasy", "Animation", "Crime", "Mystery", "War", "Western"];
 
   useEffect(() => {
     // 1. Auth Check
@@ -32,23 +31,41 @@ const Dashboard = () => {
     }
     setUser(currentUser);
 
-    // 2. Fetch Movies
+    // 2. Fetch Movies and TV Shows from multiple endpoints
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [moviesData, watchlistData] = await Promise.all([
-          movieService.getAllMovies(),
+        const [
+          trendingMovies,
+          popularMovies,
+          topRatedMovies,
+          trendingTV,
+          popularTV,
+          topRatedTV,
+          watchlistData
+        ] = await Promise.all([
+          movieService.getTrendingMovies(),
+          movieService.getPopularMovies(),
+          movieService.getTopRatedMovies(),
+          movieService.getTrendingTVShows(),
+          movieService.getPopularTVShows(),
+          movieService.getTopRatedTVShows(),
           currentUser.id ? interactionService.getWatchlist(currentUser.id) : Promise.resolve([])
         ]);
 
-        if (moviesData && moviesData.length > 0) {
-          setMovies(moviesData);
-        } else {
-          setMovies(mockMovies);
-        }
+        // Combine all content for display
+        const allContent = [
+          ...trendingMovies,
+          ...popularMovies,
+          ...topRatedMovies,
+          ...trendingTV,
+          ...popularTV,
+          ...topRatedTV
+        ];
+
+        setMovies(allContent.length > 0 ? allContent : mockMovies);
 
         if (watchlistData) {
-          // watchlistData is array of {movieId: 123, ... }
           const ids = watchlistData.map(item => item.movieId);
           setWatchlist(ids);
         }
@@ -64,10 +81,6 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
-  // Helper to filter movies by category
-  const getMoviesByCategory = (cat) => {
-    return movies.filter(m => m.category === cat || (cat === "Trending" && m.id % 2 === 0));
-  };
 
   // Filter content based on Active Tab
   const getFilteredContent = () => {
@@ -160,6 +173,51 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
+            {/* Movies Tab with Genre Filter */}
+            {activeTab === "Movies" && (
+              <div className="px-8 md:px-12 pb-12">
+                <GenreFilter
+                  selectedGenre={selectedGenreName}
+                  onGenreSelect={(genreId, genreName) => {
+                    setSelectedGenreId(genreId);
+                    setSelectedGenreName(genreName);
+                  }}
+                />
+
+                {selectedGenreId ? (
+                  <div>
+                    <h2 className="text-2xl font-bold mb-6 text-white">{selectedGenreName} Movies & TV Shows</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                      {movies
+                        .filter(m => m.genreIds?.includes(selectedGenreId))
+                        .map((movie) => (
+                          <MovieCard
+                            key={movie.id}
+                            movie={movie}
+                            onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                            className="w-full aspect-[2/3]"
+                          />
+                        ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className="text-2xl font-bold mb-6 text-white">All Movies & TV Shows</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                      {movies.slice(0, 50).map((movie) => (
+                        <MovieCard
+                          key={movie.id}
+                          movie={movie}
+                          onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                          className="w-full aspect-[2/3]"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* My List Grid View - 5 Columns */}
             {activeTab === "My List" && (
               <div className="px-8 md:px-12 pb-12">
@@ -181,50 +239,64 @@ const Dashboard = () => {
               </div>
             )}
 
-            {/* Always show a "Trending" or "All" row first ONLY on Home or when viewing All movies */}
-            {activeTab !== "My List" && (activeTab !== "Movies" || selectedGenre === "All") && (
-              <MovieRow
-                title={activeTab === "Home" ? "Trending Now" : `Top ${activeTab}`}
-                movies={getFilteredContent().slice(0, 10)}
-                onMovieClick={(m) => navigate(`/movie/${m.id}`)}
-              />
-            )}
 
-            {/* Show Home Categories */}
-            {activeTab === "Home" && homeCategories.map((cat) => {
-              const catMovies = getMoviesByCategory(cat);
-              if (catMovies.length === 0) return null;
-
-              return (
+            {/* Show Home Categories - Fetch from specific endpoints */}
+            {activeTab === "Home" && (
+              <>
+                {/* Trending Now - Mixed Movies + TV */}
                 <MovieRow
-                  key={cat}
-                  title={`${cat} Movies`}
-                  movies={catMovies}
+                  title="Trending Now"
+                  movies={movies.filter(m =>
+                    m.categories?.includes("Trending Movies") ||
+                    m.categories?.includes("Trending TV")
+                  ).slice(0, 15)}
                   onMovieClick={(m) => navigate(`/movie/${m.id}`)}
                 />
-              );
-            })}
 
-            {/* Show Movies Categories (Filtered by Genre Selector) */}
-            {activeTab === "Movies" && movieCategories
-              .filter(cat => selectedGenre === "All" || cat === selectedGenre)
-              .map((cat) => {
-                const catMovies = getMoviesByCategory(cat);
-                if (catMovies.length === 0) return null;
+                {/* Popular Movies */}
+                <MovieRow
+                  title="Popular Movies"
+                  movies={movies.filter(m => m.categories?.includes("Popular Movies")).slice(0, 15)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                />
 
-                return (
-                  <MovieRow
-                    key={cat}
-                    title={`${cat} Movies`}
-                    movies={catMovies}
-                    onMovieClick={(m) => navigate(`/movie/${m.id}`)}
-                  />
-                );
-              })}
+                {/* Top Rated Movies */}
+                <MovieRow
+                  title="Top Rated Movies"
+                  movies={movies.filter(m => m.categories?.includes("Top Rated Movies")).slice(0, 15)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                />
+
+                {/* Popular TV Shows */}
+                <MovieRow
+                  title="Popular TV Shows"
+                  movies={movies.filter(m => m.categories?.includes("Popular TV")).slice(0, 15)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                />
+
+                {/* Top Rated TV Shows */}
+                <MovieRow
+                  title="Top Rated TV Shows"
+                  movies={movies.filter(m => m.categories?.includes("Top Rated TV")).slice(0, 15)}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                />
+
+
+
+                {/* Genre Section with Horizontal Tabs */}
+                <GenreCarousel
+                  movies={movies}
+                  onMovieClick={(m) => navigate(`/movie/${m.id}`)}
+                />
+
+
+
+              </>
+            )}
           </>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

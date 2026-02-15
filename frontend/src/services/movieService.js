@@ -44,6 +44,78 @@ const movieService = {
         return response.data;
     },
 
+    // NEW: Get popular movies
+    getPopularMovies: async () => {
+        const response = await api.get('/popular');
+        return response.data;
+    },
+
+    // NEW: Get top rated movies
+    getTopRatedMovies: async () => {
+        const response = await api.get('/top-rated');
+        return response.data;
+    },
+
+    // NEW: Get similar movies
+    getSimilarMovies: async (tmdbId) => {
+        const response = await api.get(`/${tmdbId}/similar`);
+        return response.data;
+    },
+
+    // NEW: Get all genres
+    getGenres: async () => {
+        const response = await api.get('/genres');
+        return response.data;
+    },
+
+    // NEW: Get movie cast
+    getMovieCast: async (tmdbId) => {
+        const response = await api.get(`/${tmdbId}/cast`);
+        return response.data;
+    },
+
+    // NEW: Get trending movies
+    getTrendingMovies: async () => {
+        const response = await api.get('/trending');
+        return response.data;
+    },
+
+    // NEW: Get all TV shows (use axios directly to avoid /movie prefix)
+    getAllTVShows: async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/tv/all', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
+    // NEW: Get popular TV shows
+    getPopularTVShows: async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/tv/popular', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
+    // NEW: Get top rated TV shows
+    getTopRatedTVShows: async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/tv/top-rated', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
+    // NEW: Get trending TV shows
+    getTrendingTVShows: async () => {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/tv/trending', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    },
+
     // Sync (Admin only, but good to have)
     syncMovies: async () => {
         await api.get('/sync');

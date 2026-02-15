@@ -25,4 +25,10 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
 
     // Find top movies by popularity
     List<Movie> findTop20ByOrderByPopularityDesc();
+
+    // NEW: Find movies by categories (for cache refresh)
+    List<Movie> findByCategoriesContaining(String category);
+
+    // NEW: Delete movies by categories (for cache refresh)
+    void deleteByCategoriesContaining(String category);
 }

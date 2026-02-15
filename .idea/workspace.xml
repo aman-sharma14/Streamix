@@ -5,30 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/dto/TmdbResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/dto/TmdbResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/entity/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/entity/Movie.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/repository/MovieRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/repository/MovieRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/scheduler/MovieScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/scheduler/MovieScheduler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/WatchHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/WatchHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/Watchlist.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/entity/Watchlist.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchHistoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchHistoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchlistRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchlistRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/HeroSection.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/HeroSection.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieDetailsModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieDetailsModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/interactionService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/interactionService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +110,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.InteractionServiceApplication">
+  <component name="RunManager" selected="Spring Boot.ApiGatewayApplication">
     <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="api-gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.api_gateway.ApiGatewayApplication" />
@@ -176,9 +166,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.InteractionServiceApplication" />
-        <item itemvalue="Spring Boot.CatalogServiceApplication" />
         <item itemvalue="Spring Boot.ApiGatewayApplication" />
+        <item itemvalue="Spring Boot.CatalogServiceApplication" />
+        <item itemvalue="Spring Boot.InteractionServiceApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -211,6 +201,8 @@
       <workItem from="1770911346368" duration="627000" />
       <workItem from="1770912006124" duration="752000" />
       <workItem from="1770950983934" duration="7297000" />
+      <workItem from="1771047666946" duration="1551000" />
+      <workItem from="1771133021419" duration="6805000" />
     </task>
     <servers />
   </component>

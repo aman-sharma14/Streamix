@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Play, Plus, ArrowLeft, Check } from 'lucide-react';
 import interactionService from '../../services/interactionService';
 import MovieCard from './MovieCard'; // Re-use MovieCard for recommendations
+import { loadGenres, getGenreNames } from '../../utils/genreUtils';
 
 const MovieDetailsModal = ({ movie, similarMovies, user, onClose, onMovieClick }) => {
     const [inWatchlist, setInWatchlist] = useState(false);
+    const [genres, setGenres] = useState({});
+
+    useEffect(() => {
+        loadGenres().then(setGenres);
+    }, []);
 
     if (!movie) return null;
 
@@ -99,8 +105,10 @@ const MovieDetailsModal = ({ movie, similarMovies, user, onClose, onMovieClick }
                         </div>
 
                         <div className="flex items-center space-x-3 text-sm font-semibold text-gray-400">
-                            <span className="text-green-500">98% Match</span>
-                            <span>{movie.release_date ? movie.release_date.split('-')[0] : "2024"}</span>
+                            {movie.genreIds && genres && getGenreNames(movie.genreIds, genres) && (
+                                <span className="text-green-500">{getGenreNames(movie.genreIds, genres)}</span>
+                            )}
+                            <span>{movie.releaseYear || movie.releaseDate?.split('-')[0] || "2024"}</span>
                             <span className="border border-gray-600 px-1 rounded text-gray-300">HD</span>
                         </div>
 

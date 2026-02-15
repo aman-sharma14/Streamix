@@ -10,6 +10,7 @@ server:
 tmdb:
   api:
     key: f33c417070653dbf2c8fd8fd63e6e998
+    base-url: https://api.themoviedb.org/3
 
 eureka:
   client:
