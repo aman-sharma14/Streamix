@@ -56,7 +56,7 @@ const MovieCard = ({ movie, onMovieClick, className }) => {
                     {movie.title}
                 </h3>
                 <p className="text-gray-300 text-sm mt-1">
-                    {movie.category || "Movie"}
+                    {movie.release_date?.split('-')[0] || movie.first_air_date?.split('-')[0] || movie.releaseYear || "N/A"}
                 </p>
             </div>
 

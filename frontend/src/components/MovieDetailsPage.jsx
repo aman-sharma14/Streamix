@@ -17,6 +17,7 @@ const MovieDetailsPage = () => {
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
     const [genres, setGenres] = useState({});
+    const [cast, setCast] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,8 +40,12 @@ const MovieDetailsPage = () => {
                     try {
                         const similar = await movieService.getSimilarMovies(movieData.tmdbId);
                         setSimilarMovies(similar);
+
+                        // Fetch Cast
+                        const castData = await movieService.getMovieCast(movieData.tmdbId);
+                        setCast(castData);
                     } catch (err) {
-                        console.warn("Failed to fetch similar movies", err);
+                        console.warn("Failed to fetch similar movies or cast", err);
                     }
                 }
 
@@ -232,7 +237,11 @@ const MovieDetailsPage = () => {
                     <div className="bg-[#2f2f2f]/20 p-6 rounded-xl border border-white/5 h-fit space-y-6 backdrop-blur-sm">
                         <div>
                             <span className="block text-gray-500 mb-1 text-sm">Genres</span>
-                            <span className="text-white font-medium">{movie.category}</span>
+                            <span className="text-white font-medium">
+                                {movie.genreIds && genres && getGenreNames(movie.genreIds, genres)
+                                    ? getGenreNames(movie.genreIds, genres)
+                                    : movie.category || "N/A"}
+                            </span>
                         </div>
                         <div>
                             <span className="block text-gray-500 mb-1 text-sm">Maturity Rating</span>
@@ -245,16 +254,45 @@ const MovieDetailsPage = () => {
                     </div>
                 </div>
 
+                {/* Cast Section */}
+                <div className="mt-12">
+                    <h3 className="text-2xl font-bold mb-6 text-white">Top Cast</h3>
+                    {cast && cast.length > 0 ? (
+                        <div className="flex space-x-4 overflow-x-auto scrollbar-hide pb-4">
+                            {cast.slice(0, 15).map((actor) => (
+                                <div key={actor.id} className="flex-none w-32 md:w-40 text-center group cursor-pointer">
+                                    <div className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-3 rounded-full overflow-hidden border-2 border-transparent group-hover:border-red-600 transition-all">
+                                        <img
+                                            src={actor.profile_path ? `https://image.tmdb.org/t/p/w185${actor.profile_path}` : "https://via.placeholder.com/185x185?text=No+Image"}
+                                            alt={actor.name}
+                                            className="w-full h-full object-cover transform group-hover:scale-110 transition duration-500"
+                                        />
+                                    </div>
+                                    <h4 className="text-white font-medium text-sm md:text-base truncate">{actor.name}</h4>
+                                    <p className="text-gray-400 text-xs truncate">{actor.character}</p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 italic">Cast information not available.</p>
+                    )}
+                </div>
+
                 {/* Recommendations */}
                 <div className="mt-20">
                     <h3 className="text-2xl font-bold mb-8 text-white">Recommendations</h3>
                     {similarMovies && similarMovies.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                            {similarMovies.map(m => (
-                                <div key={m.id} className="transform hover:scale-105 transition duration-300 cursor-pointer" onClick={() => navigate(`/movie/${m.id}`)}>
-                                    <MovieCard movie={m} />
-                                </div>
-                            ))}
+                            {similarMovies.map(m => {
+                                // Resolve genre name for the recommendation card
+                                const genreName = m.genreIds && genres ? getGenreNames(m.genreIds, genres).split(' • ')[0] : "Movie";
+                                const movieWithGenre = { ...m, category: genreName };
+                                return (
+                                    <div key={m.id} className="transform hover:scale-105 transition duration-300 cursor-pointer" onClick={() => navigate(`/movie/${m.id}`)}>
+                                        <MovieCard movie={movieWithGenre} />
+                                    </div>
+                                );
+                            })}
                         </div>
                     ) : (
                         <p className="text-gray-500 italic">No similar movies found.</p>

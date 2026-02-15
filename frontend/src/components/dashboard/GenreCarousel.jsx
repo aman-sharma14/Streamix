@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { loadGenres } from '../../utils/genreUtils';
+import MovieRow from './MovieRow';
 
 const GenreCarousel = ({ movies, onMovieClick }) => {
     const [genres, setGenres] = useState([]);
@@ -21,6 +22,13 @@ const GenreCarousel = ({ movies, onMovieClick }) => {
     }, []);
 
     const filteredMovies = movies.filter(m => m.genreIds?.includes(selectedGenreId));
+
+    // Inject the selected genre name into the movie object so MovieCard displays it
+    // instead of the default category (e.g., "Trending Movies")
+    const moviesWithGenre = filteredMovies.map(m => ({
+        ...m,
+        category: selectedGenreName // Override/Set category to the specific genre name
+    }));
 
     return (
         <div className="space-y-4 mb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -48,34 +56,20 @@ const GenreCarousel = ({ movies, onMovieClick }) => {
                 </div>
             </div>
 
-            {/* Movie Carousel */}
-            <div className="relative group/row">
-                <div className="flex space-x-4 overflow-x-auto scrollbar-hide py-4">
-                    {filteredMovies.length > 0 ? (
-                        filteredMovies.slice(0, 20).map((movie) => (
-                            <div
-                                key={movie.id}
-                                onClick={() => onMovieClick(movie)}
-                                className="flex-none w-[150px] md:w-[200px] cursor-pointer transform transition-transform hover:scale-105"
-                            >
-                                <img
-                                    src={movie.posterUrl || `https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                                    alt={movie.title || movie.name}
-                                    className="w-full h-[225px] md:h-[300px] object-cover rounded-md shadow-lg"
-                                    onError={(e) => {
-                                        e.target.src = 'https://via.placeholder.com/200x300?text=No+Image';
-                                    }}
-                                />
-                                {/* Optional: Title overlay or below, keeping clean like MovieRow */}
-                            </div>
-                        ))
-                    ) : (
-                        <div className="w-full py-10 text-center text-gray-400">
-                            No {selectedGenreName} content available
-                        </div>
-                    )}
+            {/* Movie Carousel using MovieRow */}
+            {moviesWithGenre.length > 0 ? (
+                <div className="-mx-4 sm:-mx-6 lg:-mx-8"> {/* Negative margin to counteract MovieRow's padding since we are already inside a container */}
+                    <MovieRow
+                        title=""
+                        movies={moviesWithGenre}
+                        onMovieClick={onMovieClick}
+                    />
                 </div>
-            </div>
+            ) : (
+                <div className="w-full py-10 text-center text-gray-400">
+                    No {selectedGenreName} content available
+                </div>
+            )}
         </div>
     );
 };

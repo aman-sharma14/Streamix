@@ -33,16 +33,18 @@ const MovieRow = ({ title, movies, onMovieClick }) => {
     return (
         <div className="space-y-2 mb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             {/* Title */}
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer">
-                    {title}
-                </h2>
-                {showExploreMore && (
-                    <a href={`/category/${title.replace(" Movies", "")}`} className="text-sm text-gray-400 hover:text-white transition font-semibold">
-                        Explore All &gt;
-                    </a>
-                )}
-            </div>
+            {title && (
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer">
+                        {title}
+                    </h2>
+                    {showExploreMore && (
+                        <a href={`/category/${title.replace(" Movies", "")}`} className="text-sm text-gray-400 hover:text-white transition font-semibold">
+                            Explore All &gt;
+                        </a>
+                    )}
+                </div>
+            )}
 
             {/* Row Container */}
             <div className="relative group/row">

@@ -12,6 +12,14 @@ const Navbar = ({ activeTab, setActiveTab }) => {
   const searchRef = useRef(null); // Ref for click outside
   const navigate = useNavigate();
   const user = authService.getCurrentUser();
+  const inputRef = useRef(null);
+
+  // Auto-focus input when search opens
+  useEffect(() => {
+    if (isSearchOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSearchOpen]);
 
   // Click Outside Logic
   useEffect(() => {
@@ -127,24 +135,30 @@ const Navbar = ({ activeTab, setActiveTab }) => {
           {/* RIGHT: Search & Profile */}
           <div className="flex items-center space-x-6">
 
+
+
             {/* Search Bar (Expandable) */}
             <div
               ref={searchRef}
-              className={`relative flex items-center border-white/20 transition-all duration-300 ${isSearchOpen ? 'bg-black/50 border border-gray-600 px-3 py-1 rounded-t-lg' : ''} ${searchResults.length > 0 && isSearchOpen ? 'rounded-b-none' : 'rounded-full'}`}
+              className={`relative flex items-center transition-all duration-300 ${isSearchOpen
+                ? 'bg-black/80 border border-gray-600 px-3 py-1.5 w-64'
+                : 'w-10 justify-center'
+                } ${searchResults.length > 0 && isSearchOpen ? 'rounded-t-lg rounded-b-none' : 'rounded-full'}`}
             >
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="text-gray-200 hover:text-white"
+                className="text-gray-200 hover:text-white focus:outline-none"
               >
                 <Search className="w-5 h-5" />
               </button>
-              <form onSubmit={handleSearchSubmit} className="flex-1">
+              <form onSubmit={handleSearchSubmit} className={`flex-1 ${isSearchOpen ? 'block' : 'hidden'}`}>
                 <input
+                  ref={inputRef}
                   type="text"
                   placeholder="Titles, people, genres"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`bg-transparent text-sm text-white placeholder-gray-400 outline-none transition-all duration-300 ${isSearchOpen ? 'w-48 ml-2' : 'w-0'}`}
+                  className="bg-transparent text-sm text-white placeholder-gray-400 outline-none w-full ml-2"
                 />
               </form>
 
