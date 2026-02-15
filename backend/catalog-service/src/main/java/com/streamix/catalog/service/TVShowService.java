@@ -98,7 +98,15 @@ public class TVShowService {
                     for (TmdbTVResponse.TmdbTVDto dto : response.getResults()) {
                         try {
                             // Check if already exists
-                            if (repository.findByTmdbId(dto.getId()).isPresent()) {
+                            java.util.Optional<TVShow> existing = repository.findByTmdbId(dto.getId());
+                            if (existing.isPresent()) {
+                                // Merge category into existing show's categories list
+                                TVShow existingShow = existing.get();
+                                if (existingShow.getCategories() != null
+                                        && !existingShow.getCategories().contains(category)) {
+                                    existingShow.getCategories().add(category);
+                                    repository.save(existingShow);
+                                }
                                 continue;
                             }
 
@@ -138,7 +146,7 @@ public class TVShowService {
         tvShow.setVoteAverage(dto.getVoteAverage());
         tvShow.setGenreIds(dto.getGenreIds());
         tvShow.setCategory(category);
-        tvShow.setCategories(Arrays.asList(category));
+        tvShow.setCategories(new ArrayList<>(Arrays.asList(category)));
         tvShow.setType("tv");
         tvShow.setCachedAt(LocalDateTime.now());
 
@@ -193,15 +201,27 @@ public class TVShowService {
     }
 
     public List<TVShow> getPopularTVShows() {
-        return repository.findByCategoriesContaining("Popular TV");
+        List<TVShow> shows = repository.findByCategoriesContaining("Popular TV");
+        shows.sort((a, b) -> Double.compare(
+                b.getPopularity() != null ? b.getPopularity() : 0.0,
+                a.getPopularity() != null ? a.getPopularity() : 0.0));
+        return shows;
     }
 
     public List<TVShow> getTopRatedTVShows() {
-        return repository.findByCategoriesContaining("Top Rated TV");
+        List<TVShow> shows = repository.findByCategoriesContaining("Top Rated TV");
+        shows.sort((a, b) -> Double.compare(
+                b.getVoteAverage() != null ? b.getVoteAverage() : 0.0,
+                a.getVoteAverage() != null ? a.getVoteAverage() : 0.0));
+        return shows;
     }
 
     public List<TVShow> getTrendingTVShows() {
-        return repository.findByCategoriesContaining("Trending TV");
+        List<TVShow> shows = repository.findByCategoriesContaining("Trending TV");
+        shows.sort((a, b) -> Double.compare(
+                b.getPopularity() != null ? b.getPopularity() : 0.0,
+                a.getPopularity() != null ? a.getPopularity() : 0.0));
+        return shows;
     }
 
     public java.util.Optional<TVShow> getTVShowById(String id) {

@@ -5,20 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/entity/Genre.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/entity/Genre.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/repository/GenreRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/repository/GenreRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/SearchResultsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/SearchResultsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/GenreCarousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/GenreCarousel.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
