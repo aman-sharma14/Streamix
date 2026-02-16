@@ -85,6 +85,40 @@ const authService = {
   isAuthenticated: () => {
     return !!(localStorage.getItem('token') || sessionStorage.getItem('token'));
   },
+
+  // Forgot password - send verification code
+  forgotPassword: async (email) => {
+    try {
+      const response = await api.post('/forgot-password', { email });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || 'Failed to send verification code';
+    }
+  },
+
+  // Verify reset code
+  verifyCode: async (email, code) => {
+    try {
+      const response = await api.post('/verify-code', { email, code });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || 'Invalid or expired code';
+    }
+  },
+
+  // Reset password
+  resetPassword: async (email, code, newPassword) => {
+    try {
+      const response = await api.post('/reset-password', {
+        email,
+        code,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || 'Failed to reset password';
+    }
+  },
 };
 
 export default authService;

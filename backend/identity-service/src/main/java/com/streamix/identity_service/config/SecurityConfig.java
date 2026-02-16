@@ -38,7 +38,7 @@ public class SecurityConfig {
                 
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/validate").permitAll() // Public endpoints
+                        .requestMatchers("/auth/register", "/auth/login", "/auth/validate", "/auth/forgot-password", "/auth/verify-code", "/auth/reset-password").permitAll() // Public endpoints
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session

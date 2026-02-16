@@ -17,11 +17,14 @@ public class AuthController {
 
     private final AuthService service;
     private final AuthenticationManager authenticationManager;
+    private final com.streamix.identity_service.service.PasswordResetService passwordResetService;
 
     public AuthController(AuthService service,
-                          AuthenticationManager authenticationManager) {
+                          AuthenticationManager authenticationManager,
+                          com.streamix.identity_service.service.PasswordResetService passwordResetService) {
         this.service = service;
         this.authenticationManager = authenticationManager;
+        this.passwordResetService = passwordResetService;
     }
 
     // ========================= REGISTER =========================
@@ -98,6 +101,51 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid or expired token");
+        }
+    }
+
+    // ========================= PASSWORD RESET =========================
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody com.streamix.identity_service.dto.ForgotPasswordRequest request) {
+        try {
+            String result = passwordResetService.initiatePasswordReset(request.getEmail());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<?> verifyCode(@RequestBody com.streamix.identity_service.dto.VerifyCodeRequest request) {
+        try {
+            boolean isValid = passwordResetService.verifyResetCode(request.getEmail(), request.getCode());
+            
+            if (isValid) {
+                return ResponseEntity.ok("Verification code is valid");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Invalid or expired verification code");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Verification failed: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody com.streamix.identity_service.dto.ResetPasswordRequest request) {
+        try {
+            String result = passwordResetService.resetPassword(
+                request.getEmail(), 
+                request.getCode(), 
+                request.getNewPassword()
+            );
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
     }
 }

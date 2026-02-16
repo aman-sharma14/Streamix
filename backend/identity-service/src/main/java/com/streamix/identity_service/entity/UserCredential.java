@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity // This tells Hibernate: "Make a table called user_credential in Supabase"
 @Data // Lombok: Generates Getters/Setters automatically
 @AllArgsConstructor
@@ -20,4 +22,8 @@ public class UserCredential {
     private String name;
     private String email;
     private String password;
+    
+    // Password reset fields
+    private String resetCode;
+    private LocalDateTime resetCodeExpiry;
 }

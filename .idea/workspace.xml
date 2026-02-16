@@ -5,11 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/entity/UserCredential.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/entity/UserCredential.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/test/java/com/streamix/interaction/service/InteractionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/test/java/com/streamix/interaction/service/InteractionServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/authService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/authService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/interactionService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/interactionService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,6 +179,9 @@
         <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
       </set>
     </attachedChunks>
+  </component>
+  <component name="StructureViewState">
+    <option name="selectedTab" value="Logical" />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
