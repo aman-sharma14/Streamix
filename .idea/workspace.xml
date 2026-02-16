@@ -6,15 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/TVShowController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/TVShowService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchHistoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/repository/WatchHistoryRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/VideoPlayerPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/interactionService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/interactionService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +74,7 @@
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.archetype.catalogs&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -96,7 +93,7 @@
           <value>
             <map>
               <entry key="ApiGatewayApplication" value="STOPPED" />
-              <entry key="CatalogServiceApplication" value="STOPPED" />
+              <entry key="CatalogServiceApplication" value="FAILED" />
               <entry key="DiscoveryServerApplication" value="STOPPED" />
               <entry key="IdentityServiceApplication" value="FAILED" />
               <entry key="InteractionServiceApplication" value="STOPPED" />
@@ -106,7 +103,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.InteractionServiceApplication">
+  <component name="RunManager" selected="Spring Boot.CatalogServiceApplication">
     <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="api-gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.api_gateway.ApiGatewayApplication" />
@@ -162,9 +159,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.CatalogServiceApplication" />
         <item itemvalue="Spring Boot.InteractionServiceApplication" />
         <item itemvalue="Spring Boot.ApiGatewayApplication" />
-        <item itemvalue="Spring Boot.CatalogServiceApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -200,7 +197,10 @@
       <workItem from="1771047666946" duration="1551000" />
       <workItem from="1771133021419" duration="6805000" />
       <workItem from="1771178434767" duration="114000" />
-      <workItem from="1771178696944" duration="4465000" />
+      <workItem from="1771178696944" duration="4631000" />
+      <workItem from="1771210999619" duration="2785000" />
+      <workItem from="1771213951142" duration="2871000" />
+      <workItem from="1771221248402" duration="438000" />
     </task>
     <servers />
   </component>

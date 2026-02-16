@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface WatchHistoryRepository extends MongoRepository<WatchHistory, String> {
     List<WatchHistory> findByUserId(Integer userId);
 
-    Optional<WatchHistory> findByUserIdAndMovieId(Integer userId, String movieId);
+    List<WatchHistory> findByUserIdAndMovieId(Integer userId, String movieId);
 }

@@ -66,11 +66,20 @@ public class InteractionService {
      */
     public WatchHistory updateHistory(Integer userId, String movieId, Double startAt, Double duration,
             Boolean completed, Integer season, Integer episode, String movieTitle, String posterUrl) {
-        Optional<WatchHistory> existing = watchHistoryRepository.findByUserIdAndMovieId(userId, movieId);
+        List<WatchHistory> existingList = watchHistoryRepository.findByUserIdAndMovieId(userId, movieId);
         WatchHistory history;
 
-        if (existing.isPresent()) {
-            history = existing.get();
+        if (!existingList.isEmpty()) {
+            history = existingList.get(0);
+            // Self-heal: Delete duplicates if any
+            if (existingList.size() > 1) {
+                log.warn(
+                        "Found {} duplicate history entries for user {} movie {}. Keeping the first one and deleting others.",
+                        existingList.size(), userId, movieId);
+                for (int i = 1; i < existingList.size(); i++) {
+                    watchHistoryRepository.delete(existingList.get(i));
+                }
+            }
         } else {
             history = new WatchHistory();
             history.setUserId(userId);

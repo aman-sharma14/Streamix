@@ -213,7 +213,6 @@ const Dashboard = () => {
           image="https://image.tmdb.org/t/p/original/9faGSFi5jam6pDWGNd0p8JcJgXQ.jpg" // Breaking Bad / Better Call Saul vibe
         />
       )}
-
       {activeTab === "New & Popular" && (
         <SectionHeader
           title="New & Popular"
@@ -384,8 +383,8 @@ const Dashboard = () => {
               <>
                 {/* Continue Watching */}
                 {continueWatchingList.length > 0 && (
-                  <div className="px-8 md:px-12">
-                    <h2 className="text-2xl font-bold mb-4">Continue Watching</h2>
+                  <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-8">
+                    <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer mb-4">Continue Watching</h2>
                     <div className="flex space-x-4 overflow-x-auto pb-6 scrollbar-hide">
                       {continueWatchingList.map(item => (
                         <div
@@ -400,9 +399,11 @@ const Dashboard = () => {
                               className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                             />
                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
-                            <div className="absolute bottom-1 left-2 bg-red-600 px-2 rounded text-[10px] font-bold">
-                              {item.season ? `S${item.season}E${item.episode}` : 'Resume'}
-                            </div>
+                            {item.season && (
+                              <div className="absolute bottom-1 left-2 bg-red-600 px-2 rounded text-[10px] font-bold">
+                                {`S${item.season}E${item.episode}`}
+                              </div>
+                            )}
                             <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-700">
                               <div
                                 className="h-full bg-red-600"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import movieService from '../services/movieService';
@@ -26,13 +26,62 @@ const VideoPlayerPage = () => {
     const saveInterval = useRef(null);
     const userIdRef = useRef(null); // Ref to hold latest user ID
 
+    // DEBUG STATE
+    const [debugLog, setDebugLog] = useState("Debug Log Init...");
+
+    // Callbacks must be defined before useEffect to be used in dependencies
+    const saveProgress = useCallback(async (currentTime, explicitUserId = null) => {
+        // Use ref or explicit ID to avoid stale closure
+        const userIdToUse = explicitUserId || userIdRef.current;
+
+        if (!userIdToUse) {
+            console.error("DEBUG: Cannot save progress, user ID missing", { explicitUserId, ref: userIdRef.current });
+            // setDebugLog(prev => `Save Err: No User ID\n${prev}`.slice(0, 300));
+            return;
+        }
+        // Check movie state directly
+        if (!movie) {
+            // setDebugLog(prev => `Save Err: No Movie Data\n${prev}`.slice(0, 300));
+            return;
+        }
+
+        // Handle poster URL: Use full URL if available, otherwise construct from path
+        let poster = null;
+        if (movie.posterUrl) {
+            poster = movie.posterUrl;
+        } else if (movie.poster_path) {
+            poster = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        }
+
+        const progressData = {
+            userId: userIdToUse,
+            movieId: id,
+            startAt: currentTime,
+            duration: videoDuration.current,
+            completed: videoDuration.current > 0 && (currentTime / videoDuration.current) > 0.9,
+            season: season ? parseInt(season) : null,
+            episode: episode ? parseInt(episode) : null,
+            movieTitle: movie.title || movie.name,
+            posterUrl: poster
+        };
+
+        try {
+            await interactionService.updateHistory(progressData);
+            console.log("History saved successfully assigned to User " + userIdToUse);
+            setDebugLog(prev => `Saved: ${Math.floor(currentTime)}s\n${prev}`.slice(0, 300));
+        } catch (error) {
+            console.error("Failed to save history", error);
+            setDebugLog(prev => `Save Fail: ${error.message}\n${prev}`.slice(0, 300));
+        }
+    }, [id, season, episode, movie]);
+
     useEffect(() => {
         const currentUser = authService.getCurrentUser();
         if (!currentUser || !currentUser.id) {
             navigate('/login');
             return;
         }
-        setUser(currentUser);
+        // setUser(currentUser); // Unused
         userIdRef.current = currentUser.id; // Update ref immediately
 
         const fetchData = async () => {
@@ -66,83 +115,91 @@ const VideoPlayerPage = () => {
 
         fetchData();
 
-        // Listen for postMessage from vidlink
-        const handleMessage = (event) => {
-            // Safety check for origin if possible, but vidlink might change
-            // We just care about the data structure
-            const data = event.data;
-            console.log("DEBUG: Received message from iframe:", data);
+        // Cleanup function for unmount save
+        return () => {
+            // Save on unmount if we have progress
+            if (currentVideoTime.current > 0) {
+                console.log("Saving progress on unmount...", currentVideoTime.current);
+                // We cannot call saveProgress here easily if it depends on 'movie' which is a closure.
+                // However, 'movie' state should be stable. 
+                // To be safe, we might skip UNMOUNT save for now or move saveProgress logic to a ref if needed.
+                // For now, let's trust the closure has the movie.
+                // NOTE: We recreate the logic here to avoid dependency on saveProgress closure if needed, 
+                // but relying on saveProgress is cleaner if dependencies are managed.
+                saveProgress(currentVideoTime.current);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id, type, season, episode, navigate, searchParams, startAtParam]); // Keep dependencies stable to avoid re-fetching
 
-            if (data && data.type === 'MEDIA_DATA') {
-                console.log("DEBUG: Media Data received:", data);
-                videoDuration.current = data.duration;
+    // SEPARATE EFFECT FOR EVENT LISTENER
+    // This allows us to use 'movie' in dependencies if needed, or better yet, keeps it clean.
+    useEffect(() => {
+        const handleMessage = (event) => {
+            // if (event.origin !== 'https://vidlink.pro') return;
+
+            const msg = event.data;
+            // Removed aggressive logging to prevent re-renders
+            // try {
+            //     // Log to console as requested
+            //     // console.log("DEBUG RX:", msg); 
+
+            //     setDebugLog(prev => `Rx: ${JSON.stringify(msg).slice(0, 50)}\n${prev}`.slice(0, 300));
+            // } catch (e) {
+            //     setDebugLog(prev => `Rx: [Non-serializable]\n${prev}`.slice(0, 300));
+            // }
+
+            if (msg && msg.type === 'MEDIA_DATA') {
+                console.log("DEBUG: MEDIA_DATA received:", msg);
+                const mediaData = msg.data;
+                if (mediaData && mediaData.progress && mediaData.progress.duration) {
+                    videoDuration.current = mediaData.progress.duration;
+                    // setDebugLog(prev => `Duration: ${mediaData.progress.duration}\n${prev}`.slice(0, 300));
+                }
             }
 
-            if (data && data.type === 'PLAYER_EVENT') {
-                console.log("DEBUG: Player Event:", data.event, data.currentTime);
-                if (data.event === 'timeupdate') {
-                    const currentTime = data.currentTime;
-                    currentVideoTime.current = currentTime; // Update ref
+            if (msg && msg.type === 'PLAYER_EVENT') {
+                const payload = msg.data;
 
-                    // Throttle saving to every 15 seconds
-                    if (currentTime - lastSavedTime.current > 15) {
-                        console.log("Saving progress...", currentTime);
-                        saveProgress(currentTime);
-                        lastSavedTime.current = currentTime;
+                if (payload) {
+                    if (payload.duration) {
+                        videoDuration.current = payload.duration;
+                    }
+
+                    if (payload.event === 'timeupdate') {
+                        const currentTime = payload.currentTime;
+                        currentVideoTime.current = currentTime; // Update ref
+
+                        // Throttle saving to every 15 seconds
+                        if (currentTime - lastSavedTime.current > 15) {
+                            console.log("DEBUG: Triggering saveProgress at", currentTime);
+                            saveProgress(currentTime);
+                            lastSavedTime.current = currentTime;
+                        }
+                    } else {
+                        // Only log interesting events
+                        if (payload.event !== 'timeupdate') {
+                            // console.log("DEBUG: Player Event:", payload.event, payload);
+                            // setDebugLog(prev => `Event: ${payload.event}\n${prev}`.slice(0, 300));
+                        }
                     }
                 }
             }
         };
 
         window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, [movie, saveProgress]); // Add movie and saveProgress dependency so handleMessage closure has access to it!
 
-        // IMMEDIATE SAVE: Save "started watching" (0:00) immediately on mount
-        // This ensures the item appears in "Continue Watching" as soon as the page is opened.
-        if (lastSavedTime.current === 0) {
-            console.log("Initial history save at 0s...");
-            // Pass currentUser.id explicitly for immediate save
-            saveProgress(0, currentUser.id);
+    // IMMEDIATE SAVE ON MOUNT (Once movie is loaded)
+    useEffect(() => {
+        if (movie && userIdRef.current && lastSavedTime.current === 0) {
+            console.log("Initial history save at 0s (Movie Loaded)...");
+            saveProgress(0, userIdRef.current);
+            // setDebugLog(prev => `Init Save Triggered (Movie Ready)\n${prev}`);
         }
-
-        return () => {
-            window.removeEventListener('message', handleMessage);
-            // Save on unmount if we have progress
-            if (currentVideoTime.current > 0) {
-                console.log("Saving progress on unmount...", currentVideoTime.current);
-                saveProgress(currentVideoTime.current);
-            }
-        };
-    }, [id, type, season, episode]);
-
-    const saveProgress = async (currentTime, explicitUserId = null) => {
-        // Use ref or explicit ID to avoid stale closure
-        const userIdToUse = explicitUserId || userIdRef.current;
-
-        if (!userIdToUse) {
-            console.error("DEBUG: Cannot save progress, user ID missing", { explicitUserId, ref: userIdRef.current });
-            return;
-        }
-        if (!movie) return;
-
-        const progressData = {
-            userId: userIdToUse,
-            movieId: id,
-            startAt: currentTime,
-            duration: videoDuration.current,
-            completed: videoDuration.current > 0 && (currentTime / videoDuration.current) > 0.9,
-            season: season ? parseInt(season) : null,
-            episode: episode ? parseInt(episode) : null,
-            movieTitle: movie.title || movie.name,
-            posterUrl: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null
-        };
-
-        try {
-            await interactionService.updateHistory(progressData);
-            console.log("History saved successfully assigned to User " + userIdToUse);
-        } catch (error) {
-            console.error("Failed to save history", error);
-        }
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [movie, saveProgress]); // Run when movie is set
 
     if (loading) return (
         <div className="h-screen bg-black flex items-center justify-center text-white">
@@ -163,8 +220,32 @@ const VideoPlayerPage = () => {
         ? `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}?primaryColor=B20710&autoplay=true${startAt}`
         : `https://vidlink.pro/movie/${tmdbId}?primaryColor=B20710&autoplay=true${startAt}`;
 
+
+
+    // Confirm render
+    console.log("DEBUG: VideoPlayerPage Rendering. Debug Log:", debugLog);
+
     return (
         <div className="h-screen w-full bg-black relative overflow-hidden">
+            {/* Debug Overlay - INLINE STYLES TO FORCE VISIBILITY */}
+            <div style={{
+                position: 'fixed',
+                top: '100px',
+                right: '20px',
+                zIndex: 99999,
+                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                color: '#0f0',
+                padding: '20px',
+                border: '2px solid red',
+                maxWidth: '400px',
+                fontSize: '14px',
+                fontFamily: 'monospace',
+                pointerEvents: 'none'
+            }}>
+                <p style={{ borderBottom: '1px solid #0f0', marginBottom: '5px', fontWeight: 'bold' }}>Debug Info (Inline)</p>
+                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{debugLog}</pre>
+            </div>
+
             {/* Simple Back Overlay */}
             <div className="absolute top-6 left-6 z-50 flex items-center group">
                 <button
