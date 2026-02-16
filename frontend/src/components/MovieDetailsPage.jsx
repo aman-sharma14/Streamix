@@ -271,7 +271,7 @@ const MovieDetailsPage = () => {
                 <img
                     src={backdrop}
                     alt={title}
-                    className="w-full h-full object-cover opacity-50"
+                    className="w-full h-full object-cover object-top opacity-50"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-black/30"></div>
 

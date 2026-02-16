@@ -1,7 +1,7 @@
 package com.streamix.catalog.service;
 
 import com.streamix.catalog.dto.TmdbTVResponse;
-import com.streamix.catalog.dto.TmdbVideosResponse;
+
 import com.streamix.catalog.entity.TVShow;
 import com.streamix.catalog.repository.TVShowRepository;
 import lombok.RequiredArgsConstructor;
@@ -166,33 +166,13 @@ public class TVShowService {
             tvShow.setReleaseYear(Integer.parseInt(dto.getFirstAirDate().substring(0, 4)));
         }
 
-        // Fetch trailer URL
-        String trailerUrl = fetchTrailerUrl(dto.getId(), "tv");
-        tvShow.setVideoUrl(trailerUrl != null ? trailerUrl
-                : "https://www.youtube.com/results?search_query=" + dto.getName() + "+trailer");
+        // Fetch trailer URL - REMOVED for performance
+        // String trailerUrl = fetchTrailerUrl(dto.getId(), "tv");
+        // tvShow.setVideoUrl(trailerUrl != null ? trailerUrl
+        // : "https://www.youtube.com/results?search_query=" + dto.getName() +
+        // "+trailer");
 
         return tvShow;
-    }
-
-    /**
-     * Fetch trailer URL from TMDB videos endpoint
-     */
-    private String fetchTrailerUrl(Integer tmdbId, String type) {
-        try {
-            String url = baseUrl + "/" + type + "/" + tmdbId + "/videos?api_key=" + apiKey;
-            TmdbVideosResponse response = restTemplate.getForObject(url, TmdbVideosResponse.class);
-
-            if (response != null && response.getResults() != null) {
-                return response.getResults().stream()
-                        .filter(v -> "Trailer".equals(v.getType()) && "YouTube".equals(v.getSite()))
-                        .findFirst()
-                        .map(v -> "https://www.youtube.com/watch?v=" + v.getKey())
-                        .orElse(null);
-            }
-        } catch (Exception e) {
-            // Silently fail, will use search URL as fallback
-        }
-        return null;
     }
 
     // Basic CRUD operations

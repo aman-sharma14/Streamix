@@ -241,47 +241,11 @@ public class MovieService {
             movie.setReleaseYear(Integer.parseInt(dto.getReleaseDate().substring(0, 4)));
         }
 
-        // Fetch trailer URL
-        String trailerUrl = fetchTrailerUrl(dto.getId(), type);
-        movie.setVideoUrl(trailerUrl);
+        // Fetch trailer URL - REMOVED for performance
+        // String trailerUrl = fetchTrailerUrl(dto.getId(), type);
+        // movie.setVideoUrl(trailerUrl);
 
         return movie;
-    }
-
-    /**
-     * Fetch trailer URL from TMDB videos endpoint
-     */
-    private String fetchTrailerUrl(Integer tmdbId, String type) {
-        try {
-            String url = TMDB_BASE_URL + "/" + type + "/" + tmdbId + "/videos?api_key=" + apiKey;
-            TmdbVideosResponse response = restTemplate.getForObject(url, TmdbVideosResponse.class);
-
-            if (response != null && response.getResults() != null) {
-                // Priority 1: Official YouTube trailer
-                for (TmdbVideosResponse.VideoResult video : response.getResults()) {
-                    if ("YouTube".equals(video.getSite()) &&
-                            "Trailer".equals(video.getType()) &&
-                            Boolean.TRUE.equals(video.getOfficial())) {
-                        return "https://www.youtube.com/watch?v=" + video.getKey();
-                    }
-                }
-
-                // Priority 2: Any YouTube trailer
-                for (TmdbVideosResponse.VideoResult video : response.getResults()) {
-                    if ("YouTube".equals(video.getSite()) && "Trailer".equals(video.getType())) {
-                        return "https://www.youtube.com/watch?v=" + video.getKey();
-                    }
-                }
-            }
-
-            // Add small delay to avoid rate limiting
-            Thread.sleep(100);
-        } catch (Exception e) {
-            System.err.println("Error fetching trailer for TMDB ID " + tmdbId + ": " + e.getMessage());
-        }
-
-        // Fallback: return null (frontend can handle missing trailers)
-        return null;
     }
 
     /**

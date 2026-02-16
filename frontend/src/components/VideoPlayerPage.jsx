@@ -26,8 +26,7 @@ const VideoPlayerPage = () => {
     const saveInterval = useRef(null);
     const userIdRef = useRef(null); // Ref to hold latest user ID
 
-    // DEBUG STATE
-    const [debugLog, setDebugLog] = useState("Debug Log Init...");
+
 
     // Callbacks must be defined before useEffect to be used in dependencies
     const saveProgress = useCallback(async (currentTime, explicitUserId = null) => {
@@ -68,10 +67,8 @@ const VideoPlayerPage = () => {
         try {
             await interactionService.updateHistory(progressData);
             console.log("History saved successfully assigned to User " + userIdToUse);
-            setDebugLog(prev => `Saved: ${Math.floor(currentTime)}s\n${prev}`.slice(0, 300));
         } catch (error) {
             console.error("Failed to save history", error);
-            setDebugLog(prev => `Save Fail: ${error.message}\n${prev}`.slice(0, 300));
         }
     }, [id, season, episode, movie]);
 
@@ -223,28 +220,11 @@ const VideoPlayerPage = () => {
 
 
     // Confirm render
-    console.log("DEBUG: VideoPlayerPage Rendering. Debug Log:", debugLog);
+
 
     return (
         <div className="h-screen w-full bg-black relative overflow-hidden">
-            {/* Debug Overlay - INLINE STYLES TO FORCE VISIBILITY */}
-            <div style={{
-                position: 'fixed',
-                top: '100px',
-                right: '20px',
-                zIndex: 99999,
-                backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                color: '#0f0',
-                padding: '20px',
-                border: '2px solid red',
-                maxWidth: '400px',
-                fontSize: '14px',
-                fontFamily: 'monospace',
-                pointerEvents: 'none'
-            }}>
-                <p style={{ borderBottom: '1px solid #0f0', marginBottom: '5px', fontWeight: 'bold' }}>Debug Info (Inline)</p>
-                <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{debugLog}</pre>
-            </div>
+
 
             {/* Simple Back Overlay */}
             <div className="absolute top-6 left-6 z-50 flex items-center group">
