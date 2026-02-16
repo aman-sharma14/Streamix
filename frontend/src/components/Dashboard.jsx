@@ -102,29 +102,52 @@ const Dashboard = () => {
         }
 
         // Recommendations Logic
-        if (allContent.length > 0) {
-          // Get unique genre IDs from history and watchlist
-          const watchedGenreIds = new Set();
-          historyData.forEach(h => {
-            const movie = allContent.find(m => m.id === h.movieId);
-            if (movie && movie.genreIds) movie.genreIds.forEach(gid => watchedGenreIds.add(gid));
-          });
-          watchlistData.forEach(w => {
-            const movie = allContent.find(m => m.id === w.movieId);
-            if (movie && movie.genreIds) movie.genreIds.forEach(gid => watchedGenreIds.add(gid));
-          });
+        // Strict check: if no history and no watchlist, show NO recommendations
+        if (historyData.length === 0 && watchlistData.length === 0) {
+          setRecommendations([]);
+        } else if (allContent.length > 0) {
+          // 1. Calculate Genre Weights based on user frequency
+          const genreWeights = {};
 
-          if (watchedGenreIds.size > 0) {
-            const recommended = allContent
-              .filter(m =>
-                !historyData.some(h => h.movieId === m.id && h.completed) && // Not already finished
-                !watchlistData.some(w => w.movieId === m.id) && // Not already in list
-                m.genreIds?.some(gid => watchedGenreIds.has(gid)) // Matches at least one genre
-              )
-              .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
-              .slice(0, 15);
-            setRecommendations(recommended);
-          }
+          const updateWeights = (itemId) => {
+            const movie = allContent.find(m => m.id === itemId);
+            if (movie && movie.genreIds) {
+              movie.genreIds.forEach(gid => {
+                genreWeights[gid] = (genreWeights[gid] || 0) + 1;
+              });
+            }
+          };
+
+          historyData.forEach(h => updateWeights(h.movieId));
+          watchlistData.forEach(w => updateWeights(w.movieId));
+
+          // 2. Score and Filter Movies
+          const recommended = allContent
+            .filter(m => {
+              // Exclude if already watched (completed) or in watchlist
+              const isWatched = historyData.some(h => h.movieId === m.id && h.completed);
+              const isInList = watchlistData.some(w => w.movieId === m.id);
+              const isWatching = historyData.some(h => h.movieId === m.id && !h.completed); // Optional: exclude currently watching? User said "based on", usually implies similar *others*
+              return !isWatched && !isInList && !isWatching;
+            })
+            .map(m => {
+              let score = 0;
+              // Base score from popularity (low weight, just to break ties)
+              score += (m.popularity || 0) * 0.01;
+
+              // Weighted score from genres
+              if (m.genreIds) {
+                m.genreIds.forEach(gid => {
+                  score += (genreWeights[gid] || 0) * 10; // High weight for genre matches
+                });
+              }
+              return { ...m, score };
+            })
+            .filter(m => m.score > 1) // Must have at least some relevance (popularity alone is < 10 usually, let's say > 1 ensures at least 1 genre match logic roughly, or just > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 15);
+
+          setRecommendations(recommended);
         }
 
       } catch (error) {

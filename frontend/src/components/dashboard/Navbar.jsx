@@ -219,10 +219,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
               )}
             </div>
 
-            {/* Notification */}
-            <button className="text-gray-200 hover:text-white transition">
-              <Bell className="w-5 h-5" />
-            </button>
+
 
             {/* User Dropdown (Simplified) */}
             <div className="group relative flex items-center cursor-pointer">
