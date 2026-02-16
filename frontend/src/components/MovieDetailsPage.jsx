@@ -25,7 +25,11 @@ const MovieDetailsPage = () => {
     const [user, setUser] = useState(null);
     const [notification, setNotification] = useState(null);
     const [isMuted, setIsMuted] = useState(true);
+    const [isIdle, setIsIdle] = useState(false);
     const iframeRef = React.useRef(null);
+    const goIdleTimeoutRef = React.useRef(null);
+    const wakeUpStartRef = React.useRef(null);
+    const wakeUpResetTimeoutRef = React.useRef(null);
 
     // Helpers
     const getMatchPercentage = (voteAverage) => {
@@ -37,6 +41,22 @@ const MovieDetailsPage = () => {
         setNotification(msg);
         setTimeout(() => setNotification(null), 3000);
     };
+
+    // Helper to extract YouTube ID
+    const getTrailerId = (url) => {
+        if (!url) return null;
+        // Ignore search query links
+        if (url.includes("search_query") || url.includes("/results")) return null;
+
+        try {
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/)([^#&?]*))/);
+            return (match && match[1].length === 11) ? match[1] : null;
+        } catch (e) {
+            return null;
+        }
+    };
+
+    const trailerId = getTrailerId(movie?.videoUrl);
 
     // 1. Fetch Genres Map (once)
     useEffect(() => {
@@ -209,6 +229,56 @@ const MovieDetailsPage = () => {
         fetchSeasonDetails();
     }, [movie, selectedSeason]);
 
+    // Idle Timer Logic
+    useEffect(() => {
+        const handleUserActivity = () => {
+            if (!isIdle) {
+                // If UI is active, reset the timer to go idle
+                if (goIdleTimeoutRef.current) clearTimeout(goIdleTimeoutRef.current);
+                goIdleTimeoutRef.current = setTimeout(() => {
+                    if (trailerId) setIsIdle(true);
+                }, 3000);
+            } else {
+                // If UI is idle, check for sustained interaction to wake up
+                if (!wakeUpStartRef.current) {
+                    wakeUpStartRef.current = Date.now();
+                }
+
+                const elapsed = Date.now() - wakeUpStartRef.current;
+                if (elapsed > 2000) {
+                    // Wake up after 2s of continuous activity
+                    setIsIdle(false);
+                    wakeUpStartRef.current = null;
+                }
+
+                // If user stops interacting for 500ms, reset the wake-up counter
+                if (wakeUpResetTimeoutRef.current) clearTimeout(wakeUpResetTimeoutRef.current);
+                wakeUpResetTimeoutRef.current = setTimeout(() => {
+                    wakeUpStartRef.current = null;
+                }, 500);
+            }
+        };
+
+        // Initial trigger to start the "Go Idle" timer
+        if (!isIdle) {
+            handleUserActivity();
+        }
+
+        window.addEventListener('mousemove', handleUserActivity);
+        window.addEventListener('keydown', handleUserActivity);
+        window.addEventListener('click', handleUserActivity);
+        window.addEventListener('scroll', handleUserActivity);
+
+        return () => {
+            if (goIdleTimeoutRef.current) clearTimeout(goIdleTimeoutRef.current);
+            if (wakeUpResetTimeoutRef.current) clearTimeout(wakeUpResetTimeoutRef.current);
+            window.removeEventListener('mousemove', handleUserActivity);
+            window.removeEventListener('keydown', handleUserActivity);
+            window.removeEventListener('click', handleUserActivity);
+            window.removeEventListener('scroll', handleUserActivity);
+        };
+    }, [isIdle, trailerId]);
+
     const scrollCast = (direction) => {
         if (scrollContainerRef.current) {
             const { current } = scrollContainerRef;
@@ -257,21 +327,7 @@ const MovieDetailsPage = () => {
     const releaseYear = (movie.releaseDate || movie.firstAirDate || movie.releaseYear || "2024").toString().substring(0, 4);
     const backdrop = movie.backdropUrl || movie.backdrop_path || movie.posterUrl;
 
-    // Helper to extract YouTube ID
-    const getTrailerId = (url) => {
-        if (!url) return null;
-        // Ignore search query links
-        if (url.includes("search_query") || url.includes("/results")) return null;
 
-        try {
-            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/)([^#&?]*))/);
-            return (match && match[1].length === 11) ? match[1] : null;
-        } catch (e) {
-            return null;
-        }
-    };
-
-    const trailerId = getTrailerId(movie.videoUrl);
 
     // Genre Mapping
     const genreNames = movie.genreIds?.map(id => genresMap[id]).filter(Boolean).join(', ');
@@ -320,20 +376,24 @@ const MovieDetailsPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent"></div>
 
                 <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 space-y-4 max-w-4xl">
-                    <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl">{title}</h1>
+                    <h1 className={`text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl transition-all duration-[2000ms] ease-in-out ${isIdle ? 'translate-y-32' : 'translate-y-0'}`}>
+                        {title}
+                    </h1>
 
-                    <div className="flex items-center space-x-3 text-sm font-medium text-gray-200">
-                        <span className="text-green-500 font-bold">{getMatchPercentage(movie.voteAverage)}</span>
-                        <span>{releaseYear}</span>
-                        <span className="border border-gray-500 px-2 py-0.5 rounded text-xs">HD</span>
-                        {movie.type === 'tv' && (
-                            <span className="border border-gray-500 px-2 py-0.5 rounded text-xs uppercase tracking-wider">TV Series</span>
-                        )}
+                    <div className={`space-y-4 transition-all duration-[2000ms] ease-in-out ${isIdle ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
+                        <div className="flex items-center space-x-3 text-sm font-medium text-gray-200">
+                            <span className="text-green-500 font-bold">{getMatchPercentage(movie.voteAverage)}</span>
+                            <span>{releaseYear}</span>
+                            <span className="border border-gray-500 px-2 py-0.5 rounded text-xs">HD</span>
+                            {movie.type === 'tv' && (
+                                <span className="border border-gray-500 px-2 py-0.5 rounded text-xs uppercase tracking-wider">TV Series</span>
+                            )}
+                        </div>
+
+                        <p className="text-base text-gray-300 leading-relaxed max-w-2xl drop-shadow-md line-clamp-3">
+                            {movie.overview || "Experience the unknown in this thrilling adventure."}
+                        </p>
                     </div>
-
-                    <p className="text-base text-gray-300 leading-relaxed max-w-2xl drop-shadow-md line-clamp-3">
-                        {movie.overview || "Experience the unknown in this thrilling adventure."}
-                    </p>
 
                     <div className="flex flex-wrap gap-4 pt-4">
                         {movie.type !== 'tv' ? (
