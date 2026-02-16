@@ -1,9 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, Zap, Shield, TrendingUp, ChevronRight } from 'lucide-react';
+import authService from '../services/authService';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (authService.isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -25,13 +32,13 @@ const LandingPage = () => {
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 onClick={() => navigate('/login')}
                 className="text-white hover:text-gray-300 transition font-medium"
               >
                 Sign In
               </button>
-              <button 
+              <button
                 onClick={() => navigate('/register')}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md font-medium transition"
               >
@@ -72,12 +79,12 @@ const LandingPage = () => {
           </h1>
 
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Experience the future of streaming with our hybrid catalog system. 
+            Experience the future of streaming with our hybrid catalog system.
             Watch anywhere, anytime, with the fastest streaming technology available.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <button 
+            <button
               onClick={() => navigate('/register')}
               className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition transform hover:scale-105 flex items-center justify-center space-x-2"
             >
@@ -134,7 +141,7 @@ const LandingPage = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4">Lightning Fast</h3>
               <p className="text-gray-400 leading-relaxed">
-                Our hybrid catalog system combines local database speed with unlimited TMDB content. 
+                Our hybrid catalog system combines local database speed with unlimited TMDB content.
                 Experience instant loading for your favorite movies.
               </p>
             </div>
@@ -146,7 +153,7 @@ const LandingPage = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4">Secure & Private</h3>
               <p className="text-gray-400 leading-relaxed">
-                Bank-level JWT authentication and encrypted streaming. Your data is protected 
+                Bank-level JWT authentication and encrypted streaming. Your data is protected
                 with industry-leading security standards.
               </p>
             </div>
@@ -158,7 +165,7 @@ const LandingPage = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4">Smart Recommendations</h3>
               <p className="text-gray-400 leading-relaxed">
-                AI-powered suggestions based on your watch history. Discover new favorites 
+                AI-powered suggestions based on your watch history. Discover new favorites
                 tailored specifically to your taste.
               </p>
             </div>
@@ -199,7 +206,7 @@ const LandingPage = () => {
           <p className="text-xl text-gray-300 mb-8">
             Join thousands of users enjoying unlimited entertainment today.
           </p>
-          <button 
+          <button
             onClick={() => navigate('/register')}
             className="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-lg font-semibold text-lg transition transform hover:scale-105 inline-flex items-center space-x-2"
           >

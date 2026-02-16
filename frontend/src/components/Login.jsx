@@ -10,8 +10,16 @@ const Login = () => {
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (authService.isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -27,9 +35,9 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await authService.login(formData.email, formData.password);
+      const response = await authService.login(formData.email, formData.password, rememberMe);
       console.log('Login successful:', response);
-      
+
       // Redirect to dashboard or home page
       navigate('/dashboard');
     } catch (err) {
@@ -131,12 +139,14 @@ const Login = () => {
 
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center">
+              <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 bg-gray-800 border-gray-700 rounded text-red-600 focus:ring-red-600 focus:ring-offset-0"
                 />
-                <span className="ml-2 text-sm text-gray-400">Remember me</span>
+                <span className="ml-2 text-sm text-gray-400 select-none">Remember me</span>
               </label>
               <a href="#" className="text-sm text-red-500 hover:text-red-400 transition">
                 Forgot password?
