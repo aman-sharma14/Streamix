@@ -75,7 +75,19 @@ const Dashboard = () => {
         const continueWatching = historyData
           .filter(h => !h.completed)
           .sort((a, b) => new Date(b.lastWatchedAt) - new Date(a.lastWatchedAt));
-        setContinueWatchingList(continueWatching);
+
+        // Deduplication Logic
+        const uniqueContinueWatching = [];
+        const seenMovieIds = new Set();
+
+        continueWatching.forEach(item => {
+          if (!seenMovieIds.has(item.movieId)) {
+            seenMovieIds.add(item.movieId);
+            uniqueContinueWatching.push(item);
+          }
+        });
+
+        setContinueWatchingList(uniqueContinueWatching);
 
         // Combine all content and deduplicate by id
         const allContentRaw = [

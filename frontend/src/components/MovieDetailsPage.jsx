@@ -348,9 +348,9 @@ const MovieDetailsPage = () => {
             )}
 
             <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate(-1)}
                 className="fixed top-6 left-6 z-50 w-12 h-12 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-[#333] transition ring-1 ring-white/20 group"
-                title="Back to Dashboard"
+                title="Back"
             >
                 <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
             </button>
@@ -360,7 +360,7 @@ const MovieDetailsPage = () => {
                     <div className="absolute inset-0 w-full h-full pointer-events-none">
                         <iframe
                             ref={iframeRef}
-                            className="w-full h-full object-cover opacity-90 scale-150"
+                            className={`w-full h-full object-cover scale-150 transition-opacity duration-[2000ms] ease-in-out ${isIdle ? 'opacity-100' : 'opacity-90'}`}
                             src={`https://www.youtube.com/embed/${trailerId}?autoplay=1&mute=1&loop=1&playlist=${trailerId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1`}
                             title="Trailer"
                             frameBorder="0"
@@ -372,10 +372,10 @@ const MovieDetailsPage = () => {
                     <img
                         src={backdrop}
                         alt={title}
-                        className="w-full h-full object-cover object-top opacity-50"
+                        className={`w-full h-full object-cover object-top transition-opacity duration-[2000ms] ease-in-out ${isIdle ? 'opacity-100' : 'opacity-50'}`}
                     />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent"></div>
+                <div className={`absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent transition-opacity duration-[2000ms] ease-in-out ${isIdle ? 'opacity-0' : 'opacity-100'}`}></div>
 
                 <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 space-y-4 max-w-4xl">
                     <h1 className={`text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl transition-all duration-[2000ms] ease-in-out ${isIdle ? 'translate-y-32' : 'translate-y-0'}`}>

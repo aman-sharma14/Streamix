@@ -113,7 +113,7 @@ const CategoryPage = () => {
                 {/* Header Section */}
                 <div className="flex items-center space-x-4 mb-8">
                     <button
-                        onClick={() => navigate('/dashboard')}
+                        onClick={() => navigate(-1)}
                         className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition"
                     >
                         <ArrowLeft className="w-6 h-6 text-white" />
