@@ -447,6 +447,7 @@ const Dashboard = () => {
                     title="Recommended for You"
                     movies={recommendations}
                     onMovieClick={(m) => handleMoreInfo(m.id, (m.type || (m.category?.includes('TV') ? 'tv' : 'movie')))}
+                    enableExplore={false}
                   />
                 )}
 

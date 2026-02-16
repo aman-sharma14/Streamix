@@ -212,11 +212,13 @@ const MovieDetailsPage = () => {
     };
 
     const [seasonDetails, setSeasonDetails] = useState(null);
+    const [visibleEpisodes, setVisibleEpisodes] = useState(6);
     const scrollContainerRef = React.useRef(null);
 
     // Fetch Season Details when selectedSeason changes
     useEffect(() => {
         const fetchSeasonDetails = async () => {
+            setVisibleEpisodes(6);
             if (movie?.type === 'tv' && movie.tmdbId) {
                 try {
                     const details = await movieService.getTVShowSeasonDetails(movie.tmdbId, selectedSeason);
@@ -470,7 +472,7 @@ const MovieDetailsPage = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {(seasonDetails?.episodes || []).map((ep) => {
+                            {(seasonDetails?.episodes || []).slice(0, visibleEpisodes).map((ep) => {
                                 const isCurrentHistory = history && history.season === selectedSeason && history.episode === ep.episode_number;
 
                                 return (
@@ -515,6 +517,17 @@ const MovieDetailsPage = () => {
                                 );
                             })}
                         </div>
+
+                        {seasonDetails?.episodes?.length > visibleEpisodes && (
+                            <div className="flex justify-center pt-6">
+                                <button
+                                    onClick={() => setVisibleEpisodes(prev => prev + 6)}
+                                    className="px-6 py-2 bg-[#2a2a2a] hover:bg-[#3f3f3f] text-gray-300 hover:text-white text-xs font-bold uppercase tracking-wider rounded-full border border-white/10 transition-all shadow-lg hover:shadow-red-900/20"
+                                >
+                                    Load More Episodes
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import MovieCard from './MovieCard';
 
-const MovieRow = ({ title, movies, onMovieClick, destinationUrl }) => {
+const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore = true }) => {
     const navigate = useNavigate();
     const rowRef = useRef(null);
 
@@ -21,7 +21,7 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl }) => {
 
     const limit = 10;
     const displayMovies = movies.slice(0, limit);
-    const showExploreMore = movies.length > limit;
+    const showExploreMore = enableExplore && movies.length > limit;
 
     const handleExploreClick = () => {
         if (destinationUrl) {

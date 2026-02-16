@@ -134,7 +134,7 @@ const CategoryPage = () => {
                             <MovieCard
                                 key={movie.id}
                                 movie={movie}
-                                onClick={() => {
+                                onMovieClick={() => {
                                     const isTV = category.includes('tv') || movie.type === 'tv' || movie.category?.includes('TV') || (typeof movie.title === 'string' && movie.title.includes('Series'));
                                     navigate(`/movie/${movie.id}${isTV ? '?type=tv' : ''}`);
                                 }}
