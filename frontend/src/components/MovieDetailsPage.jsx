@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Play, Plus, ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { Play, Plus, ArrowLeft, Check, AlertCircle, Volume2, VolumeX } from 'lucide-react';
 import movieService from '../services/movieService';
 import interactionService from '../services/interactionService';
 import authService from '../services/authService';
@@ -24,6 +24,8 @@ const MovieDetailsPage = () => {
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
     const [notification, setNotification] = useState(null);
+    const [isMuted, setIsMuted] = useState(true);
+    const iframeRef = React.useRef(null);
 
     // Helpers
     const getMatchPercentage = (voteAverage) => {
@@ -215,6 +217,18 @@ const MovieDetailsPage = () => {
         }
     };
 
+    const toggleMute = () => {
+        if (iframeRef.current) {
+            const command = isMuted ? 'unMute' : 'mute';
+            iframeRef.current.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: command,
+                args: []
+            }), '*');
+            setIsMuted(!isMuted);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-[#141414] flex items-center justify-center text-white">
@@ -243,6 +257,22 @@ const MovieDetailsPage = () => {
     const releaseYear = (movie.releaseDate || movie.firstAirDate || movie.releaseYear || "2024").toString().substring(0, 4);
     const backdrop = movie.backdropUrl || movie.backdrop_path || movie.posterUrl;
 
+    // Helper to extract YouTube ID
+    const getTrailerId = (url) => {
+        if (!url) return null;
+        // Ignore search query links
+        if (url.includes("search_query") || url.includes("/results")) return null;
+
+        try {
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/)([^#&?]*))/);
+            return (match && match[1].length === 11) ? match[1] : null;
+        } catch (e) {
+            return null;
+        }
+    };
+
+    const trailerId = getTrailerId(movie.videoUrl);
+
     // Genre Mapping
     const genreNames = movie.genreIds?.map(id => genresMap[id]).filter(Boolean).join(', ');
     const displayGenre = genreNames || movie.category || "General";
@@ -267,18 +297,32 @@ const MovieDetailsPage = () => {
                 <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
             </button>
 
-            <div className="relative w-full h-[70vh] bg-black">
-                <img
-                    src={backdrop}
-                    alt={title}
-                    className="w-full h-full object-cover object-top opacity-50"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-black/30"></div>
+            <div className="relative w-full h-[75vh] bg-black overflow-hidden">
+                {trailerId ? (
+                    <div className="absolute inset-0 w-full h-full pointer-events-none">
+                        <iframe
+                            ref={iframeRef}
+                            className="w-full h-full object-cover opacity-90 scale-150"
+                            src={`https://www.youtube.com/embed/${trailerId}?autoplay=1&mute=1&loop=1&playlist=${trailerId}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1`}
+                            title="Trailer"
+                            frameBorder="0"
+                            allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    </div>
+                ) : (
+                    <img
+                        src={backdrop}
+                        alt={title}
+                        className="w-full h-full object-cover object-top opacity-50"
+                    />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent"></div>
 
-                <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 space-y-6 max-w-4xl">
-                    <h1 className="text-5xl md:text-7xl font-extrabold text-white drop-shadow-2xl">{title}</h1>
+                <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 space-y-4 max-w-4xl">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl">{title}</h1>
 
-                    <div className="flex items-center space-x-4 text-lg font-medium text-gray-200">
+                    <div className="flex items-center space-x-3 text-sm font-medium text-gray-200">
                         <span className="text-green-500 font-bold">{getMatchPercentage(movie.voteAverage)}</span>
                         <span>{releaseYear}</span>
                         <span className="border border-gray-500 px-2 py-0.5 rounded text-xs">HD</span>
@@ -287,7 +331,7 @@ const MovieDetailsPage = () => {
                         )}
                     </div>
 
-                    <p className="text-xl text-gray-300 leading-relaxed max-w-2xl drop-shadow-md">
+                    <p className="text-base text-gray-300 leading-relaxed max-w-2xl drop-shadow-md line-clamp-3">
                         {movie.overview || "Experience the unknown in this thrilling adventure."}
                     </p>
 
@@ -296,15 +340,15 @@ const MovieDetailsPage = () => {
                             <>
                                 <button
                                     onClick={() => handlePlay(true)}
-                                    className="flex items-center space-x-3 bg-white text-black px-10 py-4 rounded font-extrabold hover:bg-gray-200 transition text-xl shadow-xl hover:scale-105"
+                                    className="flex items-center space-x-2 bg-white text-black px-5 py-2.5 rounded font-bold hover:bg-gray-200 transition text-base shadow-lg hover:scale-105"
                                 >
-                                    <Play className="w-7 h-7 fill-black" />
+                                    <Play className="w-5 h-5 fill-black" />
                                     <span>{hasProgress ? 'Resume' : 'Play'}</span>
                                 </button>
                                 {hasProgress && (
                                     <button
                                         onClick={() => handlePlay(false)}
-                                        className="flex items-center space-x-3 bg-[#333]/80 backdrop-blur-md text-white px-10 py-4 rounded font-extrabold hover:bg-[#444] transition text-xl shadow-xl hover:scale-105"
+                                        className="flex items-center space-x-2 bg-[#333]/80 backdrop-blur-md text-white px-5 py-2.5 rounded font-bold hover:bg-[#444] transition text-base shadow-lg hover:scale-105"
                                     >
                                         <span>Restart</span>
                                     </button>
@@ -313,28 +357,39 @@ const MovieDetailsPage = () => {
                         ) : (
                             <button
                                 onClick={() => handlePlay(true)}
-                                className="flex items-center space-x-3 bg-white text-black px-10 py-4 rounded font-extrabold hover:bg-gray-200 transition text-xl shadow-xl hover:scale-105"
+                                className="flex items-center space-x-2 bg-white text-black px-5 py-2.5 rounded font-bold hover:bg-gray-200 transition text-base shadow-lg hover:scale-105"
                             >
-                                <Play className="w-7 h-7 fill-black" />
+                                <Play className="w-5 h-5 fill-black" />
                                 <span>{hasProgress ? `Resume S${history?.season || 1}E${history?.episode || 1}` : 'Watch Series'}</span>
                             </button>
                         )}
 
                         <button
                             onClick={handleWatchlistToggle}
-                            className={`flex items-center space-x-3 px-10 py-4 rounded font-extrabold transition border-2 text-xl shadow-xl hover:scale-105 ${inWatchlist
+                            className={`flex items-center space-x-2 px-5 py-2.5 rounded font-bold transition border-2 text-base shadow-lg hover:scale-105 ${inWatchlist
                                 ? 'bg-transparent border-green-500 text-green-500 hover:bg-green-500/10'
                                 : 'bg-[#2a2a2a]/60 backdrop-blur-md border-transparent text-white hover:bg-[#3f3f3f] hover:border-white/30'
                                 }`}
                         >
-                            {inWatchlist ? <Check className="w-7 h-7" /> : <Plus className="w-7 h-7" />}
+                            {inWatchlist ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                             <span>{inWatchlist ? 'In My List' : 'My List'}</span>
                         </button>
                     </div>
                 </div>
+
+                {/* Sound Toggle Button */}
+                {trailerId && (
+                    <button
+                        onClick={toggleMute}
+                        className="absolute bottom-10 right-10 z-20 p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-white/20 transition group border border-white/10"
+                        title={isMuted ? "Unmute" : "Mute"}
+                    >
+                        {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+                    </button>
+                )}
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 space-y-16">
+            <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 space-y-16">
 
                 {/* TV Season/Episode Selector */}
                 {movie.type === 'tv' && tvDetails && (
