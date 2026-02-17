@@ -34,8 +34,7 @@ const VideoPlayerPage = () => {
         const userIdToUse = explicitUserId || userIdRef.current;
 
         if (!userIdToUse) {
-            console.error("DEBUG: Cannot save progress, user ID missing", { explicitUserId, ref: userIdRef.current });
-            // setDebugLog(prev => `Save Err: No User ID\n${prev}`.slice(0, 300));
+            console.warn("Skipping history save: User ID is missing or invalid.");
             return;
         }
         // Check movie state directly
@@ -66,7 +65,7 @@ const VideoPlayerPage = () => {
 
         try {
             await interactionService.updateHistory(progressData);
-            console.log("History saved successfully assigned to User " + userIdToUse);
+            console.log(`History saved for Movie ${id} at ${Math.floor(currentTime)}s`);
         } catch (error) {
             console.error("Failed to save history", error);
         }
@@ -169,7 +168,6 @@ const VideoPlayerPage = () => {
 
                         // Throttle saving to every 15 seconds
                         if (currentTime - lastSavedTime.current > 15) {
-                            console.log("DEBUG: Triggering saveProgress at", currentTime);
                             saveProgress(currentTime);
                             lastSavedTime.current = currentTime;
                         }
@@ -191,7 +189,7 @@ const VideoPlayerPage = () => {
     // IMMEDIATE SAVE ON MOUNT (Once movie is loaded)
     useEffect(() => {
         if (movie && userIdRef.current && lastSavedTime.current === 0) {
-            console.log("Initial history save at 0s (Movie Loaded)...");
+            console.log("Initial history save (Start)");
             saveProgress(0, userIdRef.current);
             // setDebugLog(prev => `Init Save Triggered (Movie Ready)\n${prev}`);
         }

@@ -9,8 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +44,7 @@ class InteractionServiceTest {
         String movieTitle = "Test Movie";
         String posterUrl = "http://test.com/poster.jpg";
 
-        when(watchHistoryRepository.findByUserIdAndMovieId(userId, movieId)).thenReturn(Collections.emptyList());
+        when(watchHistoryRepository.findByUserIdAndMovieId(userId, movieId)).thenReturn(List.of());
         when(watchHistoryRepository.save(any(WatchHistory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -73,7 +72,7 @@ class InteractionServiceTest {
         existingMain.setMovieId(movieId);
         existingMain.setStartAt(50.0);
 
-        when(watchHistoryRepository.findByUserIdAndMovieId(userId, movieId)).thenReturn(Collections.singletonList(existingMain));
+        when(watchHistoryRepository.findByUserIdAndMovieId(userId, movieId)).thenReturn(List.of(existingMain));
         when(watchHistoryRepository.save(any(WatchHistory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act

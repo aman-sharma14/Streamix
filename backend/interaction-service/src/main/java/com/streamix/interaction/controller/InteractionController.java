@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class InteractionController {
 
     private final InteractionService interactionService;
+    private final org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
 
     @PostMapping("/watchlist/add")
     public Watchlist addToWatchlist(@RequestBody Map<String, Object> payload) {
@@ -132,5 +133,13 @@ public class InteractionController {
             return Boolean.parseBoolean((String) value);
         }
         return false;
+    }
+    @GetMapping("/debug-db")
+    public Map<String, Object> debugDb() {
+        return Map.of(
+            "database", mongoTemplate.getDb().getName(),
+            "collection", "watch_history",
+            "count", mongoTemplate.getCollection("watch_history").countDocuments()
+        );
     }
 }

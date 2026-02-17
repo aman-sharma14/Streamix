@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InteractionService {
 
+    private final org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
     private final WatchlistRepository watchlistRepository;
     private final WatchHistoryRepository watchHistoryRepository;
 
@@ -30,21 +31,22 @@ public class InteractionService {
      * @param posterUrl  Poster URL for snapshot
      */
     public Watchlist addToWatchlist(Integer userId, String movieId, String movieTitle, String posterUrl) {
-        Optional<Watchlist> existing = watchlistRepository.findByUserIdAndMovieId(userId, movieId);
-        if (existing.isPresent()) {
-            return existing.get();
-        }
+        log.info("Upserting watchlist item for user {} and movie {}", userId, movieId);
 
-        Watchlist watchlist = new Watchlist();
-        watchlist.setUserId(userId);
-        watchlist.setMovieId(movieId);
-        watchlist.setAddedOn(LocalDateTime.now());
+        org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query(
+            org.springframework.data.mongodb.core.query.Criteria.where("userId").is(userId).and("movieId").is(movieId)
+        );
 
-        // Set movie snapshot for denormalization
-        Watchlist.MovieSnapshot snapshot = new Watchlist.MovieSnapshot(movieTitle, posterUrl);
-        watchlist.setMovieSnapshot(snapshot);
+        org.springframework.data.mongodb.core.query.Update update = new org.springframework.data.mongodb.core.query.Update()
+            .setOnInsert("userId", userId)
+            .setOnInsert("movieId", movieId)
+            .setOnInsert("addedOn", LocalDateTime.now())
+            .setOnInsert("movieSnapshot", new Watchlist.MovieSnapshot(movieTitle, posterUrl));
 
-        return watchlistRepository.save(watchlist);
+        // Atomic Upsert: If it exists, return it. If not, insert it.
+        org.springframework.data.mongodb.core.FindAndModifyOptions options = new org.springframework.data.mongodb.core.FindAndModifyOptions().returnNew(true).upsert(true);
+
+        return mongoTemplate.findAndModify(query, update, options, Watchlist.class);
     }
 
     public void removeFromWatchlist(Integer userId, String movieId) {
@@ -66,38 +68,29 @@ public class InteractionService {
      */
     public WatchHistory updateHistory(Integer userId, String movieId, Double startAt, Double duration,
             Boolean completed, Integer season, Integer episode, String movieTitle, String posterUrl) {
-        List<WatchHistory> existingList = watchHistoryRepository.findByUserIdAndMovieId(userId, movieId);
-        WatchHistory history;
+        
+        log.info("Upserting watch history for user {} and movie {}. Progress: {}/{}", userId, movieId, startAt, duration);
 
-        if (!existingList.isEmpty()) {
-            history = existingList.get(0);
-            // Self-heal: Delete duplicates if any
-            if (existingList.size() > 1) {
-                log.warn(
-                        "Found {} duplicate history entries for user {} movie {}. Keeping the first one and deleting others.",
-                        existingList.size(), userId, movieId);
-                for (int i = 1; i < existingList.size(); i++) {
-                    watchHistoryRepository.delete(existingList.get(i));
-                }
-            }
-        } else {
-            history = new WatchHistory();
-            history.setUserId(userId);
-            history.setMovieId(movieId);
+        org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query(
+            org.springframework.data.mongodb.core.query.Criteria.where("userId").is(userId).and("movieId").is(movieId)
+        );
 
-            // Set movie snapshot for new history entry
-            WatchHistory.MovieSnapshot snapshot = new WatchHistory.MovieSnapshot(movieTitle, posterUrl);
-            history.setMovieSnapshot(snapshot);
-        }
+        org.springframework.data.mongodb.core.query.Update update = new org.springframework.data.mongodb.core.query.Update()
+            .set("startAt", startAt)
+            .set("duration", duration)
+            .set("completed", completed)
+            .set("lastWatchedAt", LocalDateTime.now())
+            .setOnInsert("userId", userId)
+            .setOnInsert("movieId", movieId)
+            .setOnInsert("movieSnapshot", new WatchHistory.MovieSnapshot(movieTitle, posterUrl));
 
-        history.setStartAt(startAt);
-        history.setDuration(duration);
-        history.setCompleted(completed);
-        history.setSeason(season);
-        history.setEpisode(episode);
-        history.setLastWatchedAt(LocalDateTime.now());
-        log.info("Saving watch history for user {} and movie {}: {}", userId, movieId, history);
-        return watchHistoryRepository.save(history);
+        if (season != null) update.set("season", season);
+        if (episode != null) update.set("episode", episode);
+
+        // Atomic Upsert
+        org.springframework.data.mongodb.core.FindAndModifyOptions options = new org.springframework.data.mongodb.core.FindAndModifyOptions().returnNew(true).upsert(true);
+        
+        return mongoTemplate.findAndModify(query, update, options, WatchHistory.class);
     }
 
     public List<Watchlist> getUserWatchlist(Integer userId) {
