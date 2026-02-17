@@ -32,10 +32,7 @@ const MovieDetailsPage = () => {
     const wakeUpResetTimeoutRef = React.useRef(null);
 
     // Helpers
-    const getMatchPercentage = (voteAverage) => {
-        if (!voteAverage) return "95% Match";
-        return `${Math.round(voteAverage * 10)}% Match`;
-    };
+
 
     const showNotification = (msg) => {
         setNotification(msg);
@@ -384,7 +381,7 @@ const MovieDetailsPage = () => {
 
                     <div className={`space-y-4 transition-all duration-[2000ms] ease-in-out ${isIdle ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
                         <div className="flex items-center space-x-3 text-sm font-medium text-gray-200">
-                            <span className="text-green-500 font-bold">{getMatchPercentage(movie.voteAverage)}</span>
+
                             <span>{releaseYear}</span>
                             <span className="border border-gray-500 px-2 py-0.5 rounded text-xs">HD</span>
                             {movie.type === 'tv' && (
@@ -592,7 +589,7 @@ const MovieDetailsPage = () => {
                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                     }}
                                 >
-                                    <MovieCard movie={m} />
+                                    <MovieCard movie={m} className="w-full aspect-[2/3]" />
                                 </div>
                             ))}
                         </div>

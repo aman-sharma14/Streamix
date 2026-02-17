@@ -13,7 +13,7 @@ const LandingPage = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="h-screen w-full bg-black text-white overflow-y-scroll scrollbar-hide">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-gradient-to-b from-black to-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,12 +21,7 @@ const LandingPage = () => {
             {/* Logo */}
             <div className="flex items-center">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center">
-                  <Play className="w-5 h-5 fill-white" />
-                </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
-                  Streamix
-                </span>
+                <img src="/images/logo.png" alt="Streamix" className="h-10 w-auto object-contain" />
               </div>
             </div>
 
@@ -258,10 +253,7 @@ const LandingPage = () => {
           </div> */}
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-6 h-6 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center">
-                <Play className="w-4 h-4 fill-white" />
-              </div>
-              <span className="text-xl font-bold">Streamix</span>
+              <img src="/images/logo.png" alt="Streamix" className="h-8 w-auto object-contain" />
             </div>
             <p className="text-gray-500 text-sm">
               © 2024 Streamix. All rights reserved.

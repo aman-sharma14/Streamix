@@ -44,11 +44,11 @@ const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
       </div>
 
       {/* Content Content - Increased Top Padding for Navbar Clearance */}
-      <div className="relative z-20 h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+      <div className="relative z-20 h-full flex items-center w-full px-4 sm:px-8 lg:px-12 pt-20">
         <div className="w-full md:w-2/3 lg:w-1/2 space-y-6 pb-12">
 
           {/* Movie Title Effect - Reduced sizes for better wrapping */}
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-2xl leading-[1.1] max-w-4xl line-clamp-3">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl leading-[1.1] max-w-4xl line-clamp-3">
             {movie.title}
           </h1>
 
@@ -79,17 +79,17 @@ const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
           <div className="flex items-center space-x-4 pt-4 relative z-30">
             <button
               onClick={onPlay}
-              className="flex items-center space-x-2 bg-white text-black px-6 md:px-8 py-2 md:py-3 rounded hover:bg-gray-200 transition font-bold text-base md:text-lg"
+              className="flex items-center space-x-3 bg-white text-black px-8 py-3 rounded-lg hover:bg-gray-200 transition-all duration-300 font-bold text-lg shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] transform hover:scale-105"
             >
-              <Play className="w-5 h-5 md:w-6 md:h-6 fill-black" />
+              <Play className="w-6 h-6 fill-black" />
               <span>Play</span>
             </button>
 
             <button
               onClick={onMoreInfo}
-              className="flex items-center space-x-2 bg-gray-500/70 hover:bg-gray-500/50 backdrop-blur-sm text-white px-6 md:px-8 py-2 md:py-3 rounded transition font-bold text-base md:text-lg"
+              className="flex items-center space-x-3 bg-gray-600/40 hover:bg-gray-600/60 backdrop-blur-md text-white px-8 py-3 rounded-lg transition-all duration-300 font-bold text-lg border border-white/10 hover:border-white/30 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <Info className="w-5 h-5 md:w-6 md:h-6" />
+              <Info className="w-6 h-6" />
               <span>More Info</span>
             </button>
           </div>

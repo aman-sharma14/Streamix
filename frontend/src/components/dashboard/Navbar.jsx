@@ -4,8 +4,9 @@ import { Search, Bell, LogOut, Play } from 'lucide-react';
 import authService from '../../services/authService';
 import movieService from '../../services/movieService';
 
-const Navbar = ({ activeTab, setActiveTab }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const Navbar = ({ activeTab, setActiveTab, isScrolledProp }) => {
+  const [internalIsScrolled, setInternalIsScrolled] = useState(false);
+  const isScrolled = isScrolledProp !== undefined ? isScrolledProp : internalIsScrolled;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -92,17 +93,19 @@ const Navbar = ({ activeTab, setActiveTab }) => {
 
   // Handle Scroll Effect
   useEffect(() => {
+    if (isScrolledProp !== undefined) return;
+
     const handleScroll = () => {
       if (window.scrollY > 0) {
-        setIsScrolled(true);
+        setInternalIsScrolled(true);
       } else {
-        setIsScrolled(false);
+        setInternalIsScrolled(false);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isScrolledProp]);
 
   const handleLogout = () => {
     authService.logout();
@@ -113,58 +116,54 @@ const Navbar = ({ activeTab, setActiveTab }) => {
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-black/95 shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-black/60 backdrop-blur-md border-b border-white/5' : 'bg-gradient-to-b from-black/80 to-transparent'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+      <div className="w-full px-4 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-16 md:h-20 relative">
 
-          {/* LEFT: Logo & Links */}
-          <div className="flex items-center space-x-8">
-            {/* Logo */}
+          {/* LEFT: Logo */}
+          <div className="flex-shrink-0">
             <Link
               to="/dashboard"
               onClick={() => setActiveTab('Home')}
-              className="flex items-center space-x-2 group"
+              className="flex items-center group"
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center transform group-hover:scale-110 transition duration-300">
-                <Play className="w-5 h-5 fill-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
-                Streamix
-              </span>
+              <img
+                src="/images/logo.png"
+                alt="Streamix"
+                className="h-8 w-auto object-contain transition duration-300 transform group-hover:scale-105"
+                style={{ mixBlendMode: 'screen' }}
+              />
             </Link>
+          </div>
 
-            {/* Desktop Links */}
-            <div className="hidden md:flex items-center space-x-6">
-              {navLinks.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    setActiveTab(item);
-                    if (window.location.pathname !== '/dashboard') {
-                      navigate('/dashboard', { state: { tab: item } });
-                    }
-                  }}
-                  className={`relative text-sm font-medium transition duration-300 pb-1 ${activeTab === item
-                    ? 'text-white font-bold'
-                    : 'text-gray-400 hover:text-gray-200'
-                    }`}
-                >
-                  {item}
-                  {activeTab === item && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
-                  )}
-                </button>
-              ))}
-            </div>
+          {/* CENTER: Tab Bar Items */}
+          <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center space-x-12 bg-black/20 backdrop-blur-sm px-10 py-3 rounded-full border border-white/5 shadow-lg">
+            {navLinks.map((item) => (
+              <button
+                key={item}
+                onClick={() => {
+                  setActiveTab(item);
+                  if (window.location.pathname !== '/dashboard') {
+                    navigate('/dashboard', { state: { tab: item } });
+                  }
+                }}
+                className={`relative text-sm tracking-wide transition-all duration-300 pb-1 ${activeTab === item
+                  ? 'text-white font-bold'
+                  : 'text-gray-400 hover:text-white font-medium'
+                  }`}
+              >
+                {item}
+                {activeTab === item && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600 rounded-full" />
+                )}
+              </button>
+            ))}
           </div>
 
           {/* RIGHT: Search & Profile */}
           <div className="flex items-center space-x-6">
-
-
-
             {/* Search Bar (Expandable) */}
             <div
               ref={searchRef}
@@ -175,7 +174,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
             >
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="text-gray-200 hover:text-white focus:outline-none"
+                className="text-gray-200 hover:text-white focus:outline-none transition-colors"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -219,26 +218,25 @@ const Navbar = ({ activeTab, setActiveTab }) => {
               )}
             </div>
 
-
-
             {/* User Dropdown (Simplified) */}
             <div className="group relative flex items-center cursor-pointer">
-              <div className="w-8 h-8 rounded bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-xs font-bold ring-2 ring-transparent group-hover:ring-white transition">
-                {user.email ? user.email[0].toUpperCase() : 'U'}
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center border border-white/20 group-hover:border-white transition overflow-hidden">
+                {/* Placeholder Avatar or Initials */}
+                <span className="text-sm font-bold text-white">{user.email ? user.email[0].toUpperCase() : 'U'}</span>
               </div>
 
               {/* Dropdown Menu */}
-              <div className="absolute right-0 top-full mt-2 w-48 bg-black/95 border border-gray-800 rounded shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
-                <div className="py-2 px-4 border-b border-gray-800">
-                  <p className="text-xs text-gray-400">Signed in as</p>
-                  <p className="text-sm text-white truncate">{user.email}</p>
+              <div className="absolute right-0 top-full mt-4 w-56 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                <div className="py-3 px-4 border-b border-gray-700">
+                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Signed in as</p>
+                  <p className="text-sm text-white font-medium truncate">{user.email}</p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-900 flex items-center space-x-2 transition"
+                  className="w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800 flex items-center space-x-3 transition first:rounded-t-lg last:rounded-b-lg"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Sign out of Streamix</span>
+                  <span>Sign out</span>
                 </button>
               </div>
             </div>

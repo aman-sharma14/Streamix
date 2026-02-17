@@ -15,6 +15,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = (e) => {
+    if (e.target.scrollTop > 0) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
 
   // Handle Tab Switch via Query Param
   useEffect(() => {
@@ -221,8 +230,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden font-sans">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div
+      className="h-screen w-full bg-[#141414] text-white overflow-y-scroll overflow-x-hidden font-sans scrollbar-hide"
+      onScroll={handleScroll}
+    >
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} isScrolledProp={isScrolled} />
 
       {/* Headers based on Active Tab */}
       {activeTab === "Home" && (
