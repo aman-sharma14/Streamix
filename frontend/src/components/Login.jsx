@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Play, Mail, Lock, Eye, EyeOff, Loader } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader } from 'lucide-react';
 import authService from '../services/authService';
 
 const Login = () => {
@@ -65,12 +65,7 @@ const Login = () => {
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center">
-              <Play className="w-6 h-6 fill-white" />
-            </div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
-              Streamix
-            </span>
+            <img src="/images/logo.png" alt="Streamix" className="h-12 w-auto" />
           </div>
         </div>
 

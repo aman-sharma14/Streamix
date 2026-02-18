@@ -199,7 +199,16 @@ const Dashboard = () => {
       return movies.slice(0, 5);
     }
     if (activeTab === "My List") {
-      return movies.filter(m => watchlist.includes(m.id));
+      return watchlistItems.map(item => ({
+        id: item.movieId,
+        title: item.movieSnapshot?.title,
+        posterUrl: item.movieSnapshot?.posterUrl, // Direct URL
+        backdrop_path: item.movieSnapshot?.posterUrl, // Fallback
+        overview: "", // Not stored in watchlist snapshot
+        vote_average: 0,
+        release_date: item.addedOn,
+        type: 'movie' // Defaulting to movie since we don't store type yet
+      }));
     }
     return movies; // "Home"
   };
