@@ -274,6 +274,40 @@ public class MovieService {
     }
 
     /**
+     * Get images (logos, backdrops, posters) from TMDB
+     */
+    public Map<String, Object> getImages(Integer tmdbId) {
+        try {
+            // Determine type from database
+            Optional<Movie> movieOpt = repository.findByTmdbId(tmdbId);
+            String type = movieOpt.map(Movie::getType).orElse("movie");
+
+            String url = TMDB_BASE_URL + "/" + type + "/" + tmdbId + "/images?api_key=" + apiKey + "&include_image_language=en,null";
+            return restTemplate.getForObject(url, Map.class);
+        } catch (Exception e) {
+            System.err.println("Error fetching images for TMDB ID " + tmdbId + ": " + e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Get videos (trailers, teasers) from TMDB
+     */
+    public Map<String, Object> getVideos(Integer tmdbId) {
+        try {
+            // Determine type from database
+            Optional<Movie> movieOpt = repository.findByTmdbId(tmdbId);
+            String type = movieOpt.map(Movie::getType).orElse("movie");
+
+            String url = TMDB_BASE_URL + "/" + type + "/" + tmdbId + "/videos?api_key=" + apiKey;
+            return restTemplate.getForObject(url, Map.class);
+        } catch (Exception e) {
+            System.err.println("Error fetching videos for TMDB ID " + tmdbId + ": " + e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
      * Smart search: DB first, TMDB fallback with caching
      */
     public List<Movie> searchMovies(String query) {

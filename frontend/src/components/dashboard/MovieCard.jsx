@@ -14,7 +14,7 @@ const MovieCard = ({ movie, onMovieClick, className }) => {
     return (
         <div
             onClick={() => onMovieClick && onMovieClick(movie)}
-            className={`relative flex-none group overflow-hidden rounded-md bg-[#181818] cursor-pointer ${className || "w-[220px] h-[330px]"}`}
+            className={`relative flex-none group overflow-hidden rounded-md bg-[#181818] cursor-pointer ${className || "w-[180px] h-[270px]"}`}
         >
 
             {/* Poster Image */}

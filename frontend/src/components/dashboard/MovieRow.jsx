@@ -34,7 +34,7 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore =
     };
 
     return (
-        <div className="space-y-2 mb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="space-y-0.5 mb-2 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             {/* Title */}
             {title && (
                 <div className="flex items-center justify-between">
@@ -78,7 +78,7 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore =
                     {showExploreMore && (
                         <div
                             onClick={handleExploreClick}
-                            className="flex-none w-[150px] md:w-[200px] h-[225px] md:h-[300px] bg-gray-900 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-gray-800 transition group"
+                            className="flex-none w-[120px] md:w-[180px] h-[180px] md:h-[270px] bg-gray-900 rounded-md flex flex-col items-center justify-center cursor-pointer hover:bg-gray-800 transition group"
                         >
                             <div className="w-12 h-12 rounded-full border-2 border-red-600 flex items-center justify-center mb-4 group-hover:scale-110 transition">
                                 <span className="text-red-600 font-bold text-xl">+</span>

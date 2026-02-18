@@ -51,6 +51,16 @@ public class MovieController {
         return service.getMovieCast(tmdbId);
     }
 
+    @GetMapping("/{tmdbId}/images")
+    public java.util.Map<String, Object> getMovieImages(@PathVariable Integer tmdbId) {
+        return service.getImages(tmdbId);
+    }
+
+    @GetMapping("/{tmdbId}/videos")
+    public java.util.Map<String, Object> getMovieVideos(@PathVariable Integer tmdbId) {
+        return service.getVideos(tmdbId);
+    }
+
     @GetMapping("/genres")
     public List<Genre> getAllGenres() {
         return service.getAllGenres();

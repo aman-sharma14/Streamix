@@ -83,6 +83,18 @@ const movieService = {
         return response.data;
     },
 
+    // NEW: Get movie images (logos)
+    getMovieImages: async (tmdbId) => {
+        const response = await api.get(`/${tmdbId}/images`);
+        return response.data;
+    },
+
+    // NEW: Get movie videos
+    getMovieVideos: async (tmdbId) => {
+        const response = await api.get(`/${tmdbId}/videos`);
+        return response.data;
+    },
+
     // NEW: Get trending movies
     getTrendingMovies: async () => {
         const response = await api.get('/trending');

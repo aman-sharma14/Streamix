@@ -31,6 +31,25 @@ const MovieDetailsPage = () => {
     const wakeUpStartRef = React.useRef(null);
     const wakeUpResetTimeoutRef = React.useRef(null);
 
+    const [logoUrl, setLogoUrl] = useState(null);
+
+    useEffect(() => {
+        setLogoUrl(null);
+        if (movie?.tmdbId) {
+            import('../services/movieService').then(module => {
+                module.default.getMovieImages(movie.tmdbId).then(data => {
+                    if (data && data.logos && data.logos.length > 0) {
+                        const englishLogos = data.logos.filter(l => l.iso_639_1 === 'en' || l.iso_639_1 === null);
+                        const bestLogo = englishLogos.length > 0 ? englishLogos[0] : data.logos[0];
+                        if (bestLogo) {
+                            setLogoUrl(`https://image.tmdb.org/t/p/w500${bestLogo.file_path}`);
+                        }
+                    }
+                }).catch(err => console.warn("Failed to fetch logo", err));
+            });
+        }
+    }, [movie]);
+
     // Helpers
 
 
@@ -129,7 +148,7 @@ const MovieDetailsPage = () => {
                             const allData = isTV ? await movieService.getAllTVShows() : await movieService.getAllMovies();
                             similarData = allData
                                 .filter(m => m.category === movieData.category && m.id !== movieData.id)
-                                .slice(0, 10);
+                                .slice(0, 20);
                         }
                         setSimilarMovies(similarData || []);
                     } catch (e) { console.warn("Similar fetch failed", e); }
@@ -335,7 +354,7 @@ const MovieDetailsPage = () => {
     const hasProgress = history && history.startAt > 0 && !history.completed;
 
     return (
-        <div className="min-h-screen bg-[#141414] text-white overflow-x-hidden animate-in fade-in duration-300 font-sans">
+        <div className="h-screen bg-[#141414] text-white overflow-y-auto overflow-x-hidden animate-in fade-in duration-300 font-sans scrollbar-hide">
 
             {notification && (
                 <div className="fixed bottom-5 right-5 z-50 bg-green-600 text-white px-6 py-3 rounded shadow-lg animate-in slide-in-from-right duration-300 flex items-center space-x-2">
@@ -375,9 +394,19 @@ const MovieDetailsPage = () => {
                 <div className={`absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent transition-opacity duration-[2000ms] ease-in-out ${isIdle ? 'opacity-0' : 'opacity-100'}`}></div>
 
                 <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 space-y-4 max-w-4xl">
-                    <h1 className={`text-3xl md:text-5xl font-extrabold text-white drop-shadow-2xl transition-all duration-[2000ms] ease-in-out ${isIdle ? 'translate-y-32' : 'translate-y-0'}`}>
-                        {title}
-                    </h1>
+                    <div className={`transition-all duration-[2000ms] ease-in-out ${isIdle ? 'translate-y-32' : 'translate-y-0'}`}>
+                        {logoUrl ? (
+                            <img
+                                src={logoUrl}
+                                alt={title}
+                                className="max-h-32 md:max-h-48 w-auto object-contain mb-4 drop-shadow-2xl"
+                            />
+                        ) : (
+                            <h1 className="text-3xl md:text-5xl font-medium text-white drop-shadow-2xl">
+                                {title}
+                            </h1>
+                        )}
+                    </div>
 
                     <div className={`space-y-4 transition-all duration-[2000ms] ease-in-out ${isIdle ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
                         <div className="flex items-center space-x-3 text-sm font-medium text-gray-200">

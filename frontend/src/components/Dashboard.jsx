@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [selectedGenreId, setSelectedGenreId] = useState(null);
   const [selectedGenreName, setSelectedGenreName] = useState(null);
   const [genres, setGenres] = useState([]);
+  const [featuredMovie, setFeaturedMovie] = useState(null);
 
 
   useEffect(() => {
@@ -114,7 +115,18 @@ const Dashboard = () => {
           return true;
         });
 
-        setMovies(allContent.length > 0 ? allContent : mockMovies);
+        if (allContent.length > 0) {
+          setMovies(allContent);
+          // Initialize featured movie only once if not set
+          if (!featuredMovie) {
+            setFeaturedMovie(allContent[Math.floor(Math.random() * allContent.length)]);
+          }
+        } else {
+          setMovies(mockMovies);
+          if (!featuredMovie) {
+            setFeaturedMovie(mockMovies[Math.floor(Math.random() * mockMovies.length)]);
+          }
+        }
 
         if (watchlistData) {
           const ids = watchlistData.map(item => item.movieId);
@@ -182,6 +194,18 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
+  // Auto-rotate featured movie every 5 seconds
+  useEffect(() => {
+    if (movies.length > 0 && activeTab === "Home") {
+      const interval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * movies.length);
+        setFeaturedMovie(movies[randomIndex]);
+      }, 5000); // 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [movies, activeTab]);
+
   const [continueWatchingList, setContinueWatchingList] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [watchlistItems, setWatchlistItems] = useState([]);
@@ -215,10 +239,7 @@ const Dashboard = () => {
 
   if (!user) return null;
 
-  // Select a featured movie (Random or first)
-  const featuredMovie = movies.length > 0
-    ? movies[Math.floor(Math.random() * movies.length)]
-    : null;
+
 
   const handlePlay = (movieToPlay) => {
     const target = movieToPlay || featuredMovie;
@@ -547,13 +568,13 @@ const Dashboard = () => {
 
 // Robust Mock Data with TMDB style paths
 const mockMovies = [
-  { id: 1, title: "Stranger Things", poster_path: "/49WJfeN0moxb9IPfGn8AIqMGskD.jpg", backdrop_path: "/56v2KjBlU4XaOv9rVYkJu64j4ih.jpg", category: "Sci-Fi", overview: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.", vote_average: 8.6, release_date: "2016-07-15" },
-  { id: 2, title: "Avengers: Endgame", poster_path: "/or06FN3Dka5tukK1e9sl16pB3iy.jpg", backdrop_path: "/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg", category: "Action", overview: "After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.", vote_average: 8.3, release_date: "2019-04-24" },
-  { id: 3, title: "The Witcher", poster_path: "/7vjaCdMW15FEbXyWWTVaCp33tXV.jpg", backdrop_path: "/jBJWaqoSCiARWtfV0GlqHrcdidd.jpg", category: "Fantasy", overview: "Geralt of Rivia, a mutated monster-hunter for hire, journeys toward his destiny in a turbulent world where people often prove more wicked than beasts.", vote_average: 8.2, release_date: "2019-12-20" },
-  { id: 4, title: "Inception", poster_path: "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", backdrop_path: "/s3TBrRGB1iav7gFOCNx3H31MoES.jpg", category: "Sci-Fi", overview: "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious.", vote_average: 8.4, release_date: "2010-07-15" },
-  { id: 5, title: "Dark", poster_path: "/apbrbWs8M9lyOpJYU5WXkFbkqMZ.jpg", backdrop_path: "/3lBDg3i6nn5R2NKkNgmQmVgOhAR.jpg", category: "Mystery", overview: "A missing child sets four families on a frantic hunt for answers as they unearth a mind-bending mystery that spans three generations.", vote_average: 8.4, release_date: "2017-12-01" },
-  { id: 6, title: "Interstellar", poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", backdrop_path: "/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg", category: "Sci-Fi", overview: "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.", vote_average: 8.4, release_date: "2014-11-05" },
-  { id: 7, title: "Parasite", poster_path: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", backdrop_path: "/hiKmpZMGZsrkA3cdce8a7DwyQP2.jpg", category: "Drama", overview: "All-unemployed Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.", vote_average: 8.5, release_date: "2019-05-30" },
+  // { id: 1, title: "Stranger Things", poster_path: "/49WJfeN0moxb9IPfGn8AIqMGskD.jpg", backdrop_path: "/56v2KjBlU4XaOv9rVYkJu64j4ih.jpg", category: "Sci-Fi", overview: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.", vote_average: 8.6, release_date: "2016-07-15" },
+  // { id: 2, title: "Avengers: Endgame", poster_path: "/or06FN3Dka5tukK1e9sl16pB3iy.jpg", backdrop_path: "/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg", category: "Action", overview: "After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe.", vote_average: 8.3, release_date: "2019-04-24" },
+  // { id: 3, title: "The Witcher", poster_path: "/7vjaCdMW15FEbXyWWTVaCp33tXV.jpg", backdrop_path: "/jBJWaqoSCiARWtfV0GlqHrcdidd.jpg", category: "Fantasy", overview: "Geralt of Rivia, a mutated monster-hunter for hire, journeys toward his destiny in a turbulent world where people often prove more wicked than beasts.", vote_average: 8.2, release_date: "2019-12-20" },
+  // { id: 4, title: "Inception", poster_path: "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg", backdrop_path: "/s3TBrRGB1iav7gFOCNx3H31MoES.jpg", category: "Sci-Fi", overview: "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious.", vote_average: 8.4, release_date: "2010-07-15" },
+  // { id: 5, title: "Dark", poster_path: "/apbrbWs8M9lyOpJYU5WXkFbkqMZ.jpg", backdrop_path: "/3lBDg3i6nn5R2NKkNgmQmVgOhAR.jpg", category: "Mystery", overview: "A missing child sets four families on a frantic hunt for answers as they unearth a mind-bending mystery that spans three generations.", vote_average: 8.4, release_date: "2017-12-01" },
+  // { id: 6, title: "Interstellar", poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", backdrop_path: "/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg", category: "Sci-Fi", overview: "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.", vote_average: 8.4, release_date: "2014-11-05" },
+  // { id: 7, title: "Parasite", poster_path: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg", backdrop_path: "/hiKmpZMGZsrkA3cdce8a7DwyQP2.jpg", category: "Drama", overview: "All-unemployed Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.", vote_average: 8.5, release_date: "2019-05-30" },
 ];
 
 export default Dashboard;

@@ -15,10 +15,37 @@ const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
     backdrop_path: "/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg", // TMDB path
     vote_average: 8.4,
     release_date: "2014-11-05",
-    original_language: "en"
+    original_language: "en",
+    tmdbId: 157336 // Added for logo fetching
   };
 
   const movie = featuredMovie || defaultMovie;
+  const [logoUrl, setLogoUrl] = useState(null);
+
+  // Fetch Logo
+  useEffect(() => {
+    let isMounted = true;
+    setLogoUrl(null);
+
+    if (movie?.tmdbId) {
+      import('../../services/movieService').then(module => {
+        // Fetch Images (Logo)
+        module.default.getMovieImages(movie.tmdbId).then(data => {
+          if (isMounted && data && data.logos && data.logos.length > 0) {
+            const englishLogos = data.logos.filter(l => l.iso_639_1 === 'en' || l.iso_639_1 === null);
+            const bestLogo = englishLogos.length > 0 ? englishLogos[0] : data.logos[0];
+            if (bestLogo) {
+              setLogoUrl(`https://image.tmdb.org/t/p/w500${bestLogo.file_path}`);
+            }
+          }
+        }).catch(err => console.error("Failed to fetch logo", err));
+      });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [movie]);
 
   // Handle different image path formats (absolute URL vs TMDB path)
   const getBackdrop = (m) => {
@@ -29,31 +56,40 @@ const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
   };
 
   return (
-    <div className="relative w-full h-[80vh] text-white">
+    <div className="relative w-full h-[80vh] text-white overflow-hidden group">
 
       {/* Background Image */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         <img
           src={getBackdrop(movie)}
           alt={movie.title}
           className="w-full h-full object-cover"
         />
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent"></div>
       </div>
 
       {/* Content Content - Increased Top Padding for Navbar Clearance */}
-      <div className="relative z-20 h-full flex items-center w-full px-4 sm:px-8 lg:px-12 pt-20">
-        <div className="w-full md:w-2/3 lg:w-1/2 space-y-6 pb-12">
+      <div className="relative z-20 h-full flex items-end w-full px-4 sm:px-8 lg:px-12 pb-20">
+        <div className="w-full md:w-2/3 lg:w-1/2 space-y-2">
 
-          {/* Movie Title Effect - Reduced sizes for better wrapping */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl leading-[1.1] max-w-4xl line-clamp-3">
-            {movie.title}
-          </h1>
+          {/* Movie Title/Logo Effect */}
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={movie.title}
+              className="max-h-32 md:max-h-48 w-auto object-contain mb-4 drop-shadow-2xl"
+            />
+          ) : (
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-medium tracking-tight drop-shadow-2xl leading-[1.2] pb-1 max-w-4xl line-clamp-3">
+              {movie.title}
+            </h1>
+          )}
 
           {/* Metadata */}
-          <div className="flex items-center space-x-4 text-sm md:text-base font-medium">
+          <div className="flex items-center space-x-4 text-xs md:text-sm font-medium">
             {movie.genreIds && genres && getGenreNames(movie.genreIds, genres) ? (
               <span className="text-green-400">
                 {getGenreNames(movie.genreIds, genres)}
@@ -71,25 +107,25 @@ const HeroSection = ({ featuredMovie, onPlay, onMoreInfo }) => {
           </div>
 
           {/* Description */}
-          <p className="text-gray-300 text-sm md:text-base lg:text-lg line-clamp-3 drop-shadow-md max-w-xl">
+          <p className="text-gray-300 text-sm md:text-base font-light line-clamp-3 drop-shadow-md max-w-xl leading-relaxed">
             {movie.description || movie.overview || "Experience the unknown in this thrilling adventure that pushes the boundaries of imagination."}
           </p>
 
           {/* Buttons - Ensure Z-Index for Clickability */}
-          <div className="flex items-center space-x-4 pt-4 relative z-30">
+          <div className="flex items-center space-x-3 pt-2 relative z-30">
             <button
               onClick={onPlay}
-              className="flex items-center space-x-3 bg-white text-black px-8 py-3 rounded-lg hover:bg-gray-200 transition-all duration-300 font-bold text-lg shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] transform hover:scale-105"
+              className="flex items-center space-x-2 bg-white text-black px-6 py-2 rounded hover:bg-gray-200 transition-all duration-300 font-bold text-base transform hover:scale-105"
             >
-              <Play className="w-6 h-6 fill-black" />
+              <Play className="w-5 h-5 fill-black" />
               <span>Play</span>
             </button>
 
             <button
               onClick={onMoreInfo}
-              className="flex items-center space-x-3 bg-gray-600/40 hover:bg-gray-600/60 backdrop-blur-md text-white px-8 py-3 rounded-lg transition-all duration-300 font-bold text-lg border border-white/10 hover:border-white/30 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="flex items-center space-x-2 bg-gray-500/30 hover:bg-gray-500/50 backdrop-blur-md text-white px-6 py-2 rounded transition-all duration-300 font-bold text-base transform hover:scale-105"
             >
-              <Info className="w-6 h-6" />
+              <Info className="w-5 h-5" />
               <span>More Info</span>
             </button>
           </div>
