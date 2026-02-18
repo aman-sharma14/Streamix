@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Play, Mail, Lock, User, Eye, EyeOff, Loader, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Loader, CheckCircle } from 'lucide-react';
 import authService from '../services/authService';
 
 const Register = () => {
@@ -47,7 +47,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -62,9 +62,9 @@ const Register = () => {
         formData.password
       );
       console.log('Registration successful:', response);
-      
+
       setSuccess(true);
-      
+
       // Redirect to login after 2 seconds
       setTimeout(() => {
         navigate('/login');
@@ -92,21 +92,16 @@ const Register = () => {
       {/* Register Card */}
       <div className="relative z-20 w-full max-w-md">
         {/* Logo */}
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center justify-center mb-4">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center">
-              <Play className="w-6 h-6 fill-white" />
-            </div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
-              Streamix
-            </span>
+            <img src="/images/logo.png" alt="Streamix" className="h-8 w-auto" />
           </div>
         </div>
 
         {/* Form Container */}
-        <div className="bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl p-8 rounded-2xl border border-gray-800 shadow-2xl">
-          <h2 className="text-3xl font-bold mb-2 text-center">Create Account</h2>
-          <p className="text-gray-400 text-center mb-8">
+        <div className="bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl p-6 rounded-2xl border border-gray-800 shadow-2xl">
+          <h2 className="text-2xl font-bold mb-2 text-center">Create Account</h2>
+          <p className="text-gray-400 text-center mb-5">
             Start your streaming journey today
           </p>
 
@@ -126,10 +121,10 @@ const Register = () => {
           )}
 
           {/* Register Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {/* Name Input */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">
+              <label htmlFor="name" className="block text-sm font-medium mb-1">
                 Full Name
               </label>
               <div className="relative">
@@ -141,7 +136,7 @@ const Register = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                   placeholder="John Doe"
                 />
               </div>
@@ -149,7 +144,7 @@ const Register = () => {
 
             {/* Email Input */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
+              <label htmlFor="email" className="block text-sm font-medium mb-1">
                 Email Address
               </label>
               <div className="relative">
@@ -161,7 +156,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                   placeholder="you@example.com"
                 />
               </div>
@@ -169,7 +164,7 @@ const Register = () => {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
+              <label htmlFor="password" className="block text-sm font-medium mb-1">
                 Password
               </label>
               <div className="relative">
@@ -181,7 +176,7 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-12 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -196,7 +191,7 @@ const Register = () => {
 
             {/* Confirm Password Input */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
                 Confirm Password
               </label>
               <div className="relative">
@@ -208,7 +203,7 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
+                  className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-12 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
                   placeholder="••••••••"
                 />
                 <button
@@ -264,7 +259,7 @@ const Register = () => {
           </form>
 
           {/* Divider */}
-          <div className="relative my-6">
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-700"></div>
             </div>
@@ -287,7 +282,7 @@ const Register = () => {
         </div>
 
         {/* Back to Home */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-4">
           <Link
             to="/"
             className="text-gray-400 hover:text-white transition text-sm"

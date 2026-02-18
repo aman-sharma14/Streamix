@@ -65,7 +65,7 @@ const Login = () => {
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center space-x-2">
-            <img src="/images/logo.png" alt="Streamix" className="h-12 w-auto" />
+            <img src="/images/logo.png" alt="Streamix" className="h-10 w-auto" />
           </div>
         </div>
 
