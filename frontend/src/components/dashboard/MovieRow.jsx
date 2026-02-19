@@ -34,21 +34,19 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore =
     };
 
     return (
-        <div className="space-y-0.5 mb-2 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-            {/* Title */}
+        <div className="space-y-0.5 mb-2 px-4 sm:px-8 lg:px-12 mx-auto">
+            {/* Title Header - Clickable Group */}
             {title && (
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer">
+                <div
+                    className="flex items-center space-x-2 group/title cursor-pointer w-fit"
+                    onClick={() => showExploreMore && handleExploreClick()}
+                >
+                    <h2 className="text-xl font-bold text-white group-hover/title:text-gray-300 group-hover/title:opacity-80 transition-all duration-300 flex items-center">
                         {title}
+                        {showExploreMore && (
+                            <ChevronRight className="w-6 h-5 ml-0.5 mt-1.5 text-white group-hover/title:text-gray-300 transition-colors duration-300" />
+                        )}
                     </h2>
-                    {showExploreMore && (
-                        <button
-                            onClick={handleExploreClick}
-                            className="text-sm text-gray-400 hover:text-white transition font-semibold"
-                        >
-                            Explore All &gt;
-                        </button>
-                    )}
                 </div>
             )}
 
@@ -57,7 +55,7 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore =
                 {/* Left Arrow */}
                 <button
                     onClick={() => handleScroll('left')}
-                    className="absolute left-0 top-8 bottom-8 z-40 bg-black/30 hover:bg-black/50 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 rounded-l-md"
+                    className="absolute left-0 top-0 bottom-0 z-40 bg-black/30 hover:bg-black/50 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 rounded-l-md"
                 >
                     <ChevronLeft className="w-8 h-8 text-white" />
                 </button>
@@ -65,7 +63,7 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore =
                 {/* Scrollable Area */}
                 <div
                     ref={rowRef}
-                    className="flex space-x-4 overflow-x-scroll scrollbar-hide scroll-smooth py-8 px-4"
+                    className="flex space-x-4 overflow-x-scroll scrollbar-hide scroll-smooth py-4"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {displayMovies.map((movie) => (
@@ -91,7 +89,7 @@ const MovieRow = ({ title, movies, onMovieClick, destinationUrl, enableExplore =
                 {/* Right Arrow */}
                 <button
                     onClick={() => handleScroll('right')}
-                    className="absolute right-0 top-8 bottom-8 z-40 bg-black/30 hover:bg-black/50 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 rounded-r-md"
+                    className="absolute right-0 top-0 bottom-0 z-40 bg-black/30 hover:bg-black/50 w-12 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 rounded-r-md"
                 >
                     <ChevronRight className="w-8 h-8 text-white" />
                 </button>

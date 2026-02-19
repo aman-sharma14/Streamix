@@ -6,16 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/AuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/HeroSection.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/HeroSection.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/GenreCarousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/GenreCarousel.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,18 +25,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "JeetWaral"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;JeetWaral&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/aman-sharma14/Streamix.git",
-    "accountId": "8f8e3dff-7df5-46d3-870d-8f4d3a9560d6"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/aman-sharma14/Streamix.git&quot;,
+    &quot;accountId&quot;: &quot;8f8e3dff-7df5-46d3-870d-8f4d3a9560d6&quot;
   }
-}]]></component>
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -109,14 +109,18 @@
         <entry key="SpringBootApplicationConfigurationType">
           <value>
             <map>
+              <entry key="ApiGatewayApplication" value="STOPPED" />
               <entry key="CatalogServiceApplication" value="STOPPED" />
+              <entry key="DiscoveryServerApplication" value="STOPPED" />
+              <entry key="IdentityServiceApplication" value="STOPPED" />
+              <entry key="InteractionServiceApplication" value="STOPPED" />
             </map>
           </value>
         </entry>
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.CatalogServiceApplication">
+  <component name="RunManager" selected="Spring Boot.IdentityServiceApplication">
     <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <module name="api-gateway" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.api_gateway.ApiGatewayApplication" />
@@ -173,8 +177,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.CatalogServiceApplication" />
-        <item itemvalue="Spring Boot.InteractionServiceApplication" />
         <item itemvalue="Spring Boot.ApiGatewayApplication" />
+        <item itemvalue="Spring Boot.InteractionServiceApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -219,6 +223,8 @@
       <workItem from="1771221248402" duration="2600000" />
       <workItem from="1771227992196" duration="211000" />
       <workItem from="1771383218691" duration="3018000" />
+      <workItem from="1771420201699" duration="1283000" />
+      <workItem from="1771425544618" duration="857000" />
     </task>
     <servers />
   </component>

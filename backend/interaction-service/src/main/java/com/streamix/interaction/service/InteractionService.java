@@ -34,17 +34,18 @@ public class InteractionService {
         log.info("Upserting watchlist item for user {} and movie {}", userId, movieId);
 
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query(
-            org.springframework.data.mongodb.core.query.Criteria.where("userId").is(userId).and("movieId").is(movieId)
-        );
+                org.springframework.data.mongodb.core.query.Criteria.where("userId").is(userId).and("movieId")
+                        .is(movieId));
 
         org.springframework.data.mongodb.core.query.Update update = new org.springframework.data.mongodb.core.query.Update()
-            .setOnInsert("userId", userId)
-            .setOnInsert("movieId", movieId)
-            .setOnInsert("addedOn", LocalDateTime.now())
-            .setOnInsert("movieSnapshot", new Watchlist.MovieSnapshot(movieTitle, posterUrl));
+                .setOnInsert("userId", userId)
+                .setOnInsert("movieId", movieId)
+                .setOnInsert("addedOn", LocalDateTime.now())
+                .setOnInsert("movieSnapshot", new Watchlist.MovieSnapshot(movieTitle, posterUrl));
 
         // Atomic Upsert: If it exists, return it. If not, insert it.
-        org.springframework.data.mongodb.core.FindAndModifyOptions options = new org.springframework.data.mongodb.core.FindAndModifyOptions().returnNew(true).upsert(true);
+        org.springframework.data.mongodb.core.FindAndModifyOptions options = new org.springframework.data.mongodb.core.FindAndModifyOptions()
+                .returnNew(true).upsert(true);
 
         return mongoTemplate.findAndModify(query, update, options, Watchlist.class);
     }
@@ -68,28 +69,32 @@ public class InteractionService {
      */
     public WatchHistory updateHistory(Integer userId, String movieId, Double startAt, Double duration,
             Boolean completed, Integer season, Integer episode, String movieTitle, String posterUrl) {
-        
-        log.info("Upserting watch history for user {} and movie {}. Progress: {}/{}", userId, movieId, startAt, duration);
+
+        log.info("Upserting watch history for user {} and movie {}. Progress: {}/{}", userId, movieId, startAt,
+                duration);
 
         org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query(
-            org.springframework.data.mongodb.core.query.Criteria.where("userId").is(userId).and("movieId").is(movieId)
-        );
+                org.springframework.data.mongodb.core.query.Criteria.where("userId").is(userId).and("movieId")
+                        .is(movieId));
 
         org.springframework.data.mongodb.core.query.Update update = new org.springframework.data.mongodb.core.query.Update()
-            .set("startAt", startAt)
-            .set("duration", duration)
-            .set("completed", completed)
-            .set("lastWatchedAt", LocalDateTime.now())
-            .setOnInsert("userId", userId)
-            .setOnInsert("movieId", movieId)
-            .setOnInsert("movieSnapshot", new WatchHistory.MovieSnapshot(movieTitle, posterUrl));
+                .set("startAt", startAt)
+                .set("duration", duration)
+                .set("completed", completed)
+                .set("lastWatchedAt", LocalDateTime.now())
+                .setOnInsert("userId", userId)
+                .setOnInsert("movieId", movieId)
+                .setOnInsert("movieSnapshot", new WatchHistory.MovieSnapshot(movieTitle, posterUrl));
 
-        if (season != null) update.set("season", season);
-        if (episode != null) update.set("episode", episode);
+        if (season != null)
+            update.set("season", season);
+        if (episode != null)
+            update.set("episode", episode);
 
         // Atomic Upsert
-        org.springframework.data.mongodb.core.FindAndModifyOptions options = new org.springframework.data.mongodb.core.FindAndModifyOptions().returnNew(true).upsert(true);
-        
+        org.springframework.data.mongodb.core.FindAndModifyOptions options = new org.springframework.data.mongodb.core.FindAndModifyOptions()
+                .returnNew(true).upsert(true);
+
         return mongoTemplate.findAndModify(query, update, options, WatchHistory.class);
     }
 

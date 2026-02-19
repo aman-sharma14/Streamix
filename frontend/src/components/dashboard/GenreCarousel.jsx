@@ -31,7 +31,7 @@ const GenreCarousel = ({ movies, onMovieClick }) => {
     }));
 
     return (
-        <div className="space-y-4 mb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="space-y-4 mb-8 px-4 sm:px-8 lg:px-12 mx-auto">
             {/* Genre Header with Tabs - Flex column on mobile, row on desktop */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h2 className="text-xl font-bold text-gray-100">Genres</h2>
@@ -58,7 +58,7 @@ const GenreCarousel = ({ movies, onMovieClick }) => {
 
             {/* Movie Carousel using MovieRow */}
             {moviesWithGenre.length > 0 ? (
-                <div className="-mx-4 sm:-mx-6 lg:-mx-8"> {/* Negative margin to counteract MovieRow's padding since we are already inside a container */}
+                <div className="-mx-4 sm:-mx-8 lg:-mx-12"> {/* Negative margin to counteract MovieRow's padding since we are already inside a container */}
                     <MovieRow
                         title=""
                         movies={moviesWithGenre}

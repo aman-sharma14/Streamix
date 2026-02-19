@@ -109,7 +109,7 @@ const CategoryPage = () => {
         <div className="min-h-screen bg-[#141414] text-white">
             <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-            <div className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="pt-24 px-4 sm:px-8 lg:px-12 mx-auto">
                 {/* Header Section */}
                 <div className="flex items-center space-x-4 mb-8">
                     <button

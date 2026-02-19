@@ -20,7 +20,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         super(Config.class);
     }
 
-    public static class Config {}
+    public static class Config {
+    }
 
     @Override
     public GatewayFilter apply(Config config) {

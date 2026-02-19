@@ -307,7 +307,7 @@ const Dashboard = () => {
       )}
 
       {/* Content Layers */}
-      <div className={`relative z-10 pb-20 space-y-8 px-4 md:px-0 bg-[#141414] pb-20`}>
+      <div className={`relative z-10 pb-20 space-y-8 bg-[#141414] pb-20`}>
 
         {loading ? (
           <div className="text-center py-20 flex flex-col items-center">
@@ -318,7 +318,7 @@ const Dashboard = () => {
           <>
             {/* Movies Tab */}
             {activeTab === "Movies" && (
-              <div className="px-8 md:px-12 pb-12">
+              <div className="pb-12">
                 {/* 1. Trending Movies */}
                 <MovieRow
                   title="Trending Movies"
@@ -378,7 +378,7 @@ const Dashboard = () => {
 
             {/* Series Tab */}
             {activeTab === "Series" && (
-              <div className="px-8 md:px-12 pb-12">
+              <div className="pb-12">
 
                 {/* 1. Trending Series */}
                 <MovieRow
@@ -435,7 +435,7 @@ const Dashboard = () => {
 
             {/* My List Grid View - 5 Columns */}
             {activeTab === "My List" && (
-              <div className="px-8 md:px-12 pb-12">
+              <div className="px-4 sm:px-8 lg:px-12 pb-12">
                 <h2 className="text-xl font-bold mb-4 text-white">Your List</h2>
                 {getFilteredContent().length > 0 ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -460,7 +460,7 @@ const Dashboard = () => {
               <>
                 {/* Continue Watching */}
                 {continueWatchingList.length > 0 && (
-                  <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-8">
+                  <div className="px-4 sm:px-8 lg:px-12 mx-auto mb-8">
                     <h2 className="text-xl font-bold text-gray-100 hover:text-white transition cursor-pointer mb-4">Continue Watching</h2>
                     <div className="flex space-x-4 overflow-x-auto pb-6 scrollbar-hide">
                       {continueWatchingList.map(item => (

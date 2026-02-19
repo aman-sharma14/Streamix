@@ -393,7 +393,7 @@ const MovieDetailsPage = () => {
                 )}
                 <div className={`absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/60 to-transparent transition-opacity duration-[2000ms] ease-in-out ${isIdle ? 'opacity-0' : 'opacity-100'}`}></div>
 
-                <div className="absolute bottom-0 left-0 w-full p-8 md:p-12 space-y-4 max-w-4xl">
+                <div className="absolute bottom-0 left-0 w-full px-4 sm:px-8 lg:px-12 pb-12 space-y-4 max-w-4xl">
                     <div className={`transition-all duration-[2000ms] ease-in-out ${isIdle ? 'translate-y-32' : 'translate-y-0'}`}>
                         {logoUrl ? (
                             <img
@@ -477,7 +477,7 @@ const MovieDetailsPage = () => {
                 )}
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 space-y-16">
+            <div className="mx-auto px-4 sm:px-8 lg:px-12 py-6 space-y-16">
 
                 {/* TV Season/Episode Selector */}
                 {movie.type === 'tv' && tvDetails && (

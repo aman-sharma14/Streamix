@@ -134,12 +134,12 @@ public class InteractionController {
         }
         return false;
     }
+
     @GetMapping("/debug-db")
     public Map<String, Object> debugDb() {
         return Map.of(
-            "database", mongoTemplate.getDb().getName(),
-            "collection", "watch_history",
-            "count", mongoTemplate.getCollection("watch_history").countDocuments()
-        );
+                "database", mongoTemplate.getDb().getName(),
+                "collection", "watch_history",
+                "count", mongoTemplate.getCollection("watch_history").countDocuments());
     }
 }

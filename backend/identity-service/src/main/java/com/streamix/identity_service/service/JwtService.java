@@ -15,7 +15,8 @@ import java.util.Map;
 @Component
 public class JwtService {
 
-    // Secret key for signing JWT (In production, move this to application.yaml or environment variable)
+    // Secret key for signing JWT (In production, move this to application.yaml or
+    // environment variable)
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
     // Validate the token

@@ -25,7 +25,7 @@ public class AuthService {
         if (repository.findByEmail(credential.getEmail()).isPresent()) {
             return "User with this email already exists!";
         }
-        
+
         // Encrypt the password before saving
         credential.setPassword(passwordEncoder.encode(credential.getPassword()));
         repository.save(credential);
@@ -41,6 +41,7 @@ public class AuthService {
     public boolean validateUser(String email) {
         return repository.findByEmail(email).isPresent();
     }
+
     // Validate JWT token
     public void validateToken(String token) {
         jwtService.validateToken(token);
