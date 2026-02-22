@@ -21,8 +21,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: jeetwaral@gmail.com
-    password: wvswszynrmbevkkd
+    username: veloxproject.dm@gmail.com
+    password: xmgt jwyn rtcj lrxu
     properties:
       mail:
         smtp:
@@ -34,7 +34,15 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
+  data:
+    redis:
+      host: advanced-squid-31813.upstash.io
+      port: 6379
+      password: AXxFAAIncDFkYjBiMDZhMDg2M2I0MjVmOGFmYTJiM2FjOTliNjQyNXAxMzE4MTM
+      ssl:
+        enabled: true
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+      

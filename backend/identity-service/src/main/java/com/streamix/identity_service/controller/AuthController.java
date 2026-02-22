@@ -1,9 +1,10 @@
 package com.streamix.identity_service.controller;
 
-import com.streamix.identity_service.dto.AuthRequest;
-import com.streamix.identity_service.dto.AuthResponse;
+import com.streamix.identity_service.dto.*;
 import com.streamix.identity_service.entity.UserCredential;
 import com.streamix.identity_service.service.AuthService;
+import com.streamix.identity_service.service.PasswordResetService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,11 +18,11 @@ public class AuthController {
 
     private final AuthService service;
     private final AuthenticationManager authenticationManager;
-    private final com.streamix.identity_service.service.PasswordResetService passwordResetService;
+    private final PasswordResetService passwordResetService;
 
     public AuthController(AuthService service,
-                          AuthenticationManager authenticationManager,
-                          com.streamix.identity_service.service.PasswordResetService passwordResetService) {
+            AuthenticationManager authenticationManager,
+            PasswordResetService passwordResetService) {
         this.service = service;
         this.authenticationManager = authenticationManager;
         this.passwordResetService = passwordResetService;
@@ -30,34 +31,37 @@ public class AuthController {
     // ========================= REGISTER =========================
 
     @PostMapping("/register")
-    public ResponseEntity<?> addNewUser(@RequestBody UserCredential credential) {
+    public ResponseEntity<?> addNewUser(@Valid @RequestBody RegisterRequest request) {
         try {
-            String result = service.saveUser(credential);
-
-            if (result.contains("already exists")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
-            }
-
+            String result = service.saveUser(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
-
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Registration failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@Valid @RequestBody VerifyCodeRequest request) {
+        try {
+            String result = service.verifyUser(request.getEmail(), request.getCode());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
     }
 
     // ========================= LOGIN =========================
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest authRequest) {
         try {
             // Authenticate user (email + password)
             authenticationManager.authenticate(
                     UsernamePasswordAuthenticationToken.unauthenticated(
                             authRequest.getEmail(),
-                            authRequest.getPassword()
-                    )
-            );
+                            authRequest.getPassword()));
 
             // If authentication succeeds → generate token
             String token = service.generateToken(authRequest.getEmail());
@@ -107,7 +111,8 @@ public class AuthController {
     // ========================= PASSWORD RESET =========================
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody com.streamix.identity_service.dto.ForgotPasswordRequest request) {
+    public ResponseEntity<?> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
         try {
             String result = passwordResetService.initiatePasswordReset(request.getEmail());
             return ResponseEntity.ok(result);
@@ -118,10 +123,10 @@ public class AuthController {
     }
 
     @PostMapping("/verify-code")
-    public ResponseEntity<?> verifyCode(@RequestBody com.streamix.identity_service.dto.VerifyCodeRequest request) {
+    public ResponseEntity<?> verifyCode(@Valid @RequestBody VerifyCodeRequest request) {
         try {
             boolean isValid = passwordResetService.verifyResetCode(request.getEmail(), request.getCode());
-            
+
             if (isValid) {
                 return ResponseEntity.ok("Verification code is valid");
             } else {
@@ -135,13 +140,13 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody com.streamix.identity_service.dto.ResetPasswordRequest request) {
+    public ResponseEntity<?> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
         try {
             String result = passwordResetService.resetPassword(
-                request.getEmail(), 
-                request.getCode(), 
-                request.getNewPassword()
-            );
+                    request.getEmail(),
+                    request.getCode(),
+                    request.getNewPassword());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

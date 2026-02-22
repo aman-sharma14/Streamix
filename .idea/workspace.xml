@@ -6,16 +6,23 @@
   <component name="ChangeListManager">
     <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/AuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/IdentityServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/IdentityServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/AuthRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/AuthRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/ForgotPasswordRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/ForgotPasswordRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/ResetPasswordRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/ResetPasswordRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/VerifyCodeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/VerifyCodeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/entity/UserCredential.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/entity/UserCredential.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/JwtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/service/InteractionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/CategoryPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/MovieDetailsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/GenreCarousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/GenreCarousel.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/MovieRow.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/PasswordResetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/PasswordResetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ForgotPassword.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ForgotPassword.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Register.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Register.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/authService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/authService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,9 +183,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.InteractionServiceApplication" />
         <item itemvalue="Spring Boot.CatalogServiceApplication" />
         <item itemvalue="Spring Boot.ApiGatewayApplication" />
-        <item itemvalue="Spring Boot.InteractionServiceApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -225,6 +232,11 @@
       <workItem from="1771383218691" duration="3018000" />
       <workItem from="1771420201699" duration="1283000" />
       <workItem from="1771425544618" duration="857000" />
+      <workItem from="1771494157241" duration="2450000" />
+      <workItem from="1771558379565" duration="3172000" />
+      <workItem from="1771563433454" duration="796000" />
+      <workItem from="1771598829906" duration="2625000" />
+      <workItem from="1771687210422" duration="4947000" />
     </task>
     <servers />
   </component>

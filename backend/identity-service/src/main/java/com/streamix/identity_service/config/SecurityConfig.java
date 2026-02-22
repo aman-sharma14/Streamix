@@ -35,10 +35,12 @@ public class SecurityConfig {
         return http
                 // ✅ 1. ADD THIS LINE: Enable CORS using the configuration source below
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                
+
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/validate", "/auth/forgot-password", "/auth/verify-code", "/auth/reset-password").permitAll() // Public endpoints
+                        .requestMatchers("/auth/register", "/auth/login", "/auth/verify-email", "/auth/validate",
+                                "/auth/forgot-password", "/auth/verify-code", "/auth/reset-password")
+                        .permitAll() // Public endpoints
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session
@@ -52,19 +54,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
+
         // Allow the React Frontend
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        
+
         // Allow all standard methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        
+
         // Allow headers typically needed (Authorization is crucial for JWT later)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        
+
         // Allow credentials (cookies/auth headers)
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -77,8 +79,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider =
-                new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
 
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;

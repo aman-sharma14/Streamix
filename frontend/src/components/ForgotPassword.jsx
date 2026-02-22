@@ -25,14 +25,21 @@ const ForgotPassword = () => {
     // Helper to reset error when user types
     const clearError = () => setError('');
 
+    const sanitize = (str) => {
+        if (typeof str !== 'string') return str;
+        return str.replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200D\uFEFF\u200E\u200F]/g, "").trim();
+    };
+
     // ==================== STEP 1: SEND CODE ====================
     const handleSendCode = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
+        const sanitizedEmail = sanitize(email);
+
         try {
-            await authService.forgotPassword(email);
+            await authService.forgotPassword(sanitizedEmail);
             setSuccessMessage('Verification code sent to your email!');
             setTimeout(() => {
                 setSuccessMessage('');
@@ -53,7 +60,7 @@ const ForgotPassword = () => {
 
         try {
             // Verify code with backend before moving to password step
-            await authService.verifyCode(email, code);
+            await authService.verifyCode(sanitize(email), code);
             setSuccessMessage('Code verified successfully!');
             setTimeout(() => {
                 setSuccessMessage('');
@@ -72,8 +79,17 @@ const ForgotPassword = () => {
         setLoading(true);
         setError('');
 
-        if (newPassword.length < 6) {
-            setError('Password must be at least 6 characters long');
+        // Password Complexity Regex (matching backend)
+        const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\S+$).{8,}$/;
+
+        if (newPassword.length < 8) {
+            setError('Password must be at least 8 characters long');
+            setLoading(false);
+            return;
+        }
+
+        if (!passwordRegex.test(newPassword)) {
+            setError('Password must contain at least one digit, one lowercase, one uppercase, one special character, and no whitespace');
             setLoading(false);
             return;
         }
@@ -85,13 +101,19 @@ const ForgotPassword = () => {
         }
 
         try {
-            await authService.resetPassword(email, code, newPassword);
+            await authService.resetPassword(sanitize(email), code, newPassword);
             setSuccessMessage('Password reset successful! Redirecting to login...');
             setTimeout(() => {
                 navigate('/login');
             }, 3000);
         } catch (err) {
-            setError(typeof err === 'string' ? err : 'Failed to reset password');
+            console.error('Reset password error:', err);
+            if (typeof err === 'object' && err !== null) {
+                const errorMessages = Object.values(err).join('. ');
+                setError(errorMessages || 'Failed to reset password');
+            } else {
+                setError(typeof err === 'string' ? err : 'Failed to reset password');
+            }
         } finally {
             setLoading(false);
         }
@@ -153,7 +175,11 @@ const ForgotPassword = () => {
                                     type="text"
                                     id="code"
                                     value={code}
-                                    onChange={(e) => { setCode(e.target.value); clearError(); }}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '');
+                                        setCode(val);
+                                        clearError();
+                                    }}
                                     required
                                     maxLength={6}
                                     className="w-full bg-gray-800/50 border border-gray-700 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition tracking-widest text-center text-lg font-mono"

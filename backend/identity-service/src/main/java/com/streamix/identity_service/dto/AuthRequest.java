@@ -1,11 +1,7 @@
-//Data Transfer Object
-//represents the User's Input
-
-//You don't want a user to send their ID or RegistrationDate during login.
-// The AuthRequest DTO only contains username and password. It's a "security filter" for data.
-
 package com.streamix.identity_service.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthRequest {
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "Password is required")
     private String password;
 }

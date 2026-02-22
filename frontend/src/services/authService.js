@@ -40,6 +40,19 @@ const authService = {
     }
   },
 
+  // Verify Email
+  verifyEmail: async (email, code) => {
+    try {
+      const response = await api.post('/verify-email', {
+        email,
+        code,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || 'Verification failed';
+    }
+  },
+
   // Login user
   login: async (email, password, rememberMe = false) => {
     try {

@@ -34,15 +34,25 @@ const Login = () => {
     setLoading(true);
     setError('');
 
+    const sanitize = (str) => {
+      if (typeof str !== 'string') return str;
+      return str.replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200D\uFEFF\u200E\u200F]/g, "").trim();
+    };
+
     try {
-      const response = await authService.login(formData.email, formData.password, rememberMe);
+      const response = await authService.login(sanitize(formData.email), formData.password, rememberMe);
       console.log('Login successful:', response);
 
       // Redirect to dashboard or home page
       navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err);
-      setError(typeof err === 'string' ? err : 'Invalid email or password');
+      if (typeof err === 'object' && err !== null) {
+        const errorMessages = Object.values(err).join('. ');
+        setError(errorMessages || 'Invalid email or password');
+      } else {
+        setError(typeof err === 'string' ? err : 'Invalid email or password');
+      }
     } finally {
       setLoading(false);
     }

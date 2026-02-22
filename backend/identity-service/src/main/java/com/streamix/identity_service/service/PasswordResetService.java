@@ -22,7 +22,11 @@ public class PasswordResetService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+
     private static final int CODE_EXPIRY_MINUTES = 15;
+    private static final String RESET_PREFIX = "RESET_CODE_";
 
     /**
      * Generate a random 6-digit verification code
@@ -35,34 +39,36 @@ public class PasswordResetService {
 
     /**
      * Initiate password reset process
-     * Generates code, saves to DB, sends email
+     * Generates code, saves to Redis, sends email
      */
     public String initiatePasswordReset(String email) {
-        Optional<UserCredential> userOpt = repository.findByEmail(email);
-        
+        if (email == null)
+            throw new RuntimeException("Email is required");
+        String sanitizedEmail = email.replaceAll("[\\p{Cc}\\p{Cf}\\p{Cs}\\p{Co}\\p{Cn}]", "").trim();
+
+        Optional<UserCredential> userOpt = repository.findByEmail(sanitizedEmail);
+
         if (userOpt.isEmpty()) {
             throw new RuntimeException("No account found with this email address");
         }
 
-        UserCredential user = userOpt.get();
-        
         // Generate verification code
         String code = generateVerificationCode();
-        
-        // Set code and expiry time
-        user.setResetCode(code);
-        user.setResetCodeExpiry(LocalDateTime.now().plusMinutes(CODE_EXPIRY_MINUTES));
-        
-        // Save to database
-        repository.save(user);
-        
+
+        // Save to Redis with expiry
+        redisTemplate.opsForValue().set(
+                RESET_PREFIX + sanitizedEmail,
+                code,
+                CODE_EXPIRY_MINUTES,
+                java.util.concurrent.TimeUnit.MINUTES);
+
         // Send email with verification code
         try {
-            emailService.sendVerificationCode(email, code);
+            emailService.sendVerificationCode(sanitizedEmail, code);
         } catch (Exception e) {
             throw new RuntimeException("Failed to send verification email: " + e.getMessage());
         }
-        
+
         return "Verification code sent to your email";
     }
 
@@ -70,67 +76,67 @@ public class PasswordResetService {
      * Verify the reset code
      */
     public boolean verifyResetCode(String email, String code) {
-        Optional<UserCredential> userOpt = repository.findByEmail(email);
-        
-        if (userOpt.isEmpty()) {
+        if (email == null || code == null)
+            return false;
+        String sanitizedEmail = email.replaceAll("[\\p{Cc}\\p{Cf}\\p{Cs}\\p{Co}\\p{Cn}]", "").trim();
+        String sanitizedCode = code.replaceAll("[\\p{Cc}\\p{Cf}\\p{Cs}\\p{Co}\\p{Cn}]", "").trim();
+
+        String redisKey = RESET_PREFIX + sanitizedEmail;
+        Object storedCode = redisTemplate.opsForValue().get(redisKey);
+
+        if (storedCode == null) {
             return false;
         }
 
-        UserCredential user = userOpt.get();
-        
-        // Check if code matches
-        if (user.getResetCode() == null || !user.getResetCode().equals(code)) {
-            return false;
-        }
-        
-        // Check if code has expired
-        if (user.getResetCodeExpiry() == null || LocalDateTime.now().isAfter(user.getResetCodeExpiry())) {
-            return false;
-        }
-        
-        return true;
+        return storedCode.toString().equals(sanitizedCode);
     }
 
     /**
      * Reset password after verifying code
      */
     public String resetPassword(String email, String code, String newPassword) {
-        // Validate password length (minimum 6 characters)
-        if (newPassword == null || newPassword.length() < 6) {
-            throw new RuntimeException("Password must be at least 6 characters long");
+        if (email == null || code == null || newPassword == null) {
+            throw new RuntimeException("Missing required fields");
+        }
+
+        String sanitizedEmail = email.replaceAll("[\\p{Cc}\\p{Cf}\\p{Cs}\\p{Co}\\p{Cn}]", "").trim();
+        String sanitizedCode = code.replaceAll("[\\p{Cc}\\p{Cf}\\p{Cs}\\p{Co}\\p{Cn}]", "").trim();
+
+        // Validate password length (minimum 8 characters - matching Register policy)
+        if (newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
         }
 
         // Verify the code first
-        if (!verifyResetCode(email, code)) {
+        if (!verifyResetCode(sanitizedEmail, sanitizedCode)) {
             throw new RuntimeException("Invalid or expired verification code");
         }
 
-        Optional<UserCredential> userOpt = repository.findByEmail(email);
-        
+        Optional<UserCredential> userOpt = repository.findByEmail(sanitizedEmail);
+
         if (userOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
 
         UserCredential user = userOpt.get();
-        
+
         // Update password (hashed)
         user.setPassword(passwordEncoder.encode(newPassword));
-        
-        // Clear reset code and expiry
-        user.setResetCode(null);
-        user.setResetCodeExpiry(null);
-        
+
         // Save to database
         repository.save(user);
-        
+
+        // Delete from Redis
+        redisTemplate.delete(RESET_PREFIX + sanitizedEmail);
+
         // Send confirmation email
         try {
-            emailService.sendPasswordChangeConfirmation(email);
+            emailService.sendPasswordChangeConfirmation(sanitizedEmail);
         } catch (Exception e) {
             // Log error but don't fail the password reset
             System.err.println("Failed to send confirmation email: " + e.getMessage());
         }
-        
+
         return "Password reset successful";
     }
 }
