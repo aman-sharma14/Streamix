@@ -1,18 +1,14 @@
 package com.streamix.identity_service.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class AuthResponse {
-    private String accessToken;
+public class RefreshTokenRequest {
+    @NotBlank(message = "Refresh token is required")
     private String refreshToken;
-    private String message;
-    private String email;
-    private Integer userId;
 }

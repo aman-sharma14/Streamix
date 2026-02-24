@@ -28,7 +28,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return ((exchange, chain) -> {
             if (validator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("Missing authorization header");
+                    exchange.getResponse().setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 }
 
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
@@ -39,9 +40,18 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 try {
                     // VALIDATE LOCALLY (No blocking network call!)
                     jwtUtil.validateToken(authHeader);
+
+                    // EXTRACT EMAIL AND APPEND TO REQUEST HEADER
+                    String email = jwtUtil.extractEmail(authHeader);
+                    var modifiedExchange = exchange.mutate()
+                            .request(exchange.getRequest().mutate().header("X-User-Email", email).build())
+                            .build();
+
+                    return chain.filter(modifiedExchange);
                 } catch (Exception e) {
                     System.out.println("Invalid Access...!");
-                    throw new RuntimeException("Unauthorized access to application");
+                    exchange.getResponse().setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 }
             }
             return chain.filter(exchange);

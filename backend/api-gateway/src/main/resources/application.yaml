@@ -1,6 +1,22 @@
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: streamix
+    key-store-type: PKCS12
+    key-alias: streamix-gateway
+
 spring:
   application:
     name: api-gateway
+  data:
+    redis:
+      host: advanced-squid-31813.upstash.io
+      port: 6379
+      password: AXxFAAIncDFkYjBiMDZhMDg2M2I0MjVmOGFmYTJiM2FjOTliNjQyNXAxMzE4MTM
+      ssl:
+        enabled: true
   cloud:
     gateway:
       routes:
@@ -9,6 +25,13 @@ spring:
           uri: lb://IDENTITY-SERVICE
           predicates:
             - Path=/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                '[redis-rate-limiter.replenishRate]': 10
+                '[redis-rate-limiter.burstCapacity]': 20
+                '[redis-rate-limiter.requestedTokens]': 1
+                key-resolver: "#{@userKeyResolver}"
 
         # Route for Catalog Service (Index 1)
         - id: catalog-service
@@ -16,7 +39,13 @@ spring:
           predicates:
             - Path=/movie/**
           filters:
-            - AuthenticationFilter # <--- ADD THIS
+            - AuthenticationFilter
+            - name: RequestRateLimiter
+              args:
+                '[redis-rate-limiter.replenishRate]': 10
+                '[redis-rate-limiter.burstCapacity]': 20
+                '[redis-rate-limiter.requestedTokens]': 1
+                key-resolver: "#{@userKeyResolver}"
 
         # Route for TV Shows (Index 1.5)
         - id: catalog-service-tv
@@ -25,6 +54,12 @@ spring:
             - Path=/tv/**
           filters:
             - AuthenticationFilter
+            - name: RequestRateLimiter
+              args:
+                '[redis-rate-limiter.replenishRate]': 10
+                '[redis-rate-limiter.burstCapacity]': 20
+                '[redis-rate-limiter.requestedTokens]': 1
+                key-resolver: "#{@userKeyResolver}"
 
         # Route for Interaction Service (Index 2)
         - id: interaction-service
@@ -32,7 +67,13 @@ spring:
           predicates:
             - Path=/interaction/**
           filters:
-            - AuthenticationFilter # <--- ADD THIS
+            - AuthenticationFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@userKeyResolver}"
 
 eureka:
   client:

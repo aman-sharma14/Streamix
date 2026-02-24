@@ -90,4 +90,14 @@ public class MovieController {
     public List<Movie> getTrendingMovies() {
         return service.getTrendingMovies();
     }
+
+    @GetMapping("/sync")
+    public ResponseEntity<String> syncMovies() {
+        // Manually trigger a refresh of Popular and Trending movies to heal data
+        new Thread(() -> {
+            service.refreshCategory("/movie/popular", 5, "Popular Movies", "movie");
+            service.refreshCategory("/trending/movie/day", 3, "Trending Movies", "movie");
+        }).start();
+        return ResponseEntity.ok("Sync started in background");
+    }
 }

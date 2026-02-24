@@ -63,13 +63,15 @@ public class AuthController {
                             authRequest.getEmail(),
                             authRequest.getPassword()));
 
-            // If authentication succeeds → generate token
-            String token = service.generateToken(authRequest.getEmail());
+            // If authentication succeeds → generate tokens
+            String accessToken = service.generateToken(authRequest.getEmail());
+            String refreshToken = service.generateRefreshToken(authRequest.getEmail());
             UserCredential user = service.getUserByEmail(authRequest.getEmail());
 
             AuthResponse response = AuthResponse.builder()
                     .email(authRequest.getEmail())
-                    .token(token)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .userId(user.getId())
                     .message("Login successful")
                     .build();
@@ -85,7 +87,7 @@ public class AuthController {
         }
     }
 
-    // ========================= TOKEN VALIDATION =========================
+    // ========================= TOKEN VALIDATION AND REFRESH =====================
 
     @GetMapping("/validate")
     public ResponseEntity<String> validateToken(
@@ -105,6 +107,29 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid or expired token");
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        try {
+            com.streamix.identity_service.dto.AuthResponse response = service
+                    .refreshAccessToken(request.getRefreshToken());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@Valid @RequestBody RefreshTokenRequest request) {
+        try {
+            service.logoutUser(request.getRefreshToken());
+            return ResponseEntity.ok("Successfully logged out");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Logout failed: " + e.getMessage());
         }
     }
 

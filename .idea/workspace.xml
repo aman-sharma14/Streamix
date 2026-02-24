@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.ai/mcp/mcp.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/Streamix.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/config/RateLimiterConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/SecurityHeadersFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/keystore.p12" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/RefreshTokenRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/filter/AuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/util/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/java/com/streamix/api_gateway/util/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/controller/MovieController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/dto/TmdbGenreResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/dto/TmdbGenreResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/catalog-service/src/main/java/com/streamix/catalog/service/MovieService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/dto/AuthResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/JwtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/identity-service/src/main/java/com/streamix/identity_service/service/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/interaction-service/src/main/java/com/streamix/interaction/controller/InteractionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/dashboard/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/authService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/authService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/interactionService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/interactionService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/movieService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/movieService.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;JeetWaral&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/aman-sharma14/Streamix.git&quot;,
+    &quot;accountId&quot;: &quot;8f8e3dff-7df5-46d3-870d-8f4d3a9560d6&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="397fOTAbanGhVPjpp9K56MmcUQP" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.arrays.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.CatalogServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.DiscoveryServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.IdentityServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.InteractionServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;streaming&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Aman/Desktop/Streamix&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.archetype.catalogs&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="ApiGatewayApplication" value="STOPPED" />
+              <entry key="CatalogServiceApplication" value="STOPPED" />
+              <entry key="DiscoveryServerApplication" value="STOPPED" />
+              <entry key="IdentityServiceApplication" value="STOPPED" />
+              <entry key="InteractionServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.ApiGatewayApplication">
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="api-gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.api_gateway.ApiGatewayApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.streamix.api_gateway.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CatalogServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="catalog-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.catalog.CatalogServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.streamix.catalog.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiscoveryServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="discovery-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.discovery_server.DiscoveryServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IdentityServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="identity-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.identity_service.IdentityServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="InteractionServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="interaction-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.streamix.interaction.InteractionServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.streamix.interaction.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.ApiGatewayApplication" />
+        <item itemvalue="Spring Boot.InteractionServiceApplication" />
+        <item itemvalue="Spring Boot.CatalogServiceApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="StructureViewState">
+    <option name="selectedTab" value="Logical" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ce2370b3-7ef7-47db-a3d6-ab22df0d4a75" name="Changes" comment="" />
+      <created>1770052000871</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770052000871</updated>
+      <workItem from="1770052002911" duration="60000" />
+      <workItem from="1770052071653" duration="165000" />
+      <workItem from="1770052252150" duration="18000" />
+      <workItem from="1770052284753" duration="1000" />
+      <workItem from="1770052307553" duration="165000" />
+      <workItem from="1770052491646" duration="12000" />
+      <workItem from="1770793225326" duration="2434000" />
+      <workItem from="1770820344590" duration="294000" />
+      <workItem from="1770820650967" duration="103000" />
+      <workItem from="1770874754212" duration="251000" />
+      <workItem from="1770875071693" duration="888000" />
+      <workItem from="1770911346368" duration="627000" />
+      <workItem from="1770912006124" duration="752000" />
+      <workItem from="1770950983934" duration="7297000" />
+      <workItem from="1771047666946" duration="1551000" />
+      <workItem from="1771133021419" duration="6805000" />
+      <workItem from="1771178434767" duration="114000" />
+      <workItem from="1771178696944" duration="4631000" />
+      <workItem from="1771210999619" duration="2785000" />
+      <workItem from="1771213951142" duration="2871000" />
+      <workItem from="1771221248402" duration="2600000" />
+      <workItem from="1771227992196" duration="211000" />
+      <workItem from="1771383218691" duration="3018000" />
+      <workItem from="1771420201699" duration="1283000" />
+      <workItem from="1771425544618" duration="857000" />
+      <workItem from="1771494157241" duration="2450000" />
+      <workItem from="1771558379565" duration="3172000" />
+      <workItem from="1771563433454" duration="796000" />
+      <workItem from="1771598829906" duration="2625000" />
+      <workItem from="1771687210422" duration="4947000" />
+      <workItem from="1771755559789" duration="942000" />
+      <workItem from="1771759001045" duration="4145000" />
+      <workItem from="1771769553709" duration="2540000" />
+      <workItem from="1771775860117" duration="8000" />
+      <workItem from="1771943455774" duration="10320000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -193,10 +193,22 @@ public class MovieService {
 
                 if (response != null && response.getResults() != null) {
                     for (TmdbResponse.TmdbMovieDto result : response.getResults()) {
-                        if (result.getPosterPath() != null && repository.findByTmdbId(result.getId()).isEmpty()) {
-                            Movie movie = createMovieFromDto(result, label, type);
-                            repository.save(movie);
-                            added++;
+                        if (result.getPosterPath() != null) {
+                            Optional<Movie> existingOpt = repository.findByTmdbId(result.getId());
+                            if (existingOpt.isEmpty()) {
+                                Movie movie = createMovieFromDto(result, label, type);
+                                repository.save(movie);
+                                added++;
+                            } else {
+                                Movie existing = existingOpt.get();
+                                if (existing.getCategories() == null) {
+                                    existing.setCategories(new ArrayList<>(Arrays.asList(label)));
+                                    repository.save(existing);
+                                } else if (!existing.getCategories().contains(label)) {
+                                    existing.getCategories().add(label);
+                                    repository.save(existing);
+                                }
+                            }
                         }
                     }
                 }
@@ -282,7 +294,8 @@ public class MovieService {
             Optional<Movie> movieOpt = repository.findByTmdbId(tmdbId);
             String type = movieOpt.map(Movie::getType).orElse("movie");
 
-            String url = TMDB_BASE_URL + "/" + type + "/" + tmdbId + "/images?api_key=" + apiKey + "&include_image_language=en,null";
+            String url = TMDB_BASE_URL + "/" + type + "/" + tmdbId + "/images?api_key=" + apiKey
+                    + "&include_image_language=en,null";
             return restTemplate.getForObject(url, Map.class);
         } catch (Exception e) {
             System.err.println("Error fetching images for TMDB ID " + tmdbId + ": " + e.getMessage());

@@ -108,12 +108,19 @@ const Dashboard = () => {
           ...popularTV,
           ...topRatedTV
         ];
-        const seen = new Set();
-        const allContent = allContentRaw.filter(item => {
-          if (seen.has(item.id)) return false;
-          seen.add(item.id);
-          return true;
+        // Deduplicate and merge categories
+        const contentMap = new Map();
+        allContentRaw.forEach(item => {
+          if (contentMap.has(item.id)) {
+            const existing = contentMap.get(item.id);
+            // Merge categories safely
+            const mergedCategories = [...new Set([...(existing.categories || []), ...(item.categories || [])])];
+            existing.categories = mergedCategories;
+          } else {
+            contentMap.set(item.id, { ...item });
+          }
         });
+        const allContent = Array.from(contentMap.values());
 
         if (allContent.length > 0) {
           setMovies(allContent);

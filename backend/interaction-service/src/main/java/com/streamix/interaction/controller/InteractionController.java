@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// import org.springframework.web.bind.annotation.GetMapping;
+// import org.springframework.web.bind.annotation.RequestHeader;
+
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +93,14 @@ public class InteractionController {
                     .body(Map.of("error", e.getMessage(), "trace", e.getStackTrace()[0].toString()));
         }
     }
+
+    
+    // @GetMapping("/test-header")
+    // public String testGatewayHeader(
+    //         @RequestHeader(value = "X-User-Email", defaultValue = "NO_HEADER_FOUND") String userEmail) {
+    //     System.out.println("The API Gateway told me the user is: " + userEmail);
+    //     return "Hello, " + userEmail + "! The Gateway successfully passed your identity downstream.";
+    // }
 
     @GetMapping("/history/{userId}")
     public List<WatchHistory> getUserHistory(@PathVariable Integer userId) {

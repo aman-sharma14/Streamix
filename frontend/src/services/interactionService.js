@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Gateway URL (adjust port if needed, assuming 8080 based on other services)
-const API_URL = 'http://localhost:8080/interaction';
+// Gateway URL (adjust port if needed, assuming 8443 based on other services)
+const API_URL = 'https://localhost:8443/interaction';
 
 // Create axios instance
 const api = axios.create({
@@ -18,6 +18,21 @@ api.interceptors.request.use(
         return config;
     },
     (error) => Promise.reject(error)
+);
+
+// Catch 401 Unauthorized errors globally
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            console.warn("Session expired or invalid token. Forcing logout.");
+            localStorage.clear();
+            sessionStorage.clear();
+            // Force navigate to login to kill React state and infinite background loops
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
 );
 
 const interactionService = {

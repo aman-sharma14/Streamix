@@ -111,10 +111,74 @@ public class AuthService {
         }
     }
 
-    // Generate JWT token after validating credentials
+    // Generate JWT Access token after validating credentials
     public String generateToken(String email) {
-        // If they exist in Postgres, they are verified
         return jwtService.generateToken(email);
+    }
+
+    // Generate Refresh Token and store in Redis (7 days TTL) - Max 5 Devices
+    public String generateRefreshToken(String email) {
+        String refreshToken = java.util.UUID.randomUUID().toString();
+        String sessionListKey = "USER_SESSIONS_" + email;
+
+        // 1. Add new token to the right of the List
+        redisTemplate.opsForList().rightPush(sessionListKey, refreshToken);
+
+        // 2. Enforce the 5-Device Limit (FIFO Queue)
+        Long activeSessions = redisTemplate.opsForList().size(sessionListKey);
+        if (activeSessions != null && activeSessions > 5) {
+            // Pop the oldest token from the left and delete its actual data
+            Object oldestToken = redisTemplate.opsForList().leftPop(sessionListKey);
+            if (oldestToken != null) {
+                redisTemplate.delete("REFRESH_" + oldestToken.toString());
+            }
+        }
+
+        // 3. Save the new token mapping and reset list expiration
+        redisTemplate.opsForValue().set("REFRESH_" + refreshToken, email, 7, java.util.concurrent.TimeUnit.DAYS);
+        redisTemplate.expire(sessionListKey, 7, java.util.concurrent.TimeUnit.DAYS); // Keep list alive matching tokens
+
+        return refreshToken;
+    }
+
+    // Validate Refresh Token and generate new Access Token
+    public com.streamix.identity_service.dto.AuthResponse refreshAccessToken(String refreshToken) {
+        String redisKey = "REFRESH_" + refreshToken;
+        Object emailObj = redisTemplate.opsForValue().get(redisKey);
+
+        if (emailObj == null) {
+            throw new RuntimeException("Invalid or expired refresh token");
+        }
+
+        String email = emailObj.toString();
+        String newAccessToken = jwtService.generateToken(email);
+        UserCredential user = getUserByEmail(email);
+
+        return com.streamix.identity_service.dto.AuthResponse.builder()
+                .email(email)
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .message("Token refreshed successfully")
+                .build();
+    }
+
+    // Logout User - Delete Refresh Token and remove from session List
+    public void logoutUser(String refreshToken) {
+        String redisKey = "REFRESH_" + refreshToken;
+        Object emailObj = redisTemplate.opsForValue().get(redisKey);
+
+        if (emailObj != null) {
+            String email = emailObj.toString();
+            String sessionListKey = "USER_SESSIONS_" + email;
+
+            // 1. Delete the actual token mapping
+            redisTemplate.delete(redisKey);
+
+            // 2. Remove the token ID from the user's active session list
+            // The value to remove is exactly 1 instance of this refreshToken
+            redisTemplate.opsForList().remove(sessionListKey, 1, refreshToken);
+        }
     }
 
     // Validate if user exists

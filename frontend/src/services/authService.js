@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/auth';
+const API_URL = 'https://localhost:8443/auth';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -61,10 +61,15 @@ const authService = {
         password,
       });
 
-      // Save token to localStorage or sessionStorage
-      if (response.data.token) {
+      // Save tokens to localStorage or sessionStorage
+      if (response.data.accessToken) {
         const storage = rememberMe ? localStorage : sessionStorage;
-        storage.setItem('token', response.data.token);
+        storage.setItem('token', response.data.accessToken);
+
+        if (response.data.refreshToken) {
+          storage.setItem('refreshToken', response.data.refreshToken);
+        }
+
         storage.setItem('email', response.data.email);
         storage.setItem('userId', response.data.userId);
       }
@@ -76,13 +81,25 @@ const authService = {
   },
 
   // Logout user
-  logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    localStorage.removeItem('userId');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('email');
-    sessionStorage.removeItem('userId');
+  logout: async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+      if (refreshToken) {
+        // We use the base API gateway URL
+        await api.post('/logout', { refreshToken });
+      }
+    } catch (error) {
+      console.error('Error during backend logout:', error);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('email');
+      localStorage.removeItem('userId');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('email');
+      sessionStorage.removeItem('userId');
+    }
   },
 
   // Get current user

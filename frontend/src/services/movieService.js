@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Gateway URL
-const API_URL = 'http://localhost:8080/movie';
+const API_URL = 'https://localhost:8443/movie';
 
 // Create axios instance
 const api = axios.create({
@@ -18,6 +18,21 @@ api.interceptors.request.use(
         return config;
     },
     (error) => Promise.reject(error)
+);
+
+// Catch 401 Unauthorized errors globally
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            console.warn("Session expired or invalid token. Forcing logout.");
+            localStorage.clear();
+            sessionStorage.clear();
+            // Force navigate to login to kill React state and infinite background loops
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
 );
 
 const movieService = {
@@ -47,7 +62,7 @@ const movieService = {
     // Search TV Shows (DB + TMDB fallback)
     searchTVShows: async (query) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/tv/search?query=${query}`, {
+        const response = await axios.get(`https://localhost:8443/tv/search?query=${query}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -104,7 +119,7 @@ const movieService = {
     // NEW: Get all TV shows (use axios directly to avoid /movie prefix)
     getAllTVShows: async () => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/tv/all', {
+        const response = await axios.get('https://localhost:8443/tv/all', {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -113,7 +128,7 @@ const movieService = {
     // NEW: Get popular TV shows
     getPopularTVShows: async () => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/tv/popular', {
+        const response = await axios.get('https://localhost:8443/tv/popular', {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -122,7 +137,7 @@ const movieService = {
     // NEW: Get top rated TV shows
     getTopRatedTVShows: async () => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/tv/top-rated', {
+        const response = await axios.get('https://localhost:8443/tv/top-rated', {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -131,7 +146,7 @@ const movieService = {
     // NEW: Get trending TV shows
     getTrendingTVShows: async () => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get('http://localhost:8080/tv/trending', {
+        const response = await axios.get('https://localhost:8443/tv/trending', {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -140,7 +155,7 @@ const movieService = {
     // NEW: Get TV Show by ID
     getTVShowById: async (id) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/tv/${id}`, {
+        const response = await axios.get(`https://localhost:8443/tv/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -149,7 +164,7 @@ const movieService = {
     // NEW: Get TV Show Cast
     getTVShowCast: async (tmdbId) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}/cast`, {
+        const response = await axios.get(`https://localhost:8443/tv/tmdb/${tmdbId}/cast`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -158,7 +173,7 @@ const movieService = {
     // NEW: Get Similar TV Shows
     getSimilarTVShows: async (tmdbId) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}/similar`, {
+        const response = await axios.get(`https://localhost:8443/tv/tmdb/${tmdbId}/similar`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -167,7 +182,7 @@ const movieService = {
     // NEW: Get TV Show Details from TMDB Proxy
     getTVShowDetailsFromProxy: async (tmdbId) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}`, {
+        const response = await axios.get(`https://localhost:8443/tv/tmdb/${tmdbId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -176,7 +191,7 @@ const movieService = {
     // NEW: Get TV Show Season Details from TMDB Proxy
     getTVShowSeasonDetails: async (tmdbId, seasonNumber) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/tv/tmdb/${tmdbId}/season/${seasonNumber}`, {
+        const response = await axios.get(`https://localhost:8443/tv/tmdb/${tmdbId}/season/${seasonNumber}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return response.data;

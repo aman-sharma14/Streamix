@@ -107,9 +107,10 @@ const Navbar = ({ activeTab, setActiveTab, isScrolledProp }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrolledProp]);
 
-  const handleLogout = () => {
-    authService.logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    await authService.logout();
+    // Force a full page reload to clear all React state/memory
+    window.location.href = '/login';
   };
 
   const navLinks = ['Home', 'Series', 'Movies', 'My List'];

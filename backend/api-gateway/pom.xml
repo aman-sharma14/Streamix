@@ -41,6 +41,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- REDIS SUPPORT FOR RATE LIMITING -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+		</dependency>
+
 		<!-- JWT Support for Gateway -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
