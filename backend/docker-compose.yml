@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  discovery-server:
+    build: ./discovery-server
+    container_name: streamix-discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=discovery-server
+      - JAVA_OPTS=-Xmx128m -Xms64m
+    networks:
+      - streamix-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  identity-service:
+    build: ./identity-service
+    container_name: streamix-identity-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - JAVA_OPTS=-Xmx128m -Xms64m
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+    networks:
+      - streamix-network
+
+  catalog-service:
+    build: ./catalog-service
+    container_name: streamix-catalog-service
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - JAVA_OPTS=-Xmx128m -Xms64m
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+    networks:
+      - streamix-network
+
+  interaction-service:
+    build: ./interaction-service
+    container_name: streamix-interaction-service
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - JAVA_OPTS=-Xmx128m -Xms64m
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+    networks:
+      - streamix-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: streamix-api-gateway
+    ports:
+      - "8443:8443"
+    env_file:
+      - .env
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - JAVA_OPTS=-Xmx128m -Xms64m
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      identity-service:
+        condition: service_started
+      catalog-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+    networks:
+      - streamix-network
+
+networks:
+  streamix-network:
+    driver: bridge

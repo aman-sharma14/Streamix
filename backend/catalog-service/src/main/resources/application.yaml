@@ -2,14 +2,14 @@ spring:
   application:
     name: catalog-service
   mongodb:
-    uri: mongodb+srv://admin:yXXEeI8bJDIJBLCL@cluster0.adwjbav.mongodb.net/streamix?retryWrites=true&w=majority&appName=Cluster0
+    uri: ${MONGODB_URI}
 
 server:
   port: 8082
 
 tmdb:
   api:
-    key: f33c417070653dbf2c8fd8fd63e6e998
+    key: ${TMDB_API_KEY}
     base-url: https://api.themoviedb.org/3
 
 eureka:

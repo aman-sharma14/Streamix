@@ -6,7 +6,7 @@ spring:
     name: interaction-service
   data:
     mongodb:
-      uri: mongodb+srv://admin:yXXEeI8bJDIJBLCL@cluster0.adwjbav.mongodb.net/streamix?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${MONGODB_URI}
       database: streamix
 
 

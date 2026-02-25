@@ -9,7 +9,7 @@ spring:
   datasource:
     url: jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
     username: postgres.qhemejaizwfsdchbjitp
-    password: EEYZoX0Zne7bDclG
+    password: ${SUPABASE_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -22,7 +22,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: veloxproject.dm@gmail.com
-    password: xmgt jwyn rtcj lrxu
+    password: ${SMTP_PASSWORD}
     properties:
       mail:
         smtp:
@@ -38,9 +38,11 @@ spring:
     redis:
       host: advanced-squid-31813.upstash.io
       port: 6379
-      password: AXxFAAIncDFkYjBiMDZhMDg2M2I0MjVmOGFmYTJiM2FjOTliNjQyNXAxMzE4MTM
+      password: ${REDIS_PASSWORD}
       ssl:
         enabled: true
+jwt:
+  secret: ${JWT_SECRET}
 eureka:
   client:
     service-url:
