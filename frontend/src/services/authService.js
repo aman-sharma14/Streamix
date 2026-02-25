@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://localhost:8443/auth';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
 
 // Create axios instance with default config
 const api = axios.create({
