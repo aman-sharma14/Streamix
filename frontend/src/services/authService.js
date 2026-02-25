@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
+const API_URL = `${process.env.REACT_APP_API_BASE_URL}/auth`;
 
 // Create axios instance with default config
 const api = axios.create({

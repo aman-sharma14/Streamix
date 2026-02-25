@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Gateway URL (adjust port if needed, assuming 8443 based on other services)
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/interaction`;
+const API_URL = `${process.env.REACT_APP_API_BASE_URL}/interaction`;
 
 // Create axios instance
 const api = axios.create({
