@@ -22,7 +22,7 @@ spring:
       routes:
         # Route for Identity Service (Index 0)
         - id: identity-service
-          uri: lb://IDENTITY-SERVICE
+          uri: ${IDENTITY_SERVICE_URL:lb://IDENTITY-SERVICE}
           predicates:
             - Path=/auth/**
           filters:
@@ -35,7 +35,7 @@ spring:
 
         # Route for Catalog Service (Index 1)
         - id: catalog-service
-          uri: lb://CATALOG-SERVICE
+          uri: ${CATALOG_SERVICE_URL:lb://CATALOG-SERVICE}
           predicates:
             - Path=/movie/**
           filters:
@@ -49,7 +49,7 @@ spring:
 
         # Route for TV Shows (Index 1.5)
         - id: catalog-service-tv
-          uri: lb://CATALOG-SERVICE
+          uri: ${CATALOG_SERVICE_URL:lb://CATALOG-SERVICE}
           predicates:
             - Path=/tv/**
           filters:
@@ -63,7 +63,7 @@ spring:
 
         # Route for Interaction Service (Index 2)
         - id: interaction-service
-          uri: lb://INTERACTION-SERVICE
+          uri: ${INTERACTION_SERVICE_URL:lb://INTERACTION-SERVICE}
           predicates:
             - Path=/interaction/**
           filters:
