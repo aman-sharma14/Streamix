@@ -11,3 +11,6 @@ eureka:
   client:
     register-with-eureka: false 
     fetch-registry: false       
+
+spring.security.user.name: ${EUREKA_USERNAME:admin}
+spring.security.user.password: ${EUREKA_PASSWORD:admin}
