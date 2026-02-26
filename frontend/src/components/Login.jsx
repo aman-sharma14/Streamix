@@ -41,7 +41,6 @@ const Login = () => {
 
     try {
       const response = await authService.login(sanitize(formData.email), formData.password, rememberMe);
-      console.log('Login successful:', response);
 
       // Redirect to dashboard or home page
       navigate('/dashboard');
