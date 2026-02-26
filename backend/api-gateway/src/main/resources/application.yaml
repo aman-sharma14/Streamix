@@ -19,6 +19,9 @@ spring:
         enabled: true
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 30000
+        response-timeout: 30s
       routes:
         # Route for Identity Service (Index 0)
         - id: identity-service
